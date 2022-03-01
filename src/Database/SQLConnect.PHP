@@ -15,7 +15,7 @@ class SQLConnect {
 	public static function connectDatabase(array $config) {
 		try {
 			self::$conn = new PDO(
-				$config['host'], 
+				"mysql:host={$config['host']};dbname={$config['db_name']};charset={$config['charset']}", 
 				$config['user'], 
 				$config['password'], 
 				isset($config['options']) ? $config['options'] : [

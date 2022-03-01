@@ -35,7 +35,7 @@ class QueryBuilder extends SQLConnect {
 		try {
 			$sql = self::$delete . self::$from . " {$table} " . self::$where . " {$index}=?";
 			self::bindValue(self::prepare($sql), [$files])->execute();
-			
+
 			return ['status' => "success", 'message' => "row deleted successfully."];
 		} catch (PDOException $e) {
 			return ['status' => "error", 'message' => $e];
@@ -83,7 +83,7 @@ class QueryBuilder extends SQLConnect {
 		}
 	}
 
-	public static function select(string $table, ?string $alias, string $columns, array $joins = []): string {
+	public static function select(string $method, string $table, ?string $alias, string $columns, array $joins = []): string {
 		$addJoins = "";
 		if (count($joins) > 0) {
 			foreach ($joins as $key => $join) {
@@ -91,7 +91,10 @@ class QueryBuilder extends SQLConnect {
 			}
 		}
 
-		return self::$select . " " . str_replace(",", ", ", $columns) . " " . self::$from . " {$table} " . ($alias != null ? self::$as . " {$alias} " : '') . " " . $addJoins;
+		$sql = self::$select . " " . str_replace(",", ", ", $columns) . " " . self::$from . " {$table} " . ($alias != null ? self::$as . " {$alias} " : '') . " " . $addJoins;
+		echo($sql . " <br> ");
+
+		return "";
 	}
 
 	public static function where(string $column, ?string $operator = null): string {
