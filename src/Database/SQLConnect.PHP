@@ -43,11 +43,11 @@ class SQLConnect {
 		return self::$conn->prepare($query);
 	}
 
-	protected static function fetch($stmt): array {
+	protected static function fetch(PDOStatement $stmt): array {
 		return !$stmt->execute() ? ['status' => "error", 'message' => "an unexpected error has occurred."] : $stmt->fetch();
 	}
 
-	protected static function fetchAll($stmt): array {
+	protected static function fetchAll(PDOStatement $stmt): array {
 		return !$stmt->execute() ? ['status' => "error", 'message' => "an unexpected error has occurred."] : $stmt->fetchAll();
 	}
 

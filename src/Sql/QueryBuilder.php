@@ -83,18 +83,27 @@ class QueryBuilder extends SQLConnect {
 		}
 	}
 
-	public static function select(string $method, string $table, ?string $alias, string $columns, array $joins = []): string {
-		$addJoins = "";
-		if (count($joins) > 0) {
-			foreach ($joins as $key => $join) {
-				$addJoins.= "{$join} ";
+	public static function select(string $method, string $table, ?string $alias, string $columns, array $joins = [], array $files = []): array {
+		try {
+			$addJoins = "";
+			if (count($joins) > 0) {
+				foreach ($joins as $key => $join) {
+					$addJoins.= "{$join} ";
+				}
 			}
+
+			$sql = self::$select . " " . str_replace(",", ", ", $columns) . " " . self::$from . " {$table} " . ($alias != null ? self::$as . " {$alias} " : '') . " " . $addJoins;
+			$prepare = self::prepare($sql);
+
+			if (count($files) > 0) {
+				$bind = self::bindValue($prepare, $files);
+				return $method === 'fetch' ? self::fetch($bind) : self::fetchAll($bind);
+			} else {
+				return $method === 'fetch' ? self::fetch($prepare) : self::fetchAll($prepare);
+			}
+		} catch (PDOException $e) {
+			return ['status' => "error", 'message' => $e];
 		}
-
-		$sql = self::$select . " " . str_replace(",", ", ", $columns) . " " . self::$from . " {$table} " . ($alias != null ? self::$as . " {$alias} " : '') . " " . $addJoins;
-		echo($sql . " <br> ");
-
-		return "";
 	}
 
 	public static function where(string $column, ?string $operator = null): string {
@@ -105,8 +114,8 @@ class QueryBuilder extends SQLConnect {
 		return self::$and . " {$column}{$operator}{$value}";
 	}
 
-	public static function or(string $column, string $operator, string $value): string {
-		return self::$or . " {$column}{$operator}{$value}";
+	public static function or(string $column, string $operator): string {
+		return self::$or . " {$column}{$operator}?";
 	}
 
 	public static function between(): string {
