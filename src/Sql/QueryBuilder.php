@@ -26,9 +26,37 @@ class QueryBuilder extends SQLConnect {
 	private static string $update = " UPDATE";
 	private static string $set = " SET";
 	private static string $delete = " DELETE";
+	private static string $call = " CALL";
 	
 	public function __construct() {
 		
+	}
+
+	private static function addCharacter(array $files): string {
+		$addValues = "";
+
+		foreach ($files as $key => $file) {
+			$addValues.= $key === ($count - 1) ? "?" : "?, ";
+		}
+
+		return $addValues;
+	}
+
+	public static function call(string $call_name, array $files): array {
+		try {
+			$count = count($files);
+
+			if ($count > 0) {
+				$sql = self::$call . " {$call_name}(" . self::addCharacter($files) . ")";
+				self::bindValue(self::prepare($sql), $files)->execute();
+
+				return ['status' => "success", 'message' => "execution finished."];
+			} else {
+				return ['status' => "warning", 'message' => "at least one row must be entered."];
+			}
+		} catch (PDOException $e) {
+			return ['status' => "error", 'message' => $e];
+		}
 	}
 
 	public static function delete(string $table, string $index, array $files): array {
@@ -64,14 +92,9 @@ class QueryBuilder extends SQLConnect {
 	public static function insert(string $table, string $columns, array $files = []): array {
 		try {
 			$count = count($files);
-			$addValues = "";
 
 			if ($count > 0) {
-				foreach ($files as $key => $file) {
-					$addValues.= $key === ($count - 1) ? "?" : "?, ";
-				}
-
-				$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ") " . self::$values . " ($addValues)";
+				$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ") " . self::$values . " (" . self::addCharacter($files) . ")";
 				self::bindValue(self::prepare($sql), $files)->execute();
 
 				return ['status' => "success", 'message' => "rows inserted correctly."];
