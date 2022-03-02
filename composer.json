@@ -1,7 +1,7 @@
 {
     "name": "lion-framework/lion-sql",
     "description": "package in charge of generating and executing MySQL processes.",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
