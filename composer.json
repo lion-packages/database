@@ -3,14 +3,18 @@
     "description": "package in charge of generating and executing MySQL processes.",
     "type": "library",
     "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LionFramework\\LionSql\\": "src/"
+        }
+    },
     "authors": [
         {
             "name": "Sergio León",
-            "email": "56183278+Sleon4@users.noreply.github.com"
+            "email": "sergioleon4004@hotmail.com"
         }
     ],
     "require": {
-        "php": ">=8.0",
-        "another-vendor/package": "1.*"
+        "php": ">=8.0.9"
     }
 }
