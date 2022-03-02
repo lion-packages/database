@@ -133,8 +133,8 @@ class QueryBuilder extends SQLConnect {
 		return self::$where . " {$column}" . ($operator != null ? "{$operator}?" : '');
 	}
 
-	public static function and(string $column, string $operator, string $value): string {
-		return self::$and . " {$column}{$operator}{$value}";
+	public static function and(string $column, string $operator): string {
+		return self::$and . " {$column}{$operator}?";
 	}
 
 	public static function or(string $column, string $operator): string {
