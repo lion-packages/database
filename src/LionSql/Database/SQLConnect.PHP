@@ -34,7 +34,11 @@ class SQLConnect {
 
 	protected static function bindValue(PDOStatement $stmt, array $data): PDOStatement {
 		foreach ($data as $key => $dt) {
-			$stmt->bindValue(($key + 1), strtolower($dt[1]) === "int" ? (int) $dt[0] : $dt[0], strtolower($dt[1]) === "int" ? PDO::PARAM_INT : PDO::PARAM_STR);
+			if (isset($dt[1])) {
+				$stmt->bindValue(($key + 1), strtolower($dt[1]) === "int" ? (int) $dt[0] : $dt[0], strtolower($dt[1]) === "int" ? PDO::PARAM_INT : PDO::PARAM_STR);
+			} else {
+				$stmt->bindValue(($key + 1), $dt[0], PDO::PARAM_STR);
+			}
 		}
 
 		return $stmt;
@@ -45,11 +49,23 @@ class SQLConnect {
 	}
 
 	protected static function fetch(PDOStatement $stmt): array {
-		return !$stmt->execute() ? ['status' => "error", 'message' => "an unexpected error has occurred."] : $stmt->fetch();
+		if ($stmt->execute()) {
+			$request = $stmt->fetch();
+
+			return !$request ? ['status' => "success", 'message' => "No data available."] : $request;
+		} else {
+			return ['status' => "error", 'message' => "An unexpected error has occurred."];
+		}
 	}
 
 	protected static function fetchAll(PDOStatement $stmt): array {
-		return !$stmt->execute() ? ['status' => "error", 'message' => "an unexpected error has occurred."] : $stmt->fetchAll();
+		if ($stmt->execute()) {
+			$request = $stmt->fetchAll();
+
+			return !$request ? ['status' => "success", 'message' => "No data available."] : $request;
+		} else {
+			return ['status' => "error", 'message' => "An unexpected error has occurred."];
+		}
 	}
 
 }
