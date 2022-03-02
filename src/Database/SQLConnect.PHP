@@ -7,6 +7,7 @@ use \PDOStatement;
 use \PDOException;
 
 class SQLConnect {
+	
 	private static PDO $conn;
 	
 	public function __construct() {
