@@ -32,7 +32,7 @@ class QueryBuilder extends SQLConnect {
 		
 	}
 
-	private static function addCharacter(array $files): string {
+	private static function addCharacter(array $files, int $count): string {
 		$addValues = "";
 
 		foreach ($files as $key => $file) {
@@ -47,7 +47,7 @@ class QueryBuilder extends SQLConnect {
 			$count = count($files);
 
 			if ($count > 0) {
-				$sql = self::$call . " {$call_name}(" . self::addCharacter($files) . ")";
+				$sql = self::$call . " {$call_name}(" . self::addCharacter($files, $count) . ")";
 				self::bindValue(self::prepare($sql), $files)->execute();
 
 				return ['status' => "success", 'message' => "execution finished."];
@@ -94,7 +94,7 @@ class QueryBuilder extends SQLConnect {
 			$count = count($files);
 
 			if ($count > 0) {
-				$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ") " . self::$values . " (" . self::addCharacter($files) . ")";
+				$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ") " . self::$values . " (" . self::addCharacter($files, $count) . ")";
 				self::bindValue(self::prepare($sql), $files)->execute();
 
 				return ['status' => "success", 'message' => "rows inserted correctly."];
