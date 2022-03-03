@@ -1,4 +1,4 @@
-# Lion-MySql - MySQL query generator for PHP PDO
+# Lion-MySql - MySQL query generator for PHP - PDO
 
 ## Table of content.
 | # | Description |
@@ -10,10 +10,11 @@
 | 5 | [AND](https://github.com/Sleon4/Lion-SQL/#5-and)  |
 | 6 | [OR](https://github.com/Sleon4/Lion-SQL/#6-or)  |
 | 7 | [BETWEEN](https://github.com/Sleon4/Lion-SQL/#7-between)  |
-| 8 | [JOIN](https://github.com/Sleon4/Lion-SQL/#8-join)  |
-| 9 | [UPDATE](https://github.com/Sleon4/Lion-SQL/#9-update)  |
-| 10 | [DELETE](https://github.com/Sleon4/Lion-SQL/#10-delete)  |
-| 11 | [CALL](https://github.com/Sleon4/Lion-SQL/#11-call)  |
+| 8 | [LIKE](https://github.com/Sleon4/Lion-SQL/#8-like)  |
+| 9 | [JOIN](https://github.com/Sleon4/Lion-SQL/#9-join)  |
+| 10 | [UPDATE](https://github.com/Sleon4/Lion-SQL/#10-update)  |
+| 11 | [DELETE](https://github.com/Sleon4/Lion-SQL/#11-delete)  |
+| 12 | [CALL](https://github.com/Sleon4/Lion-SQL/#12-call)  |
 
 # This library provides an easier and cleaner use for creating queries.
 
@@ -31,7 +32,7 @@ require_once("vendor/autoload.php");
 
 use LionSql\Sql\QueryBuilder as Builder;
 
-Builder::connectDatabase([
+Builder::connect([
 	'host' => 'localhost',
 	'db_name' => 'example',
 	'charset' => 'utf8',
@@ -53,7 +54,7 @@ The configuration it handles is an array of elements with parameters set by defa
 
 The configuration can be overridden and parameterized as required.
 ```php
-Builder::connectDatabase([
+Builder::connect([
 	'host' => 'localhost',
 	'db_name' => 'example',
 	'charset' => 'utf8',
@@ -267,7 +268,19 @@ $list = Builder::select('fetch', 'table', 'alias', '*', [
 var_dump($list);
 ```
 
-### 8. JOIN:
+### 8. LIKE:
+```php
+$list = Builder::select('fetchAll', 'table', null, 'column,column', [
+    Builder::where('column'),
+    Builder::like()
+], [
+    ['%example%', 'str']
+]);
+
+var_dump($list);
+```
+
+### 9. JOIN:
 Implementation of join `(INNER, LEFT AND RIGHT)`. <br>
 Example #1
 ```sql
@@ -334,7 +347,7 @@ $list = Builder::select('fetch', 'table1', 'alias', 'alias.name,alias1.name,alia
 var_dump($list);
 ```
 
-### 9. UPDATE:
+### 10. UPDATE:
 Update queries take the name of the table as their first parameter. The second parameter carries the columns separated by `(,)`, the condition parameter is separated by `(:)` at the end of the columns. The third parameter receives an array with the parameters to update.
 ```sql
 /* prepared sentence PHP */
@@ -351,7 +364,7 @@ $list = Builder::update('table', 'name,date,phone:id', [
 var_dump($list);
 ```
 
-### 10. DELETE
+### 11. DELETE
 The first parameter receives the name of the table, The second parameter receives the name of the column that is referenced, The third parameter receives an array with the respective value to eliminate.
 
 ```sql
@@ -366,7 +379,7 @@ $list = Builder::delete('table', 'id', [
 var_dump($list);
 ```
 
-### 11. CALL:
+### 12. CALL:
 Stored procedures have their name as their first parameter. The second parameter has an array with the number of elements required.
 ```sql
 /* prepared sentence PHP */

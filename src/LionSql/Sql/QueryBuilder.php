@@ -27,9 +27,14 @@ class QueryBuilder extends SQLConnect {
 	private static string $set = " SET";
 	private static string $delete = " DELETE";
 	private static string $call = " CALL";
+	private static string $like = " LIKE";
 	
 	public function __construct() {
 		
+	}
+
+	public static function connect(array $config) {
+		self::connectDatabase($config);
 	}
 
 	private static function addCharacter(array $files, int $count): string {
@@ -40,6 +45,10 @@ class QueryBuilder extends SQLConnect {
 		}
 
 		return $addValues;
+	}
+
+	public static function like(): string {
+		return self::$like . " ?";
 	}
 
 	public static function call(string $call_name, array $files): array {

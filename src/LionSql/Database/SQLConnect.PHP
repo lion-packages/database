@@ -13,7 +13,7 @@ class SQLConnect {
 	public function __construct() {
 	}
 
-	public static function connectDatabase(array $config) {
+	protected static function connectDatabase(array $config): void {
 		try {
 			self::$conn = new PDO(
 				"mysql:host={$config['host']};dbname={$config['db_name']};charset={$config['charset']}", 
