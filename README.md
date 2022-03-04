@@ -292,9 +292,9 @@ SELECT alias.name, alias1.name, alias2.name, alias3.name FROM table1 AS alias
 ```
 ```php
 $list = Builder::select('fetchAll', 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
-    Builder::join('INNER', 'table2', 'alias1', "alias.id_a=alias1.id_a"),
-    Builder::join('LEFT', 'table3', 'alias2', "alias.id_b=alias2.id_b"),
-    Builder::join('RIGHT', 'table4', 'alias3', "alias.id_c=alias3.id_c")
+    Builder::innerJoin('table2', 'alias1', "alias.id_a=alias1.id_a"),
+    Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
+    Builder::rightJoin('table4', 'alias3', "alias.id_c=alias3.id_c")
 ]);
 
 var_dump($list);
@@ -311,9 +311,9 @@ WHERE alias.id=?
 ```
 ```php
 $list = Builder::select('fetch', 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
-    Builder::join('INNER', 'table2', 'alias1', "alias.id_a=alias1.id_a"),
-    Builder::join('LEFT', 'table3', 'alias2', "alias.id_b=alias2.id_b"),
-    Builder::join('RIGHT', 'table4', 'alias3', "alias.id_c=alias3.id_c"),
+    Builder::innerJoin('table2', 'alias1', "alias.id_a=alias1.id_a"),
+    Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
+    Builder::rightJoin('table4', 'alias3', "alias.id_c=alias3.id_c"),
     Builder::where('alias.id', '=')
 ], [
     [$id, 'int'],
@@ -334,10 +334,10 @@ BETWEEN ? AND ?
 ```
 ```php
 $list = Builder::select('fetch', 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
-    Builder::join('INNER', 'table2', 'alias1', "alias.id_a=alias1.id_a"),
-    Builder::join('LEFT', 'table3', 'alias2', "alias.id_b=alias2.id_b"),
-    Builder::join('RIGHT', 'table4', 'alias3', "alias.id_c=alias3.id_c"),
-    Builder::where('alias.date'),
+    Builder::innerJoin('table2', 'alias1', "alias.id_a=alias1.id_a"),
+    Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
+    Builder::join('table4', 'alias3', "alias.id_c=alias3.id_c"),
+    Builder::rightJoin('alias.date'),
     Builder::between()
 ], [
     [$date1, 'str'],

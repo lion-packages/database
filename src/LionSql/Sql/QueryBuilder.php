@@ -154,8 +154,16 @@ class QueryBuilder extends SQLConnect {
 		return self::$between . " ? " . self::$and . " ? ";
 	}
 
-	public static function join(string $type, string $table, ?string $alias, string $condition): string {
-		return "{$type} " . self::$join . " " . ($table) . " " . ($alias != null ? self::$as . " {$alias} " : '') . " " . self::$on . " " . ($condition);
+	public static function leftJoin(string $table, ?string $alias, string $condition): string {
+		return self::$left . self::$join . " " . ($table) . " " . ($alias != null ? self::$as . " {$alias} " : '') . " " . self::$on . " " . ($condition);
+	}
+
+	public static function rightJoin(string $table, ?string $alias, string $condition): string {
+		return self::$right . self::$join . " " . ($table) . " " . ($alias != null ? self::$as . " {$alias} " : '') . " " . self::$on . " " . ($condition);
+	}
+
+	public static function innerJoin(string $table, ?string $alias, string $condition): string {
+		return self::$inner . self::$join . " " . ($table) . " " . ($alias != null ? self::$as . " {$alias} " : '') . " " . self::$on . " " . ($condition);
 	}
 	
 }
