@@ -166,7 +166,7 @@ class QueryBuilder extends SQLConnect {
 		}
 	}
 
-	public static function select(string $method, string $table, ?string $alias, ?string $columns = null, array $joins = [], array $files = []): array {
+	public static function select(string $method, string $table, ?string $alias = null, ?string $columns = null, array $joins = [], array $files = []): array {
 		try {
 			$addJoins = "";
 			if (count($joins) > 0) {

@@ -104,7 +104,7 @@ $list = Builder::select('fetchAll', 'table', null, 'table.column,table.column,co
 var_dump($list);
 
 // all data
-$list = Builder::select('fetchAll', 'table', null, '*');
+$list = Builder::select('fetchAll', 'table');
 var_dump($list);
 ```
 
