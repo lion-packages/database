@@ -1,6 +1,6 @@
 <?php
 
-namespace LionSql\Sql;
+namespace LionSql;
 
 use \PDO;
 use \PDOStatement;
