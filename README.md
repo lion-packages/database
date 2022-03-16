@@ -32,7 +32,7 @@ The connection is established by an array containing data about your configurati
 ```php
 require_once("vendor/autoload.php");
 
-use LionSql\Sql\QueryBuilder as Builder;
+use LionSql\QueryBuilder as Builder;
 
 Builder::connect([
     'host' => 'localhost',

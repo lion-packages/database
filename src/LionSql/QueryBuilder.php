@@ -5,7 +5,7 @@ namespace LionSql\Sql;
 use \PDO;
 use \PDOStatement;
 use \PDOException;
-use LionSql\Database\SQLConnect;
+use LionSql\SQLConnect;
 
 class QueryBuilder extends SQLConnect {
 
@@ -108,11 +108,10 @@ class QueryBuilder extends SQLConnect {
 
 			if ($count > 0) {
 				$sql = self::$call . " {$call_name}(" . self::addCharacter($files, $count) . ")";
-				self::bindValue(self::prepare($sql), $files)->execute();
 
-				return ['status' => "success", 'message' => "execution finished."];
+				return self::bindValue(self::prepare($sql), $files)->execute() ? ['status' => "success", 'message' => "Execution finished."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
 			} else {
-				return ['status' => "warning", 'message' => "at least one row must be entered."];
+				return ['status' => "warning", 'message' => "At least one row must be entered."];
 			}
 		} catch (PDOException $e) {
 			return ['status' => "error", 'message' => $e->getMessage()];
@@ -122,9 +121,7 @@ class QueryBuilder extends SQLConnect {
 	public static function delete(string $table, string $index, array $files): array {
 		try {
 			$sql = self::$delete . self::$from . " {$table} " . self::$where . " {$index}=?";
-			self::bindValue(self::prepare($sql), [$files])->execute();
-
-			return ['status' => "success", 'message' => "row deleted successfully."];
+			return self::bindValue(self::prepare($sql), [$files])->execute() ? ['status' => "success", 'message' => "Row deleted successfully."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
 		} catch (PDOException $e) {
 			return ['status' => "error", 'message' => $e->getMessage()];
 		}
@@ -138,11 +135,9 @@ class QueryBuilder extends SQLConnect {
 
 			if ($count > 0) {
 				$sql = self::$update . " {$table} " . self::$set . " " . str_replace(",", "=?, ", $columns[0]) . "=? " . self::$where . " {$columns[1]}" . "=?";
-				self::bindValue(self::prepare($sql), $files)->execute();
-
-				return ['status' => "success", 'message' => "rows updated successfully."];
+				return self::bindValue(self::prepare($sql), $files)->execute() ? ['status' => "success", 'message' => "Rows updated successfully."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
 			} else {
-				return ['status' => "warning", 'message' => "at least one row must be entered."];
+				return ['status' => "warning", 'message' => "At least one row must be entered."];
 			}
 		} catch (PDOException $e) {
 			return ['status' => "error", 'message' => $e->getMessage()];
@@ -155,11 +150,9 @@ class QueryBuilder extends SQLConnect {
 
 			if ($count > 0) {
 				$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ") " . self::$values . " (" . self::addCharacter($files, $count) . ")";
-				self::bindValue(self::prepare($sql), $files)->execute();
-
-				return ['status' => "success", 'message' => "rows inserted correctly."];
+				return self::bindValue(self::prepare($sql), $files)->execute() ? ['status' => "success", 'message' => "Rows inserted correctly."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
 			} else {
-				return ['status' => "warning", 'message' => "at least one row must be entered."];
+				return ['status' => "warning", 'message' => "At least one row must be entered."];
 			}	
 		} catch (PDOException $e) {
 			return ['status' => "error", 'message' => $e->getMessage()];
