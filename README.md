@@ -669,3 +669,7 @@ $list = Builder::select('fetchAll', 'table', null, null, [
 
 var_dump($list);
 ```
+
+## License
+
+Copyright © 2022 [MIT License](https://github.com/Sleon4/Lion-SQL/blob/main/LICENSE)
