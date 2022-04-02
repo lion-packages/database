@@ -28,17 +28,17 @@ class QueryBuilder extends SQLConnect {
 	private static string $delete = " DELETE";
 	private static string $call = " CALL";
 	private static string $like = " LIKE";
-	private static $groupBy = ' GROUP BY';
-	private static $asc = ' ASC';
-	private static $desc = ' DESC';
-	private static $orderBy = ' ORDER BY';
-	private static $count = ' COUNT(?)';
-	private static $max = ' MAX(?)';
-	private static $min = ' MIN(?)';
-	private static $sum = ' SUM(?)';
-	private static $avg = ' AVG(?)';
-	private static $limit = ' LIMIT';
-	private static $having = ' HAVING';
+	private static string $groupBy = ' GROUP BY';
+	private static string $asc = ' ASC';
+	private static string $desc = ' DESC';
+	private static string $orderBy = ' ORDER BY';
+	private static string $count = ' COUNT(?)';
+	private static string $max = ' MAX(?)';
+	private static string $min = ' MIN(?)';
+	private static string $sum = ' SUM(?)';
+	private static string $avg = ' AVG(?)';
+	private static string $limit = ' LIMIT';
+	private static string $having = ' HAVING';
 	
 	public function __construct() {
 		
@@ -58,7 +58,32 @@ class QueryBuilder extends SQLConnect {
 		return $addValues;
 	}
 
-	public static function limit(bool $index): string {
+	public static function findColumn(string $table, string $find_column, string $columns, array $values): array {
+		$columns_separate = explode(',', $columns);
+
+		if (count($columns_separate) != count($values)) {
+			return ['status' => "error", 'message' => 'The number of columns must be equal to the number of submitted values.'];
+		}
+
+		if (count($columns_separate) === 1) {
+			return self::select('fetch', $table, null, $find_column, [
+				self::where($columns_separate[0], '=')
+			], $values);
+		}
+
+		$addValues = "";
+		foreach ($columns_separate as $key => $column) {
+			if ($key === 0) {
+				$addValues.= self::where(trim($column), '=');
+			} else {
+				$addValues.= self::and(trim($column), '=');
+			}
+		}
+
+		return self::select('fetch', $table, null, $find_column, [$addValues], $values);
+	}
+
+	public static function limit(bool $index = true): string {
 		if (!$index) {
 			return self::$limit . " ?";
 		} else {
@@ -109,7 +134,11 @@ class QueryBuilder extends SQLConnect {
 			if ($count > 0) {
 				$sql = self::$call . " {$call_name}(" . self::addCharacter($files, $count) . ")";
 
-				return self::bindValue(self::prepare($sql), $files)->execute() ? ['status' => "success", 'message' => "Execution finished."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
+				if (!self::bindValue(self::prepare($sql), $files)->execute()) {
+					return ['status' => "error", 'message' => "An error occurred while executing the process."];
+				}
+
+				return ['status' => "success", 'message' => "Execution finished."];
 			} else {
 				return ['status' => "warning", 'message' => "At least one row must be entered."];
 			}
@@ -121,7 +150,12 @@ class QueryBuilder extends SQLConnect {
 	public static function delete(string $table, string $index, array $files): array {
 		try {
 			$sql = self::$delete . self::$from . " {$table} " . self::$where . " {$index}=?";
-			return self::bindValue(self::prepare($sql), [$files])->execute() ? ['status' => "success", 'message' => "Row deleted successfully."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
+
+			if (!self::bindValue(self::prepare($sql), [$files])->execute()) {
+				return ['status' => "error", 'message' => "An error occurred while executing the process."];
+			}
+
+			return ['status' => "success", 'message' => "Row deleted successfully."];
 		} catch (PDOException $e) {
 			return ['status' => "error", 'message' => $e->getMessage()];
 		}
@@ -135,7 +169,12 @@ class QueryBuilder extends SQLConnect {
 
 			if ($count > 0) {
 				$sql = self::$update . " {$table} " . self::$set . " " . str_replace(",", "=?, ", $columns[0]) . "=? " . self::$where . " {$columns[1]}" . "=?";
-				return self::bindValue(self::prepare($sql), $files)->execute() ? ['status' => "success", 'message' => "Rows updated successfully."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
+
+				if (!self::bindValue(self::prepare($sql), $files)->execute()) {
+					return ['status' => "error", 'message' => "An error occurred while executing the process."];
+				}
+
+				return ['status' => "success", 'message' => "Rows updated successfully."];
 			} else {
 				return ['status' => "warning", 'message' => "At least one row must be entered."];
 			}
@@ -150,7 +189,12 @@ class QueryBuilder extends SQLConnect {
 
 			if ($count > 0) {
 				$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ") " . self::$values . " (" . self::addCharacter($files, $count) . ")";
-				return self::bindValue(self::prepare($sql), $files)->execute() ? ['status' => "success", 'message' => "Rows inserted correctly."] : ['status' => "error", 'message' => "An error occurred while executing the process."];
+
+				if (!self::bindValue(self::prepare($sql), $files)->execute()) {
+					return ['status' => "error", 'message' => "An error occurred while executing the process."];
+				}
+
+				return ['status' => "success", 'message' => "Rows inserted correctly."];
 			} else {
 				return ['status' => "warning", 'message' => "At least one row must be entered."];
 			}	
@@ -173,9 +217,22 @@ class QueryBuilder extends SQLConnect {
 
 			if (count($files) > 0) {
 				$bind = self::bindValue($prepare, $files);
-				return $method === 'fetch' ? self::fetch($bind) : self::fetchAll($bind);
+
+				if ($method === 'fetch') {
+					return self::fetch($bind);
+				} elseif ($method === 'fetchAll') {
+					return self::fetchAll($bind);
+				}
+
+				return self::fetchAll($bind);
 			} else {
-				return $method === 'fetch' ? self::fetch($prepare) : self::fetchAll($prepare);
+				if ($method === 'fetch') {
+					return self::fetch($prepare);
+				} elseif ($method === 'fetchAll') {
+					return self::fetchAll($prepare);
+				}
+
+				return self::fetchAll($prepare);
 			}
 		} catch (PDOException $e) {
 			return ['status' => "error", 'message' => $e->getMessage()];
@@ -194,8 +251,8 @@ class QueryBuilder extends SQLConnect {
 		return self::$or . " {$column}{$operator}?";
 	}
 
-	public static function between(): string {
-		return self::$between . " ? " . self::$and . " ? ";
+	public static function between($column): string {
+		return self::where($column) . self::$between . " ? " . self::$and . " ? ";
 	}
 
 	public static function leftJoin(string $table, ?string $alias, string $condition): string {
