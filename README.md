@@ -51,7 +51,7 @@ The configuration it handles is an array of elements with parameters set by defa
     PDO::ATTR_EMULATE_PREPARES => false,
     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
     PDO::ATTR_TIMEOUT => 5
 ]
 ```
@@ -65,7 +65,7 @@ Builder::connect([
     'user' => 'root',
     'password' => '',
     'config' => [
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_TIMEOUT => 5
     ]
 ]);
@@ -77,7 +77,7 @@ The first parameter is defined by the **name of the table** to insert data, The 
 $list = Builder::insert('table', 'column,column,column', [
   /* id */[1, 'int'],
   /* name */['example_name', 'str']
-  /* date */['1999-09-30', 'str']
+  /* date */['1999-09-30'] // str by default
 ]);
 var_dump($list);
 ```
@@ -100,15 +100,15 @@ SELECT * FROM table
 equivalent to
 ```php
 // alias
-$list = Builder::select('fetchAll', 'table', 'alias', 'alias.column,alias.column,alias.column,alias.column');
+$list = Builder::select(Builder::FETCH_ALL, 'table', 'alias', 'alias.column,alias.column,alias.column,alias.column');
 var_dump($list);
 
 // no aliases
-$list = Builder::select('fetchAll', 'table', null, 'table.column,table.column,column,column');
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, 'table.column,table.column,column,column');
 var_dump($list);
 
 // all data
-$list = Builder::select('fetchAll', 'table');
+$list = Builder::select(Builder::FETCH_ALL, 'table');
 var_dump($list);
 ```
 
@@ -121,7 +121,7 @@ SELECT id FROM table WHERE column=?
 ```
 ```php
 $list = Builder::findColumn('table', 'id', 'column', [
-    [$value] // default str
+    [$value] // str by default
 ]);
 var_dump($list);
 ```
@@ -133,8 +133,8 @@ SELECT id FROM table WHERE column=? AND column=?
 ```
 ```php
 $list = Builder::findColumn('table', 'id', 'column,column', [
-    [$value], // default str
-    [$value2] // default str
+    [$value], // str by default
+    [$value2] // str by default
 ]);
 var_dump($list);
 ```
@@ -146,7 +146,7 @@ SELECT id FROM table WHERE column=? AND column=? AND column=?
 ```
 ```php
 $list = Builder::findColumn('table', 'id', 'column,column,column', [
-    [$value], // default str
+    [$value], // str by default
     [$value2, 'str'],
     [$value3, 'int']
 ]);
@@ -163,7 +163,7 @@ SELECT alias.column, alias.columns FROM table AS alias WHERE alias.id=?
 ```
 ```php
 // alias
-$list = Builder::select('fetch', 'table', 'alias', 'alias.column,alias.columns', [
+$list = Builder::select(Builder::FETCH, 'table', 'alias', 'alias.column,alias.columns', [
     Builder::where('alias.id', '=' /* '>', '<', '<>' */)
 ], [
     [$id, 'int']
@@ -178,7 +178,7 @@ SELECT column, columns FROM table WHERE id=?
 ```
 ```php
 // no aliases
-$list = Builder::select('fetch', 'table', null, 'column,columns', [
+$list = Builder::select(Builder::FETCH, 'table', null, 'column,columns', [
     Builder::where('id', '=' /* '>', '<', '<>' */)
 ], [
     [$id, 'int']
@@ -193,7 +193,7 @@ SELECT * FROM table WHERE id=?
 ```
 ```php
 // all data
-$list = Builder::select('fetch', 'table', null, '*', [
+$list = Builder::select(Builder::FETCH, 'table', null, '*', [
     Builder::where('id', '=' /* '>', '<', '<>' */)
 ], [
     [$id, 'int']
@@ -209,7 +209,7 @@ SELECT * FROM table WHERE id=? AND date=?
 ```
 ```php
 // all data
-$list = Builder::select('fetch', 'table', null, '*', [
+$list = Builder::select(Builder::FETCH, 'table', null, '*', [
     Builder::where('id', '=' /* '>', '<', '<>' */),
     Builder::and('date', '=' /* '>', '<', '<>' */)
 ], [
@@ -226,7 +226,7 @@ SELECT * FROM table AS alias WHERE alias.id=? AND alias.date=?
 ```
 ```php
 // all data
-$list = Builder::select('fetch', 'table', 'alias', '*', [
+$list = Builder::select(Builder::FETCH, 'table', 'alias', '*', [
     Builder::where('alias.id', '=' /* '>', '<', '<>' */),
     Builder::and('alias.date', '=' /* '>', '<', '<>' */)
 ], [
@@ -244,7 +244,7 @@ SELECT * FROM table WHERE id=? OR date=?
 ```
 ```php
 // all data
-$list = Builder::select('fetch', 'table', null, '*', [
+$list = Builder::select(Builder::FETCH, 'table', null, '*', [
     Builder::where('id', '=' /* '>', '<', '<>' */),
     Builder::or('date', '=' /* '>', '<', '<>' */)
 ], [
@@ -261,7 +261,7 @@ SELECT * FROM table AS alias WHERE alias.id=? OR alias.date=?
 ```
 ```php
 // all data
-$list = Builder::select('fetch', 'table', 'alias', null, [
+$list = Builder::select(Builder::FETCH, 'table', 'alias', null, [
     Builder::where('alias.id', '=' /* '>', '<', '<>' */),
     Builder::or('alias.date', '=' /* '>', '<', '<>' */)
 ], [
@@ -279,7 +279,7 @@ SELECT * FROM table WHERE date BETWEEN ? AND ?
 ```
 ```php
 // all data
-$list = Builder::select('fetch', 'table', null, null, [
+$list = Builder::select(Builder::FETCH, 'table', null, null, [
     Builder::between('date')
 ], [
     [$date1, 'str'],
@@ -295,7 +295,7 @@ SELECT * FROM table AS alias WHERE alias.date BETWEEN ? AND ?
 ```
 ```php
 // all data
-$list = Builder::select('fetch', 'table', 'alias', null, [
+$list = Builder::select(Builder::FETCH, 'table', 'alias', null, [
     Builder::between('alias.date')
 ], [
     [$date1, 'str'],
@@ -306,7 +306,7 @@ var_dump($list);
 
 ### 8. LIKE
 ```php
-$list = Builder::select('fetchAll', 'table', null, 'column,column', [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, 'column,column', [
     Builder::where('column'),
     Builder::like()
 ], [
@@ -326,7 +326,7 @@ SELECT alias.name, alias1.name, alias2.name, alias3.name FROM table1 AS alias
   RIGHT JOIN table4 AS alias3 ON alias.id_c=alias3.id_c
 ```
 ```php
-$list = Builder::select('fetchAll', 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
+$list = Builder::select(Builder::FETCH_ALL, 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
     Builder::innerJoin('table2', 'alias1', "alias.id_a=alias1.id_a"),
     Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
     Builder::rightJoin('table4', 'alias3', "alias.id_c=alias3.id_c")
@@ -344,7 +344,7 @@ SELECT alias.name, alias1.name, alias2.name, alias3.name FROM table1 AS alias
 WHERE alias.id=?
 ```
 ```php
-$list = Builder::select('fetch', 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
+$list = Builder::select(Builder::FETCH, 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
     Builder::innerJoin('table2', 'alias1', "alias.id_a=alias1.id_a"),
     Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
     Builder::rightJoin('table4', 'alias3', "alias.id_c=alias3.id_c"),
@@ -366,7 +366,7 @@ WHERE alias.id
 BETWEEN ? AND ?
 ```
 ```php
-$list = Builder::select('fetch', 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
+$list = Builder::select(Builder::FETCH, 'table1', 'alias', 'alias.name,alias1.name,alias2.name,alias3.name', [
     Builder::innerJoin('table2', 'alias1', "alias.id_a=alias1.id_a"),
     Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
     Builder::join('table4', 'alias3', "alias.id_c=alias3.id_c"),
@@ -432,7 +432,7 @@ Example #1
 SELECT MIN(id) FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::min('id'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::min('id'));
 var_dump($list);
 ```
 
@@ -442,7 +442,7 @@ Example #2
 SELECT MIN(id) AS alias FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::min('id', 'alias'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::min('id', 'alias'));
 var_dump($list);
 ```
 ### 14. MAX
@@ -453,7 +453,7 @@ Example #1
 SELECT MAX(id) FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::max('id'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::max('id'));
 var_dump($list);
 ```
 
@@ -463,7 +463,7 @@ Example #2
 SELECT MAX(id) AS alias FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::max('id', 'alias'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::max('id', 'alias'));
 var_dump($list);
 ```
 
@@ -475,7 +475,7 @@ Example #1
 SELECT COUNT(*) FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::count());
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::count());
 var_dump($list);
 ```
 
@@ -485,7 +485,7 @@ Example #2
 SELECT COUNT(*) AS alias FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::count(null, 'alias'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::count(null, 'alias'));
 var_dump($list);
 ```
 
@@ -495,7 +495,7 @@ Example #3
 SELECT COUNT(column) AS alias FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::count('column', 'alias'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::count('column', 'alias'));
 var_dump($list);
 ```
 
@@ -507,7 +507,7 @@ Example #1
 SELECT AVG(column) FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::avg('column'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::avg('column'));
 var_dump($list);
 ```
 
@@ -517,7 +517,7 @@ Example #2
 SELECT AVG(column) AS alias FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::avg('column', 'alias'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::avg('column', 'alias'));
 var_dump($list);
 ```
 
@@ -529,7 +529,7 @@ Example #1
 SELECT SUM(column) FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::sum('column'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::sum('column'));
 var_dump($list);
 ```
 
@@ -539,7 +539,7 @@ Example #2
 SELECT SUM(column) AS alias FROM table
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, Builder::sum('column', 'alias'));
+$list = Builder::select(Builder::FETCH, 'table', null, Builder::sum('column', 'alias'));
 var_dump($list);
 ```
 
@@ -551,7 +551,7 @@ Example #1
 SELECT * FROM table ORDER BY column;
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::orderBy('column')
 ]);
 var_dump($list);
@@ -563,7 +563,7 @@ Example #2
 SELECT * FROM table ORDER BY column ASC;
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::orderBy('column', 'ASC')
 ]);
 var_dump($list);
@@ -575,7 +575,7 @@ Example #3
 SELECT * FROM table ORDER BY column ASC, column DESC;
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::orderBy('column ASC, column DESC')
 ]);
 var_dump($list);
@@ -589,7 +589,7 @@ Example #1
 SELECT * FROM table GROUP BY column
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::groupBy('column')
 ]);
 var_dump($list);
@@ -601,7 +601,7 @@ Example #2
 SELECT * FROM table GROUP BY column DESC
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::groupBy('column', 'DESC')
 ]);
 var_dump($list);
@@ -615,7 +615,7 @@ Example #1
 SELECT * FROM table LIMIT ?
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::limit(false)
 ], [
     [$id, 'int']
@@ -629,7 +629,7 @@ Example #2
 SELECT * FROM table LIMIT ?, ?
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::limit(true)
 ], [
     [$first, 'int'],
@@ -644,7 +644,7 @@ Example #3
 SELECT * FROM table LIMIT ?, ?
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::limit()
 ], [
     [$first, 'int'],
@@ -661,7 +661,7 @@ Example #1
 SELECT * FROM table HAVING column = ?
 ```
 ```php
-$list = Builder::select('fetch', 'table', null, null, [
+$list = Builder::select(Builder::FETCH, 'table', null, null, [
     Builder::having('column', '=' /* '>', '<', '<>' */)
 ], [
     [$value, 'str']
@@ -675,7 +675,7 @@ Example #2
 SELECT * FROM table HAVING column
 ```
 ```php
-$list = Builder::select('fetchAll', 'table', null, null, [
+$list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::having('column')
 ]);
 var_dump($list);

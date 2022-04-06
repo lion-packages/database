@@ -9,6 +9,9 @@ use LionSql\SQLConnect;
 
 class QueryBuilder extends SQLConnect {
 
+	const FETCH = "fetch";
+	const FETCH_ALL = "fetchAll";
+
 	private static string $where = " WHERE";
 	private static string $as = " AS";
 	private static string $and = " AND";
@@ -58,37 +61,43 @@ class QueryBuilder extends SQLConnect {
 		return $addValues;
 	}
 
-	public static function findColumn(string $table, string $find_column, string $columns, array $values): array {
+	public static function findColumn(string $table, string $find_column, string $columns, array $values): object {
 		$columns_separate = explode(',', $columns);
 
+		if($table === "") {
+			return self::response([
+				'status' => "error", 'message' => "You must select the table."
+			]);
+		}
+
+		if ($find_column === "") {
+			return self::response([
+				'status' => "error", 'message' => "You must select the column to search."
+			]);
+		}
+
 		if (count($columns_separate) != count($values)) {
-			return ['status' => "error", 'message' => 'The number of columns must be equal to the number of submitted values.'];
+			return self::response([
+				'status' => "error", 'message' => 'The number of columns must be equal to the number of submitted values.'
+			]);
 		}
 
 		if (count($columns_separate) === 1) {
-			return self::select('fetch', $table, null, $find_column, [
+			return self::select(static::FETCH, $table, null, $find_column, [
 				self::where($columns_separate[0], '=')
 			], $values);
 		}
 
 		$addValues = "";
 		foreach ($columns_separate as $key => $column) {
-			if ($key === 0) {
-				$addValues.= self::where(trim($column), '=');
-			} else {
-				$addValues.= self::and(trim($column), '=');
-			}
+			$addValues.= $key === 0 ? self::where(trim($column), '=') : self::and(trim($column), '=');
 		}
 
-		return self::select('fetch', $table, null, $find_column, [$addValues], $values);
+		return self::select(static::FETCH, $table, null, $find_column, [$addValues], $values);
 	}
 
 	public static function limit(bool $index = true): string {
-		if (!$index) {
-			return self::$limit . " ?";
-		} else {
-			return self::$limit . " ?, ?";
-		}
+		return !$index ? (self::$limit . " ?") : (self::$limit . " ?, ?");
 	}
 
 	public static function min(string $column, ?string $alias = null): string {
@@ -127,83 +136,155 @@ class QueryBuilder extends SQLConnect {
 		return self::$like . " ?";
 	}
 
-	public static function call(string $call_name, array $files): array {
+	public static function call(string $call_name, array $files): object {
 		try {
+			if ($call_name === "") {
+				return self::response([
+					'status' => "error", 'message' => "You must select the stored procedure."
+				]);
+			}
+
 			$count = count($files);
-
-			if ($count > 0) {
-				$sql = self::$call . " {$call_name}(" . self::addCharacter($files, $count) . ")";
-
-				if (!self::bindValue(self::prepare($sql), $files)->execute()) {
-					return ['status' => "error", 'message' => "An error occurred while executing the process."];
-				}
-
-				return ['status' => "success", 'message' => "Execution finished."];
-			} else {
-				return ['status' => "warning", 'message' => "At least one row must be entered."];
+			if ($count <= 0) {
+				return self::response([
+					'status' => "error", 'message' => "At least one row must be entered."
+				]);
 			}
+
+			$sql = self::$call . " {$call_name}(" . self::addCharacter($files, $count) . ")";
+			if (!self::bindValue(self::prepare($sql), $files)->execute()) {
+				return self::response([
+					'status' => "error", 'message' => "An error occurred while executing the process."
+				]);
+			}
+
+			return self::response([
+				'status' => "success", 'message' => "Execution finished."
+			]);
 		} catch (PDOException $e) {
-			return ['status' => "error", 'message' => $e->getMessage()];
+			return self::response([
+				'status' => "error", 'message' => $e->getMessage()
+			]);
 		}
 	}
 
-	public static function delete(string $table, string $index, array $files): array {
+	public static function delete(string $table, string $id_column, array $files): object {
 		try {
-			$sql = self::$delete . self::$from . " {$table} " . self::$where . " {$index}=?";
+			if($table === "") {
+				return self::response([
+					'status' => "error", 'message' => "You must select the table."
+				]);
+			}
 
+			if ($id_column === "") {
+				return self::response([
+					'status' => "error", 'message' => "You must select the identifier."
+				]);
+			}
+
+			if (count($files) === 0) {
+				return self::response([
+					'status' => "error", 'message' => "At least one row must be entered."
+				]);
+			}
+
+			$sql = self::$delete . self::$from . " {$table} " . self::$where . " {$id_column}=?";
 			if (!self::bindValue(self::prepare($sql), [$files])->execute()) {
-				return ['status' => "error", 'message' => "An error occurred while executing the process."];
+				return self::response([
+					'status' => "error", 'message' => "An error occurred while executing the process."
+				]);
 			}
 
-			return ['status' => "success", 'message' => "Row deleted successfully."];
+			return self::response([
+				'status' => "success", 'message' => "Row deleted successfully."
+			]);
 		} catch (PDOException $e) {
-			return ['status' => "error", 'message' => $e->getMessage()];
+			return self::response([
+				'status' => "error", 'message' => $e->getMessage()
+			]);
 		}
 	}
 
-	public static function update(string $table, string $columns, array $files = []): array {
+	public static function update(string $table, string $columns, array $files = []): object {
 		try {
+			if ($table === "") {
+				return self::response([
+					'status' => "error", 'message' => "You must select the table."
+				]);
+			}
+
 			$columns = explode(":", $columns);
+			if (count($columns) <= 1 || $columns[1] === '') {
+				return self::response([
+					'status' => "error", 'message' => "column must be specified where after ':'"
+				]);
+			}
+
 			$count = count($files);
 			$addValues = "";
 
-			if ($count > 0) {
-				$sql = self::$update . " {$table} " . self::$set . " " . str_replace(",", "=?, ", $columns[0]) . "=? " . self::$where . " {$columns[1]}" . "=?";
-
-				if (!self::bindValue(self::prepare($sql), $files)->execute()) {
-					return ['status' => "error", 'message' => "An error occurred while executing the process."];
-				}
-
-				return ['status' => "success", 'message' => "Rows updated successfully."];
-			} else {
-				return ['status' => "warning", 'message' => "At least one row must be entered."];
+			if ($count <= 0) {
+				return self::response([
+					'status' => "error", 'message' => "At least one row must be entered."
+				]);
 			}
+
+			$sql = self::$update . " {$table} " . self::$set . " " . str_replace(",", "=?, ", $columns[0]) . "=? " . self::$where . " {$columns[1]}" . "=?";
+			if (!self::bindValue(self::prepare($sql), $files)->execute()) {
+				return self::response([
+					'status' => "error", 'message' => "An error occurred while executing the process."
+				]);
+			}
+
+			return self::response([
+				'status' => "success", 'message' => "Rows updated successfully."
+			]);
 		} catch (PDOException $e) {
-			return ['status' => "error", 'message' => $e->getMessage()];
+			return self::response([
+				'status' => "error", 'message' => $e->getMessage()
+			]);
 		}
 	}
 
-	public static function insert(string $table, string $columns, array $files = []): array {
+	public static function insert(string $table, string $columns, array $files = []): object {
 		try {
+			if ($table === "") {
+				return self::response([
+					'status' => "error", 'message' => "You must select the table."
+				]);
+			}
+
+			if ($columns === "") {
+				return self::response([
+					'status' => "error", 'message' => "You must select the columns."
+				]);
+			}
+
 			$count = count($files);
+			if ($count <= 0) {
+				return self::response([
+					'status' => "error", 'message' => "At least one row must be entered."
+				]);
+			}
 
-			if ($count > 0) {
-				$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ") " . self::$values . " (" . self::addCharacter($files, $count) . ")";
+			$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ")" . self::$values . " (" . self::addCharacter($files, $count) . ")";
+			if (!self::bindValue(self::prepare($sql), $files)->execute()) {
+				return self::response([
+					'status' => "error", 'message' => "An error occurred while executing the process."
+				]);
+			}
 
-				if (!self::bindValue(self::prepare($sql), $files)->execute()) {
-					return ['status' => "error", 'message' => "An error occurred while executing the process."];
-				}
-
-				return ['status' => "success", 'message' => "Rows inserted correctly."];
-			} else {
-				return ['status' => "warning", 'message' => "At least one row must be entered."];
-			}	
+			return self::response([
+				'status' => "success", 'message' => "Rows inserted correctly."
+			]);
 		} catch (PDOException $e) {
-			return ['status' => "error", 'message' => $e->getMessage()];
+			return self::response([
+				'status' => "error", 'message' => $e->getMessage()
+			]);
 		}
 	}
 
-	public static function select(string $method, string $table, ?string $alias = null, ?string $columns = null, array $joins = [], array $files = []): array {
+	public static function select(string $method, string $table, ?string $alias = null, ?string $columns = null, array $joins = [], array $files = []): object {
 		try {
 			$addJoins = "";
 			if (count($joins) > 0) {
@@ -215,27 +296,28 @@ class QueryBuilder extends SQLConnect {
 			$sql = self::$select . " " . ($columns != null ? str_replace(",", ", ", $columns) : '*') . " " . self::$from . " {$table} " . ($alias != null ? self::$as . " {$alias} " : '') . " " . $addJoins;
 			$prepare = self::prepare($sql);
 
-			if (count($files) > 0) {
-				$bind = self::bindValue($prepare, $files);
-
-				if ($method === 'fetch') {
-					return self::fetch($bind);
-				} elseif ($method === 'fetchAll') {
-					return self::fetchAll($bind);
-				}
-
-				return self::fetchAll($bind);
-			} else {
-				if ($method === 'fetch') {
+			if (count($files) <= 0) {
+				if ($method === static::FETCH) {
 					return self::fetch($prepare);
-				} elseif ($method === 'fetchAll') {
+				} elseif ($method === static::FETCH_ALL) {
 					return self::fetchAll($prepare);
 				}
 
 				return self::fetchAll($prepare);
 			}
+
+			$bind = self::bindValue($prepare, $files);
+			if ($method === static::FETCH) {
+				return self::fetch($bind);
+			} elseif ($method === static::FETCH_ALL) {
+				return self::fetchAll($bind);
+			}
+
+			return self::fetchAll($bind);
 		} catch (PDOException $e) {
-			return ['status' => "error", 'message' => $e->getMessage()];
+			return self::response([
+				'status' => "error", 'message' => $e->getMessage()
+			]);
 		}
 	}
 
