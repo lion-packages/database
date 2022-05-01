@@ -30,11 +30,11 @@ composer require lion-framework/lion-sql
 
 ## Usage
 ### 1. CONNECTION
-The connection is established by an array containing data about your configuration to connect to.
+The connection is established using an array containing data about your configuration to connect, currently only available with MySQL.
 ```php
 require_once("vendor/autoload.php");
 
-use LionSql\QueryBuilder as Builder;
+use LionSql\Drivers\MySQLDriver as Builder;
 
 Builder::connect([
     'host' => 'localhost',

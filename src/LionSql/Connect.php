@@ -6,7 +6,7 @@ use \PDO;
 use \PDOStatement;
 use \PDOException;
 
-class SQLConnect {
+class Connect {
 	
 	private static PDO $conn;
 	
@@ -19,11 +19,23 @@ class SQLConnect {
 	}
 
 	protected static function connectDatabase(array $config): void {
+		switch ($config['type']) {
+			case 'mysql':
+			self::$conn = self::mySQLConnect($config);
+			break;
+
+			default:
+			self::$conn = self::mySQLConnect($config);
+			break;
+		}
+	}
+
+	private static function mySQLConnect(array $config) {
 		try {
-			self::$conn = new PDO(
-				"mysql:host={$config['host']};dbname={$config['db_name']};charset={$config['charset']}", 
-				$config['user'], 
-				$config['password'], 
+			return new PDO(
+				"mysql:host={$config['host']};dbname={$config['db_name']};charset={$config['charset']}",
+				$config['user'],
+				$config['password'],
 				isset($config['options']) ? $config['options'] : [
 					PDO::ATTR_EMULATE_PREPARES => false,
 					PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",

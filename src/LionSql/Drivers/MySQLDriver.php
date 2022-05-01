@@ -1,13 +1,13 @@
 <?php
 
-namespace LionSql;
+namespace LionSql\Drivers;
 
 use \PDO;
 use \PDOStatement;
 use \PDOException;
-use LionSql\SQLConnect;
+use LionSql\Connect;
 
-class QueryBuilder extends SQLConnect {
+class MySQLDriver extends Connect {
 
 	const FETCH = "fetch";
 	const FETCH_ALL = "fetchAll";
@@ -42,12 +42,13 @@ class QueryBuilder extends SQLConnect {
 	private static string $avg = ' AVG(?)';
 	private static string $limit = ' LIMIT';
 	private static string $having = ' HAVING';
-	
-	public function __construct() {
-		
-	}
 
-	public static function connect(array $config) {
+	public function __construct() {
+
+	}
+	
+	public static function init($config): void {
+		$config['type'] = 'mysql';
 		self::connectDatabase($config);
 	}
 
