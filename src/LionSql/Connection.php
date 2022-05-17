@@ -6,7 +6,7 @@ use \PDO;
 use \PDOStatement;
 use \PDOException;
 
-class Connect {
+class Connection {
 	
 	private static PDO $conn;
 	
@@ -18,21 +18,21 @@ class Connect {
 		return (object) $data;
 	}
 
-	protected static function connectDatabase(array $config): void {
+	protected static function getConexion(array $config): void {
 		switch ($config['type']) {
 			case 'mysql':
-			self::$conn = self::mySQLConnect($config);
+			self::mysql($config);
 			break;
 
 			default:
-			self::$conn = self::mySQLConnect($config);
+			self::mysql($config);
 			break;
 		}
 	}
 
-	private static function mySQLConnect(array $config) {
+	private static function mysql(array $config): void {
 		try {
-			return new PDO(
+			self::$conn = new PDO(
 				"mysql:host={$config['host']};dbname={$config['db_name']};charset={$config['charset']}",
 				$config['user'],
 				$config['password'],

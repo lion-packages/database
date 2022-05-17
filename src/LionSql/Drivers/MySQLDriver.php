@@ -5,9 +5,9 @@ namespace LionSql\Drivers;
 use \PDO;
 use \PDOStatement;
 use \PDOException;
-use LionSql\Connect;
+use LionSql\Connection;
 
-class MySQLDriver extends Connect {
+class MySQLDriver extends Connection {
 
 	const FETCH = "fetch";
 	const FETCH_ALL = "fetchAll";
@@ -49,7 +49,7 @@ class MySQLDriver extends Connect {
 	
 	public static function init($config): void {
 		$config['type'] = 'mysql';
-		self::connectDatabase($config);
+		self::getConexion($config);
 	}
 
 	private static function addCharacter(array $files, int $count): string {
