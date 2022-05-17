@@ -36,7 +36,7 @@ require_once("vendor/autoload.php");
 
 use LionSql\Drivers\MySQLDriver as Builder;
 
-Builder::connect([
+Builder::init([
     'host' => 'localhost',
     'db_name' => 'example',
     'charset' => 'utf8',
@@ -58,7 +58,7 @@ The configuration it handles is an array of elements with parameters set by defa
 
 The configuration can be overridden and parameterized as required.
 ```php
-Builder::connect([
+Builder::init([
     'host' => 'localhost',
     'db_name' => 'example',
     'charset' => 'utf8',
