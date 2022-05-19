@@ -21,8 +21,6 @@ Package responsible for generating and executing MySQL processes.
 | 13 | [MIN](https://github.com/Sleon4/Lion-SQL/#13-min) |
 | 14 | [MAX](https://github.com/Sleon4/Lion-SQL/#14-max) |
 
-# This library provides an easier and cleaner use for creating queries.
-
 ## Install
 ### Install via composer:
 ```
