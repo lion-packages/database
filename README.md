@@ -3,6 +3,12 @@ Package responsible for generating and executing MySQL processes.
 
 [![Latest Stable Version](http://poser.pugx.org/lion-framework/lion-sql/v)](https://packagist.org/packages/lion-framework/lion-sql) [![Total Downloads](http://poser.pugx.org/lion-framework/lion-sql/downloads)](https://packagist.org/packages/lion-framework/lion-sql) [![Latest Unstable Version](http://poser.pugx.org/lion-framework/lion-sql/v/unstable)](https://packagist.org/packages/lion-framework/lion-sql) [![License](http://poser.pugx.org/lion-framework/lion-sql/license)](https://packagist.org/packages/lion-framework/lion-sql) [![PHP Version Require](http://poser.pugx.org/lion-framework/lion-sql/require/php)](https://packagist.org/packages/lion-framework/lion-sql)
 
+## Install
+### Install via composer:
+```shell
+composer require lion-framework/lion-sql
+```
+
 ## Table of content.
 | # | Description | # | Description |
 | :---: | :---: | :---: | :---: |
@@ -20,12 +26,6 @@ Package responsible for generating and executing MySQL processes.
 | 12 | [CALL](https://github.com/Sleon4/Lion-SQL/#12-call) |
 | 13 | [MIN](https://github.com/Sleon4/Lion-SQL/#13-min) |
 | 14 | [MAX](https://github.com/Sleon4/Lion-SQL/#14-max) |
-
-## Install
-### Install via composer:
-```
-composer require lion-framework/lion-sql
-```
 
 ## Usage
 ### 1. CONNECTION
