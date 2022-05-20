@@ -214,38 +214,26 @@ class MySQLDriver extends Connection {
 	public static function insert(string $table = "", string $columns = "", array $files = []): object {
 		try {
 			if ($table === "") {
-				return self::response([
-					'status' => "error", 'message' => "You must select the table."
-				]);
+				return self::$response->error("You must select the table");
 			}
 
 			if ($columns === "") {
-				return self::response([
-					'status' => "error", 'message' => "You must select the columns."
-				]);
+				return self::$response->error("You must select the columns");
 			}
 
 			$count = count($files);
 			if ($count <= 0) {
-				return self::response([
-					'status' => "error", 'message' => "At least one row must be entered."
-				]);
+				return self::$response->error("At least one row must be entered");
 			}
 
 			$sql = self::$insert . " {$table} (" . str_replace(",", ", ", $columns) . ")" . self::$values . " (" . self::addCharacter($files, $count) . ")";
 			if (!self::bindValue(self::prepare($sql), $files)->execute()) {
-				return self::response([
-					'status' => "error", 'message' => "An error occurred while executing the process."
-				]);
+				return self::$response->error("An error occurred while executing the process");
 			}
 
-			return self::response([
-				'status' => "success", 'message' => "Rows inserted correctly."
-			]);
+			return self::$response->success("Rows inserted correctly");
 		} catch (PDOException $e) {
-			return self::response([
-				'status' => "error", 'message' => $e->getMessage()
-			]);
+			return self::$response->error($e->getMessage());
 		}
 	}
 
