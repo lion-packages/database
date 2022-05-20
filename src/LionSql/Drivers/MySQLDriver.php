@@ -131,7 +131,7 @@ class MySQLDriver extends Connection {
 		return self::$like . " ?";
 	}
 
-	public static function call(string $call_name, array $files): object {
+	public static function call(string $call_name = "", array $files = []): object {
 		try {
 			if ($call_name === "") {
 				return self::$response->error("You must select the stored procedure");
@@ -184,6 +184,10 @@ class MySQLDriver extends Connection {
 				return self::$response->error("You must select the table");
 			}
 
+			if ($columns === "") {
+				return self::$response->error("columns must be specified");
+			}
+
 			$columns = explode(":", $columns);
 			if (count($columns) <= 1 || $columns[1] === '') {
 				return self::$response->error("column must be specified where after ':'");
@@ -207,7 +211,7 @@ class MySQLDriver extends Connection {
 		}
 	}
 
-	public static function insert(string $table, string $columns, array $files = []): object {
+	public static function insert(string $table = "", string $columns = "", array $files = []): object {
 		try {
 			if ($table === "") {
 				return self::response([
