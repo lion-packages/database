@@ -62,25 +62,19 @@ class MySQLDriver extends Connection {
 		return $addValues;
 	}
 
-	public static function findColumn(string $table, string $find_column, string $columns, array $values): object {
+	public static function findColumn(string $table = "", string $find_column = "", string $columns = "", array $values = []): object {
 		$columns_separate = explode(',', $columns);
 
 		if($table === "") {
-			return self::response([
-				'status' => "error", 'message' => "You must select the table."
-			]);
+			return self::$response->error("You must select the table");
 		}
 
 		if ($find_column === "") {
-			return self::response([
-				'status' => "error", 'message' => "You must select the column to search."
-			]);
+			return self::$response->error("You must select the column to search");
 		}
 
 		if (count($columns_separate) != count($values)) {
-			return self::response([
-				'status' => "error", 'message' => 'The number of columns must be equal to the number of submitted values.'
-			]);
+			return self::$response->error("The number of columns must be equal to the number of submitted values");
 		}
 
 		if (count($columns_separate) === 1) {
@@ -140,110 +134,76 @@ class MySQLDriver extends Connection {
 	public static function call(string $call_name, array $files): object {
 		try {
 			if ($call_name === "") {
-				return self::response([
-					'status' => "error", 'message' => "You must select the stored procedure."
-				]);
+				return self::$response->error("You must select the stored procedure");
 			}
 
 			$count = count($files);
 			if ($count <= 0) {
-				return self::response([
-					'status' => "error", 'message' => "At least one row must be entered."
-				]);
+				return self::$response->error("At least one row must be entered");
 			}
 
 			$sql = self::$call . " {$call_name}(" . self::addCharacter($files, $count) . ")";
 			if (!self::bindValue(self::prepare($sql), $files)->execute()) {
-				return self::response([
-					'status' => "error", 'message' => "An error occurred while executing the process."
-				]);
+				return self::$response->error("An error occurred while executing the process");
 			}
 
-			return self::response([
-				'status' => "success", 'message' => "Execution finished."
-			]);
+			return self::$response->success("Execution finished");
 		} catch (PDOException $e) {
-			return self::response([
-				'status' => "error", 'message' => $e->getMessage()
-			]);
+			return self::$response->error($e->getMessage());
 		}
 	}
 
-	public static function delete(string $table, string $id_column, array $files): object {
+	public static function delete(string $table = "", string $id_column = "", array $files = []): object {
 		try {
 			if($table === "") {
-				return self::response([
-					'status' => "error", 'message' => "You must select the table."
-				]);
+				return self::$response->error("You must select the table");
 			}
 
 			if ($id_column === "") {
-				return self::response([
-					'status' => "error", 'message' => "You must select the identifier."
-				]);
+				return self::$response->error("You must select the identifier");
 			}
 
 			if (count($files) === 0) {
-				return self::response([
-					'status' => "error", 'message' => "At least one row must be entered."
-				]);
+				return self::$response->error("At least one row must be entered");
 			}
 
 			$sql = self::$delete . self::$from . " {$table} " . self::$where . " {$id_column}=?";
 			if (!self::bindValue(self::prepare($sql), [$files])->execute()) {
-				return self::response([
-					'status' => "error", 'message' => "An error occurred while executing the process."
-				]);
+				return self::$response->error("An error occurred while executing the process");
 			}
 
-			return self::response([
-				'status' => "success", 'message' => "Row deleted successfully."
-			]);
+			return self::$response->success("Row deleted successfully");
 		} catch (PDOException $e) {
-			return self::response([
-				'status' => "error", 'message' => $e->getMessage()
-			]);
+			return self::$response->error($e->getMessage());
 		}
 	}
 
-	public static function update(string $table, string $columns, array $files = []): object {
+	public static function update(string $table = "", string $columns = "", array $files = []): object {
 		try {
 			if ($table === "") {
-				return self::response([
-					'status' => "error", 'message' => "You must select the table."
-				]);
+				return self::$response->error("You must select the table");
 			}
 
 			$columns = explode(":", $columns);
 			if (count($columns) <= 1 || $columns[1] === '') {
-				return self::response([
-					'status' => "error", 'message' => "column must be specified where after ':'"
-				]);
+				return self::$response->error("column must be specified where after ':'");
 			}
 
 			$count = count($files);
 			$addValues = "";
 
 			if ($count <= 0) {
-				return self::response([
-					'status' => "error", 'message' => "At least one row must be entered."
-				]);
+				return self::$response->error("At least one row must be entered");
 			}
 
 			$sql = self::$update . " {$table} " . self::$set . " " . str_replace(",", "=?, ", $columns[0]) . "=? " . self::$where . " {$columns[1]}" . "=?";
 			if (!self::bindValue(self::prepare($sql), $files)->execute()) {
-				return self::response([
-					'status' => "error", 'message' => "An error occurred while executing the process."
-				]);
+				return self::$response->error("An error occurred while executing the process");
 			}
 
-			return self::response([
-				'status' => "success", 'message' => "Rows updated successfully."
-			]);
+			return self::$response->success("Rows updated successfully");
 		} catch (PDOException $e) {
-			return self::response([
-				'status' => "error", 'message' => $e->getMessage()
-			]);
+			return self::$response->error($e->getMessage());
 		}
 	}
 
@@ -316,9 +276,7 @@ class MySQLDriver extends Connection {
 
 			return self::fetchAll($bind);
 		} catch (PDOException $e) {
-			return self::response([
-				'status' => "error", 'message' => $e->getMessage()
-			]);
+			return self::$response->error($e->getMessage());
 		}
 	}
 

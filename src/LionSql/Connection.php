@@ -5,20 +5,20 @@ namespace LionSql;
 use \PDO;
 use \PDOStatement;
 use \PDOException;
+use LionRequest\Response;
 
 class Connection {
 	
 	private static PDO $conn;
+	protected static Response $response;
 	
 	public function __construct() {
 
 	}
 
-	protected static function response(array $data): object {
-		return (object) $data;
-	}
-
 	protected static function getConexion(array $config): void {
+		self::$response = Response::getInstance();
+
 		switch ($config['type']) {
 			case 'mysql':
 			self::mysql($config);
@@ -71,28 +71,20 @@ class Connection {
 
 	protected static function fetch(PDOStatement $stmt): object {
 		if (!$stmt->execute()) {
-			return self::response([
-				'status' => "error", 'message' => "An unexpected error has occurred."
-			]);
+			return self::request->error("An unexpected error has occurred");
 		}
 
 		$request = $stmt->fetch();
-		return !$request ? self::response([
-			'status' => "success", 'message' => "No data available."
-		]) : $request;
+		return !$request ? self::$response->success("No data available") : (object) $request;
 	}
 
 	protected static function fetchAll(PDOStatement $stmt): object {
 		if (!$stmt->execute()) {
-			return self::response([
-				'status' => "error", 'message' => "An unexpected error has occurred."
-			]);
+			return self::$request->error("An unexpected error has occurred");
 		}
 
 		$request = $stmt->fetchAll();
-		return !$request ? self::response([
-			'status' => "success", 'message' => "No data available."
-		]) : (object) $request;
+		return !$request ? self::$response->success("No data available") : (object) $request;
 	}
 
 }
