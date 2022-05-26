@@ -1,8 +1,8 @@
 <?php
 
-namespace LionSql\Drivers;
+namespace LionSQL\Drivers;
 
-use LionSql\SQLConnect;
+use LionSQL\SQLConnect;
 
 class PostgreSQLDriver {
 

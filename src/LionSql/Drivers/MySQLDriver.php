@@ -1,11 +1,11 @@
 <?php
 
-namespace LionSql\Drivers;
+namespace LionSQL\Drivers;
 
 use \PDO;
 use \PDOStatement;
 use \PDOException;
-use LionSql\Connection;
+use LionSQL\Connection;
 
 class MySQLDriver extends Connection {
 

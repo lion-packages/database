@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08c74c051559aa55b10c77b9872f8741",
+    "content-hash": "bdfb924d884cf4b34e01087f5b55046a",
     "packages": [
         {
             "name": "lion-framework/lion-request",
@@ -54,7 +54,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.0.9"
+        "php": ">=8.1"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
