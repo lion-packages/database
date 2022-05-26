@@ -16,17 +16,12 @@ class Connection {
 
 	}
 
-	protected static function getConexion(array $config): void {
+	protected static function getConnection(array $config, string $type): void {
 		self::$response = Response::getInstance();
 
-		switch ($config['type']) {
-			case 'mysql':
+		$type = strtolower($type);
+		if ($type === 'mysql') {
 			self::mysql($config);
-			break;
-
-			default:
-			self::mysql($config);
-			break;
 		}
 	}
 

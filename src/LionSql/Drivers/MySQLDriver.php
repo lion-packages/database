@@ -48,8 +48,7 @@ class MySQLDriver extends Connection {
 	}
 	
 	public static function init($config): void {
-		$config['type'] = 'mysql';
-		self::getConexion($config);
+		self::getConnection($config, 'mysql');
 	}
 
 	private static function addCharacter(array $files, int $count): string {
