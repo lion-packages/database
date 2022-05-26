@@ -33,7 +33,7 @@ class Connection {
 	private static function mysql(array $config): void {
 		try {
 			self::$conn = new PDO(
-				"mysql:host={$config['host']};dbname={$config['db_name']};charset={$config['charset']}",
+				"mysql:host={$config['host']};port={$config['port']};dbname={$config['db_name']};charset={$config['charset']}",
 				$config['user'],
 				$config['password'],
 				isset($config['options']) ? $config['options'] : [
