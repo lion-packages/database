@@ -9,23 +9,27 @@ use LionRequest\Response;
 
 class Connection {
 	
-	private static PDO $conn;
+	private static ?PDO $conn = null;
 	protected static Response $response;
+	private static string $type;
 	
 	public function __construct() {
 
 	}
 
-	protected static function getConnection(array $config, string $type): void {
+	protected static function getConnection(array $config, string $type): object {
 		self::$response = Response::getInstance();
-
 		$type = strtolower($type);
+		self::$type = $type;
+
 		if ($type === 'mysql') {
-			self::mysql($config);
+			return self::mysql($config);
 		}
+
+		return Response::error("The driver '{$type}' does not exist");
 	}
 
-	private static function mysql(array $config): void {
+	private static function mysql(array $config): object {
 		try {
 			self::$conn = new PDO(
 				"mysql:host={$config['host']};port={$config['port']};dbname={$config['db_name']};charset={$config['charset']}",
@@ -39,8 +43,10 @@ class Connection {
 					PDO::ATTR_TIMEOUT => 5
 				]
 			);
+
+			return Response::success('mysql connection established');
 		} catch (PDOException $e) {
-			echo($e->getMessage());
+			return Response::error($e->getMessage());
 		}
 	}
 
