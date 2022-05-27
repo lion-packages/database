@@ -1,7 +1,7 @@
 # Lion-SQL
 Package responsible for generating and executing MySQL processes.
 
-[![Latest Stable Version](http://poser.pugx.org/lion-framework/lion-sql/v)](https://packagist.org/packages/lion-framework/lion-sql) [![Total Downloads](http://poser.pugx.org/lion-framework/lion-sql/downloads)](https://packagist.org/packages/lion-framework/lion-sql) [![Latest Unstable Version](http://poser.pugx.org/lion-framework/lion-sql/v/unstable)](https://packagist.org/packages/lion-framework/lion-sql) [![License](http://poser.pugx.org/lion-framework/lion-sql/license)](https://packagist.org/packages/lion-framework/lion-sql) [![PHP Version Require](http://poser.pugx.org/lion-framework/lion-sql/require/php)](https://packagist.org/packages/lion-framework/lion-sql)
+[![Latest Stable Version](http://poser.pugx.org/lion-framework/lion-sql/v)](https://packagist.org/packages/lion-framework/lion-sql) [![Total Downloads](http://poser.pugx.org/lion-framework/lion-sql/downloads)](https://packagist.org/packages/lion-framework/lion-sql) [![License](http://poser.pugx.org/lion-framework/lion-sql/license)](https://packagist.org/packages/lion-framework/lion-sql) [![Version](http://poser.pugx.org/lion-framework/lion-sql/version)](https://packagist.org/packages/lion-framework/lion-sql) [![PHP Version Require](http://poser.pugx.org/lion-framework/lion-sql/require/php)](https://packagist.org/packages/lion-framework/lion-sql)
 
 ## Install
 ```shell
