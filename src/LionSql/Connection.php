@@ -9,9 +9,8 @@ use LionRequest\Response;
 
 class Connection {
 	
-	private static ?PDO $conn = null;
+	private static PDO $conn;
 	protected static Response $response;
-	private static string $type;
 	
 	public function __construct() {
 
@@ -20,7 +19,6 @@ class Connection {
 	protected static function getConnection(array $config, string $type): object {
 		self::$response = Response::getInstance();
 		$type = strtolower($type);
-		self::$type = $type;
 
 		if ($type === 'mysql') {
 			return self::mysql($config);
