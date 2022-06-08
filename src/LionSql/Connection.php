@@ -68,22 +68,22 @@ class Connection {
 		return self::$conn->prepare(trim($query));
 	}
 
-	protected static function fetch(PDOStatement $stmt): object {
+	protected static function fetch(PDOStatement $stmt): array|object {
 		if (!$stmt->execute()) {
 			return self::request->error("An unexpected error has occurred");
 		}
 
 		$request = $stmt->fetch();
-		return !$request ? self::$response->success("No data available") : (object) $request;
+		return !$request ? self::$response->success("No data available") : $request;
 	}
 
-	protected static function fetchAll(PDOStatement $stmt): object {
+	protected static function fetchAll(PDOStatement $stmt): array|object {
 		if (!$stmt->execute()) {
 			return self::$request->error("An unexpected error has occurred");
 		}
 
 		$request = $stmt->fetchAll();
-		return !$request ? self::$response->success("No data available") : (object) $request;
+		return !$request ? self::$response->success("No data available") : $request;
 	}
 
 }

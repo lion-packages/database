@@ -61,7 +61,7 @@ class MySQLDriver extends Connection {
 		return $addValues;
 	}
 
-	public static function findColumn(string $table = "", string $find_column = "", string $columns = "", array $values = []): object {
+	public static function findColumn(string $table = "", string $find_column = "", string $columns = "", array $values = []): array|object {
 		$columns_separate = explode(',', $columns);
 
 		if($table === "") {
@@ -236,7 +236,7 @@ class MySQLDriver extends Connection {
 		}
 	}
 
-	public static function select(string $method, string $table, ?string $alias = null, ?string $columns = null, array $joins = [], array $files = []): object {
+	public static function select(string $method, string $table, ?string $alias = null, ?string $columns = null, array $joins = [], array $files = []): array|object {
 		try {
 			$addJoins = "";
 			if (count($joins) > 0) {
