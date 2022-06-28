@@ -75,10 +75,9 @@ Builder::init([
 The first parameter is defined by the **name of the table** to insert data, The second parameter is set by the **number of columns** separated by `(,)` without spaces, The third parameter is an **array that contains the arrays of data** to insert.
 ```php
 $list = Builder::insert('table', 'column,column,column', [
-  /* id */[1, 'int'],
-  /* name */['example_name', 'str']
-  /* date */['1999-09-30'] // str by default
+    1, 'example_name', '1999-09-30'
 ]);
+
 var_dump($list);
 ```
 
@@ -120,9 +119,7 @@ Example #1.
 SELECT id FROM table WHERE column=?
 ```
 ```php
-$list = Builder::findColumn('table', 'id', 'column', [
-    [$value] // str by default
-]);
+$list = Builder::findColumn('table', 'id', 'column', [$value]);
 var_dump($list);
 ```
 
@@ -133,9 +130,9 @@ SELECT id FROM table WHERE column=? AND column=?
 ```
 ```php
 $list = Builder::findColumn('table', 'id', 'column,column', [
-    [$value], // str by default
-    [$value2] // str by default
+    $value, $value2
 ]);
+
 var_dump($list);
 ```
 
@@ -146,10 +143,9 @@ SELECT id FROM table WHERE column=? AND column=? AND column=?
 ```
 ```php
 $list = Builder::findColumn('table', 'id', 'column,column,column', [
-    [$value], // str by default
-    [$value2, 'str'],
-    [$value3, 'int']
+    $value, $value2, $value3
 ]);
+
 var_dump($list);
 ```
 
@@ -165,9 +161,8 @@ SELECT alias.column, alias.columns FROM table AS alias WHERE alias.id=?
 // alias
 $list = Builder::select(Builder::FETCH, 'table', 'alias', 'alias.column,alias.columns', [
     Builder::where('alias.id', '=' /* '>', '<', '<>' */)
-], [
-    [$id, 'int']
-]);
+], [$id]);
+
 var_dump($list);
 ```
 
@@ -180,9 +175,8 @@ SELECT column, columns FROM table WHERE id=?
 // no aliases
 $list = Builder::select(Builder::FETCH, 'table', null, 'column,columns', [
     Builder::where('id', '=' /* '>', '<', '<>' */)
-], [
-    [$id, 'int']
-]);
+], [$id]);
+
 var_dump($list);
 ```
 
@@ -195,9 +189,8 @@ SELECT * FROM table WHERE id=?
 // all data
 $list = Builder::select(Builder::FETCH, 'table', null, '*', [
     Builder::where('id', '=' /* '>', '<', '<>' */)
-], [
-    [$id, 'int']
-]);
+], [$id]);
+
 var_dump($list);
 ```
 
@@ -212,10 +205,8 @@ SELECT * FROM table WHERE id=? AND date=?
 $list = Builder::select(Builder::FETCH, 'table', null, '*', [
     Builder::where('id', '=' /* '>', '<', '<>' */),
     Builder::and('date', '=' /* '>', '<', '<>' */)
-], [
-    [$id, 'int'],
-    [$date, 'str']
-]);
+], [$id, $date]);
+
 var_dump($list);
 ```
 
@@ -229,10 +220,8 @@ SELECT * FROM table AS alias WHERE alias.id=? AND alias.date=?
 $list = Builder::select(Builder::FETCH, 'table', 'alias', '*', [
     Builder::where('alias.id', '=' /* '>', '<', '<>' */),
     Builder::and('alias.date', '=' /* '>', '<', '<>' */)
-], [
-    [$id, 'int'],
-    [$date, 'str']
-]);
+], [$id, $date]);
+
 var_dump($list);
 ```
 
@@ -247,10 +236,8 @@ SELECT * FROM table WHERE id=? OR date=?
 $list = Builder::select(Builder::FETCH, 'table', null, '*', [
     Builder::where('id', '=' /* '>', '<', '<>' */),
     Builder::or('date', '=' /* '>', '<', '<>' */)
-], [
-    [$id, 'int'],
-    [$date, 'str']
-]);
+], [$id, $date]);
+
 var_dump($list);
 ```
 
@@ -264,10 +251,8 @@ SELECT * FROM table AS alias WHERE alias.id=? OR alias.date=?
 $list = Builder::select(Builder::FETCH, 'table', 'alias', null, [
     Builder::where('alias.id', '=' /* '>', '<', '<>' */),
     Builder::or('alias.date', '=' /* '>', '<', '<>' */)
-], [
-    [$id, 'int'],
-    [$date, 'str']
-]);
+], [$id, $date]);
+
 var_dump($list);
 ```
 
@@ -281,10 +266,8 @@ SELECT * FROM table WHERE date BETWEEN ? AND ?
 // all data
 $list = Builder::select(Builder::FETCH, 'table', null, null, [
     Builder::between('date')
-], [
-    [$date1, 'str'],
-    [$date2, 'str']
-]);
+], [$date1, $date2]);
+
 var_dump($list);
 ```
 
@@ -297,10 +280,8 @@ SELECT * FROM table AS alias WHERE alias.date BETWEEN ? AND ?
 // all data
 $list = Builder::select(Builder::FETCH, 'table', 'alias', null, [
     Builder::between('alias.date')
-], [
-    [$date1, 'str'],
-    [$date2, 'str']
-]);
+], [$date1, $date2]);
+
 var_dump($list);
 ```
 
@@ -309,9 +290,8 @@ var_dump($list);
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, 'column,column', [
     Builder::where('column'),
     Builder::like()
-], [
-    ['%example%', 'str']
-]);
+], ['%example%']);
+
 var_dump($list);
 ```
 
@@ -331,6 +311,7 @@ $list = Builder::select(Builder::FETCH_ALL, 'table1', 'alias', 'alias.name,alias
     Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
     Builder::rightJoin('table4', 'alias3', "alias.id_c=alias3.id_c")
 ]);
+
 var_dump($list);
 ```
 
@@ -349,9 +330,8 @@ $list = Builder::select(Builder::FETCH, 'table1', 'alias', 'alias.name,alias1.na
     Builder::leftJoin('table3', 'alias2', "alias.id_b=alias2.id_b"),
     Builder::rightJoin('table4', 'alias3', "alias.id_c=alias3.id_c"),
     Builder::where('alias.id', '=')
-], [
-    [$id, 'int'],
-]);
+], [$id]);
+
 var_dump($list);
 ```
 
@@ -372,10 +352,8 @@ $list = Builder::select(Builder::FETCH, 'table1', 'alias', 'alias.name,alias1.na
     Builder::join('table4', 'alias3', "alias.id_c=alias3.id_c"),
     Builder::rightJoin('alias.date'),
     Builder::between()
-], [
-    [$date1, 'str'],
-    [$date2, 'str']
-]);
+], [$date1, $date2]);
+
 var_dump($list);
 ```
 
@@ -387,11 +365,9 @@ UPDATE table SET name=?, date=?, phone=? WHERE id=?
 ```
 ```php
 $list = Builder::update('table', 'name,date,phone:id', [
-    [$name, 'str'],
-    [$date, 'str'],
-    [$phone, 'str'],
-    [$id, 'int']
+    $name, $date, $phone, $id
 ]);
+
 var_dump($list);
 ```
 
@@ -403,9 +379,7 @@ The first parameter receives the name of the table, The second parameter receive
 DELETE FROM table WHERE id=?
 ```
 ```php
-$list = Builder::delete('table', 'id', [
-    $id, 'int'
-]);
+$list = Builder::delete('table', 'id', $id);
 var_dump($list);
 ```
 
@@ -417,10 +391,9 @@ CALL name_procedure(?,?,?)
 ```
 ```php
 $list = Builder::call('name_procedure', [
-    [$name, 'str'],
-    [$date, 'str'],
-    [$id, 'int']
+    $name, $date, $id
 ]);
+
 var_dump($list);
 ```
 
@@ -554,6 +527,7 @@ SELECT * FROM table ORDER BY column;
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::orderBy('column')
 ]);
+
 var_dump($list);
 ```
 
@@ -566,6 +540,7 @@ SELECT * FROM table ORDER BY column ASC;
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::orderBy('column', 'ASC')
 ]);
+
 var_dump($list);
 ```
 
@@ -578,6 +553,7 @@ SELECT * FROM table ORDER BY column ASC, column DESC;
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::orderBy('column ASC, column DESC')
 ]);
+
 var_dump($list);
 ```
 
@@ -592,6 +568,7 @@ SELECT * FROM table GROUP BY column
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::groupBy('column')
 ]);
+
 var_dump($list);
 ```
 
@@ -604,6 +581,7 @@ SELECT * FROM table GROUP BY column DESC
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, [
     Builder::groupBy('column', 'DESC')
 ]);
+
 var_dump($list);
 ```
 
@@ -617,9 +595,8 @@ SELECT * FROM table LIMIT ?
 ```php
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::limit(false)
-], [
-    [$id, 'int']
-]);
+], [$id]);
+
 var_dump($list);
 ```
 
@@ -631,10 +608,8 @@ SELECT * FROM table LIMIT ?, ?
 ```php
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::limit(true)
-], [
-    [$first, 'int'],
-    [$second, 'int']
-]);
+], [$first, $second]);
+
 var_dump($list);
 ```
 
@@ -646,10 +621,8 @@ SELECT * FROM table LIMIT ?, ?
 ```php
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::limit()
-], [
-    [$first, 'int'],
-    [$second, 'int']
-]);
+], [$first, $second]);
+
 var_dump($list);
 ```
 
@@ -663,9 +636,8 @@ SELECT * FROM table HAVING column = ?
 ```php
 $list = Builder::select(Builder::FETCH, 'table', null, null, [
     Builder::having('column', '=' /* '>', '<', '<>' */)
-], [
-    [$value, 'str']
-]);
+], [$value]);
+
 var_dump($list);
 ```
 
@@ -678,6 +650,7 @@ SELECT * FROM table HAVING column
 $list = Builder::select(Builder::FETCH_ALL, 'table', null, null, [
     Builder::having('column')
 ]);
+
 var_dump($list);
 ```
 
