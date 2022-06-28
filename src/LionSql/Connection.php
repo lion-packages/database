@@ -48,16 +48,30 @@ class Connection {
 		}
 	}
 
-	protected static function bindValue(PDOStatement $stmt, array $data): PDOStatement {
-		$count = 1;
-		foreach ($data as $key => $dt) {
-			if (isset($dt[1])) {
-				$type = strtolower($dt[1]);
-				$stmt->bindValue($count, $type === "int" ? (int) $dt[0] : $dt[0], $type === "int" ? PDO::PARAM_INT : PDO::PARAM_STR);
-			} else {
-				$stmt->bindValue($count, $dt[0], PDO::PARAM_STR);
-			}
+	protected static function bindValue(PDOStatement $stmt, array $list): PDOStatement {
+		$type = function($value) {
+			switch (gettype($value)) {
+				case 'integer':
+				return PDO::PARAM_INT;
+				break;
 
+				case 'boolean':
+				return PDO::PARAM_BOOL;
+				break;
+
+				case 'NULL':
+				return PDO::PARAM_NULL;
+				break;
+
+				default:
+				return PDO::PARAM_STR;
+				break;
+			}
+		};
+
+		$count = 1;
+		foreach ($list as $key => $value) {
+			$stmt->bindValue($count, $value, $type($value));
 			$count++;
 		}
 
