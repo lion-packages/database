@@ -152,7 +152,7 @@ class MySQLDriver extends Connection {
 		}
 	}
 
-	public static function delete(string $table = "", string $id_column = "", int $value = 0): object {
+	public static function delete(string $table = "", string $id_column = "", $value = 0): object {
 		try {
 			if($table === "") {
 				return self::$response->error("You must select the table");
