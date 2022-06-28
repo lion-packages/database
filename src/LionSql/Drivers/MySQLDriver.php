@@ -152,7 +152,7 @@ class MySQLDriver extends Connection {
 		}
 	}
 
-	public static function delete(string $table = "", string $id_column = "", array $files = []): object {
+	public static function delete(string $table = "", string $id_column = "", int $value = 0): object {
 		try {
 			if($table === "") {
 				return self::$response->error("You must select the table");
@@ -162,12 +162,12 @@ class MySQLDriver extends Connection {
 				return self::$response->error("You must select the identifier");
 			}
 
-			if (count($files) === 0) {
+			if ($value === 0) {
 				return self::$response->error("At least one row must be entered");
 			}
 
 			$sql = self::$delete . self::$from . " {$table} " . self::$where . " {$id_column}=?";
-			if (!self::bindValue(self::prepare($sql), [$files])->execute()) {
+			if (!self::bindValue(self::prepare($sql), [$value])->execute()) {
 				return self::$response->error("An error occurred while executing the process");
 			}
 
