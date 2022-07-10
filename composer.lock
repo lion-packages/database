@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bdfb924d884cf4b34e01087f5b55046a",
+    "content-hash": "edc16f2cea9667733d4921b55b51e944",
     "packages": [
         {
             "name": "lion-framework/lion-request",
-            "version": "v3.1",
+            "version": "v4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sleon4/Lion-Request.git",
-                "reference": "f380249d00b88f45d8d5c5f6090881e4afba995a"
+                "reference": "12171201c963dab0b59c64d1cfebf880a0b7725e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sleon4/Lion-Request/zipball/f380249d00b88f45d8d5c5f6090881e4afba995a",
-                "reference": "f380249d00b88f45d8d5c5f6090881e4afba995a",
+                "url": "https://api.github.com/repos/Sleon4/Lion-Request/zipball/12171201c963dab0b59c64d1cfebf880a0b7725e",
+                "reference": "12171201c963dab0b59c64d1cfebf880a0b7725e",
                 "shasum": ""
             },
             "require-dev": {
@@ -42,9 +42,9 @@
             "description": "Library created to request input data and response requests",
             "support": {
                 "issues": "https://github.com/Sleon4/Lion-Request/issues",
-                "source": "https://github.com/Sleon4/Lion-Request/tree/v3.1"
+                "source": "https://github.com/Sleon4/Lion-Request/tree/v4.0"
             },
-            "time": "2022-05-19T14:39:42+00:00"
+            "time": "2022-07-10T18:39:11+00:00"
         }
     ],
     "packages-dev": [],
@@ -54,7 +54,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.1"
+        "php": ">=8.0.9"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
