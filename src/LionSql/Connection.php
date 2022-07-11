@@ -8,10 +8,10 @@ use \PDOException;
 use LionRequest\Response;
 
 class Connection {
-	
+
 	private static PDO $conn;
 	protected static Response $response;
-	
+
 	public function __construct() {
 
 	}
@@ -24,7 +24,7 @@ class Connection {
 			return self::mysql($config);
 		}
 
-		return Response::error("The driver '{$type}' does not exist");
+		return self::$response->error("The driver '{$type}' does not exist");
 	}
 
 	private static function mysql(array $config): object {
@@ -84,7 +84,7 @@ class Connection {
 
 	protected static function fetch(PDOStatement $stmt): array|object {
 		if (!$stmt->execute()) {
-			return self::request->error("An unexpected error has occurred");
+			return self::$response->error("An unexpected error has occurred");
 		}
 
 		$request = $stmt->fetch();
@@ -93,7 +93,7 @@ class Connection {
 
 	protected static function fetchAll(PDOStatement $stmt): array|object {
 		if (!$stmt->execute()) {
-			return self::$request->error("An unexpected error has occurred");
+			return self::$response->error("An unexpected error has occurred");
 		}
 
 		$request = $stmt->fetchAll();
