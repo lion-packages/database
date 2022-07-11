@@ -2,8 +2,6 @@
 
 namespace LionSQL\Drivers;
 
-use \PDO;
-use \PDOStatement;
 use \PDOException;
 use LionSQL\Connection;
 
@@ -46,7 +44,7 @@ class MySQLDriver extends Connection {
 	public function __construct() {
 
 	}
-	
+
 	public static function init($config): object {
 		return self::getConnection($config, 'mysql');
 	}
@@ -148,7 +146,10 @@ class MySQLDriver extends Connection {
 
 			return self::$response->success("Execution finished");
 		} catch (PDOException $e) {
-			return self::$response->error($e->getMessage());
+			return self::$response->error($e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -173,7 +174,10 @@ class MySQLDriver extends Connection {
 
 			return self::$response->success("Row deleted successfully");
 		} catch (PDOException $e) {
-			return self::$response->error($e->getMessage());
+			return self::$response->error($e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -206,7 +210,10 @@ class MySQLDriver extends Connection {
 
 			return self::$response->success("Rows updated successfully");
 		} catch (PDOException $e) {
-			return self::$response->error($e->getMessage());
+			return self::$response->error($e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -232,7 +239,10 @@ class MySQLDriver extends Connection {
 
 			return self::$response->success("Rows inserted correctly");
 		} catch (PDOException $e) {
-			return self::$response->error($e->getMessage());
+			return self::$response->error($e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -267,7 +277,10 @@ class MySQLDriver extends Connection {
 
 			return self::fetchAll($bind);
 		} catch (PDOException $e) {
-			return self::$response->error($e->getMessage());
+			return self::$response->error($e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -298,5 +311,5 @@ class MySQLDriver extends Connection {
 	public static function innerJoin(string $table, ?string $alias, string $condition): string {
 		return self::$inner . self::$join . " " . ($table) . " " . ($alias != null ? self::$as . " {$alias} " : '') . " " . self::$on . " " . ($condition);
 	}
-	
+
 }
