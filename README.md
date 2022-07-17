@@ -32,7 +32,7 @@ The connection is established using an array containing data about your configur
 ```php
 require_once("vendor/autoload.php");
 
-use LionSql\Drivers\MySQLDriver as Builder;
+use LionSQL\Drivers\MySQLDriver as Builder;
 
 Builder::init([
     'host' => 'localhost',
@@ -342,7 +342,7 @@ SELECT alias.name, alias1.name, alias2.name, alias3.name FROM table1 AS alias
   INNER JOIN table2 AS alias1 ON alias.id_a=alias1.id_a
   LEFT JOIN table3 AS alias2 ON alias.id_b=alias2.id_b
   RIGHT JOIN table4 AS alias3 ON alias.id_c=alias3.id_c
-WHERE alias.id 
+WHERE alias.id
 BETWEEN ? AND ?
 ```
 ```php
