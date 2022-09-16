@@ -37,7 +37,7 @@ class Connection {
 				$host = "mysql:host={$config['host']};dbname={$config['db_name']}";
 			}
 
-			$host = $host . (isset($config['charset']) ? ";charset={$config['charset']}" : '');
+			// $host = $host . (isset($config['charset']) ? ";charset={$config['charset']}" : '');
 
 			self::$conn = new PDO(
 				$host,
