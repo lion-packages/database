@@ -29,8 +29,16 @@ class Connection {
 
 	private static function mysql(array $config): object {
 		try {
+			$host = '';
+
+			if (isset($config['port'])) {
+				$host = "mysql:host={$config['host']};port={$config['port']};dbname={$config['db_name']};charset={$config['charset']}";
+			} else {
+				$host = "mysql:host={$config['host']};dbname={$config['db_name']};charset={$config['charset']}";
+			}
+
 			self::$conn = new PDO(
-				"mysql:host={$config['host']};port={$config['port']};dbname={$config['db_name']};charset={$config['charset']}",
+				$host,
 				$config['user'],
 				$config['password'],
 				isset($config['options']) ? $config['options'] : [
