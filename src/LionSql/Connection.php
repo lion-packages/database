@@ -32,9 +32,9 @@ class Connection {
 			$host = '';
 
 			if (isset($config['port'])) {
-				$host = "mysql:host={$config['host']};port={$config['port']};dbname={$config['db_name']}";
+				$host = "mysql:host=" . $config['host'] . ";port=" . $config['port'] . ";dbname=" . $config['db_name'];
 			} else {
-				$host = "mysql:host={$config['host']};dbname={$config['db_name']}";
+				$host = "mysql:host=" . $config['host'] . ";dbname=" . $config['db_name'];
 			}
 
 			// $host = $host . (isset($config['charset']) ? ";charset={$config['charset']}" : '');
