@@ -40,6 +40,9 @@ class MySQLDriver extends Connection {
 	private static string $avg = ' AVG(?)';
 	private static string $limit = ' LIMIT';
 	private static string $having = ' HAVING';
+	private static string $show = ' SHOW';
+	private static string $tables = ' TABLES';
+	private static string $columns = ' COLUMNS';
 
 	public function __construct() {
 
@@ -59,8 +62,16 @@ class MySQLDriver extends Connection {
 		return $addValues;
 	}
 
+	public static function showTables(string $database): array|object {
+		return self::fetchAll(self::prepare(
+			trim(self::$show . self::$tables . self::$from . " {$database}")
+		));
+	}
+
 	public static function showColumns(string $table): array|object {
-		return self::fetchAll(self::prepare("SHOW COLUMNS FROM {$table}"));
+		return self::fetchAll(self::prepare(
+			trim(self::$show . self::$columns . self::$from . " {$table}")
+		));
 	}
 
 	public static function findColumn(string $table = "", string $find_column = "", string $columns = "", array $values = []): array|object {
