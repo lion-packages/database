@@ -60,9 +60,7 @@ class MySQLDriver extends Connection {
 	}
 
 	public static function showColumns(string $table): array|object {
-		$stmt = self::prepare("SHOW COLUMNS FROM {$table}");
-		$columns = self::fetchAll($stmt);
-		return $columns;
+		return self::fetchAll(self::prepare("SHOW COLUMNS FROM {$table}"));
 	}
 
 	public static function findColumn(string $table = "", string $find_column = "", string $columns = "", array $values = []): array|object {
