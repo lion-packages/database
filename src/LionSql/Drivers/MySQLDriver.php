@@ -59,6 +59,12 @@ class MySQLDriver extends Connection {
 		return $addValues;
 	}
 
+	public static function showColumns(string $table): array|object {
+		$stmt = self::prepare("SHOW COLUMNS FROM {$table}");
+		$columns = self::fetchAll($stmt);
+		return $columns;
+	}
+
 	public static function findColumn(string $table = "", string $find_column = "", string $columns = "", array $values = []): array|object {
 		$columns_separate = explode(',', $columns);
 
