@@ -11,6 +11,7 @@ class Connection {
 
 	private static PDO $conn;
 	protected static Response $response;
+	protected static ?string $class_name = null;
 
 	public function __construct() {
 
@@ -92,7 +93,14 @@ class Connection {
 			return self::$response->error("An unexpected error has occurred");
 		}
 
-		$request = $stmt->fetch();
+		if (self::$class_name === null) {
+			$request = $stmt->fetch();
+		} else {
+			$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_name);
+			$request = $stmt->fetch();
+			self::$class_name = null;
+		}
+
 		return !$request ? self::$response->success("No data available") : $request;
 	}
 
@@ -101,7 +109,14 @@ class Connection {
 			return self::$response->error("An unexpected error has occurred");
 		}
 
-		$request = $stmt->fetchAll();
+		if (self::$class_name === null) {
+			$request = $stmt->fetchAll();
+		} else {
+			$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_name);
+			$request = $stmt->fetchAll();
+			self::$class_name = null;
+		}
+
 		return !$request ? self::$response->success("No data available") : $request;
 	}
 

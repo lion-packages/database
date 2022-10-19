@@ -52,6 +52,11 @@ class MySQLDriver extends Connection {
 		return self::getConnection($config, 'mysql');
 	}
 
+	public static function fetchClass($class): MySQLDriver {
+		self::$class_name = $class;
+		return new MySQLDriver();
+	}
+
 	private static function addCharacter(array $files, int $count): string {
 		$addValues = "";
 
