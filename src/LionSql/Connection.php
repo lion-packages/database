@@ -84,11 +84,11 @@ class Connection {
 		return $stmt;
 	}
 
-	protected static function prepare(string $query): PDOStatement {
+	public static function prepare(string $query): PDOStatement {
 		return self::$conn->prepare(trim($query));
 	}
 
-	protected static function fetch(PDOStatement $stmt): array|object {
+	public static function fetch(PDOStatement $stmt): array|object {
 		if (!$stmt->execute()) {
 			return self::$response->error("An unexpected error has occurred");
 		}
@@ -104,7 +104,7 @@ class Connection {
 		return !$request ? self::$response->success("No data available") : $request;
 	}
 
-	protected static function fetchAll(PDOStatement $stmt): array|object {
+	public static function fetchAll(PDOStatement $stmt): array|object {
 		if (!$stmt->execute()) {
 			return self::$response->error("An unexpected error has occurred");
 		}
