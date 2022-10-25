@@ -54,7 +54,7 @@ class Connection {
 		}
 	}
 
-	protected static function bindValue(PDOStatement $stmt, array $list): PDOStatement {
+	public static function bindValue(PDOStatement $stmt, array $list): PDOStatement {
 		$type = function($value) {
 			switch (gettype($value)) {
 				case 'integer':
