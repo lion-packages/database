@@ -32,7 +32,6 @@ class MySQLDriver extends Connection {
 	// ---------------------------------------------------------------------------------------------
 
 	public static function prepare(): MySQLDriver {
-		echo("'" . trim(self::$sql) . "'\n\n");
 		self::$stmt = self::$conn->prepare(trim(self::$sql));
 		return self::$mySQLDriver;
 	}
