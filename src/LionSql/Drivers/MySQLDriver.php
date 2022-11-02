@@ -32,6 +32,7 @@ class MySQLDriver extends Connection {
 	// ---------------------------------------------------------------------------------------------
 
 	public static function prepare(): MySQLDriver {
+		echo(trim(self::$sql) . "\n");
 		self::$stmt = self::$conn->prepare(trim(self::$sql));
 		return self::$mySQLDriver;
 	}
@@ -73,19 +74,17 @@ class MySQLDriver extends Connection {
 		return self::$mySQLDriver;
 	}
 
-	private static function execute(string $success_message = "", string $error_message = ""): array|object {
+	public static function execute(): array|object {
 		try {
 			self::prepare();
 			self::bindValue(self::$data_info);
 			self::$stmt->execute();
-			return self::$response->success(empty($success_message) ? self::$message : $success_message);
+			return self::$response->success(self::$message);
 		} catch (PDOException $e) {
-			self::$response->finish(
-				self::$response->response("database-error", empty($error_message) ? $e->getMessage() : $error_message, (object) [
-					'file' => $e->getFile(),
-					'line' => $e->getLine()
-				])
-			);
+			return self::$response->response("database-error", $e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -113,12 +112,10 @@ class MySQLDriver extends Connection {
 
 			return !$request ? self::$response->success("No data available") : $request;
 		} catch (PDOException $e) {
-			self::$response->finish(
-				self::$response->response("database-error", $e->getMessage(), (object) [
-					'file' => $e->getFile(),
-					'line' => $e->getLine()
-				])
-			);
+			return self::$response->response("database-error", $e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -146,21 +143,25 @@ class MySQLDriver extends Connection {
 
 			return !$request ? self::$response->success("No data available") : $request;
 		} catch (PDOException $e) {
-			self::$response->finish(
-				self::$response->response("database-error", $e->getMessage(), (object) [
-					'file' => $e->getFile(),
-					'line' => $e->getLine()
-				])
-			);
+			return self::$response->response("database-error", $e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
 	// ---------------------------------------------------------------------------------------------
 
+	public static function in(): MySQLDriver {
+		$columns = func_get_args();
+		self::addRows($columns);
+		self::$sql.= str_replace("?", self::addCharacter($columns), self::$keywords['in']);
+		return self::$mySQLDriver;
+	}
+
 	public static function call(string $store_procedure, array $rows = []): MySQLDriver {
-		$count = count($rows);
-		if ($count <= 0) {
-			return self::$response->error("At least one row must be entered");
+		if (count($rows) <= 0) {
+			return self::$response->response("database-error", "At least one row must be entered");
 		}
 
 		self::addRows($rows);
@@ -176,9 +177,8 @@ class MySQLDriver extends Connection {
 	}
 
 	public static function update(array $rows = []): MySQLDriver {
-		$count = count($rows);
-		if ($count <= 0) {
-			return self::$response->error("At least one row must be entered");
+		if (count($rows) <= 0) {
+			return self::$response->response("database-error", "At least one row must be entered");
 		}
 
 		self::addRows($rows);
@@ -188,8 +188,7 @@ class MySQLDriver extends Connection {
 	}
 
 	public static function insert(array $rows = []): MySQLDriver {
-		$count = count($rows);
-		if ($count <= 0) {
+		if (count($rows) <= 0) {
 			return self::$response->response("database-error", "At least one row must be entered");
 		}
 

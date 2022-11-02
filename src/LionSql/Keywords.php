@@ -5,6 +5,7 @@ namespace LionSQL;
 class Keywords {
 
 	protected static array $keywords = [
+		'in' => " IN(?)",
 		'where' => " WHERE",
 		'as' => " AS",
 		'and' => " AND",
