@@ -73,7 +73,7 @@ class MySQLDriver extends Connection {
 		return self::$mySQLDriver;
 	}
 
-	public static function execute(string $success_message = "", string $error_message = ""): array|object {
+	private static function execute(string $success_message = "", string $error_message = ""): array|object {
 		try {
 			self::prepare();
 			self::bindValue(self::$data_info);
@@ -90,27 +90,15 @@ class MySQLDriver extends Connection {
 	}
 
 	public static function get(): array|object {
-		self::prepare();
+		$request = null;
 
-		if (count(self::$data_info) > 0) {
-			self::bindValue(self::$data_info);
-		}
-
-		return self::fetch();
-	}
-
-	public static function getAll(): array|object {
-		self::prepare();
-
-		if (count(self::$data_info) > 0) {
-			self::bindValue(self::$data_info);
-		}
-
-		return self::fetchAll();
-	}
-
-	public static function fetch(): array|object {
 		try {
+			self::prepare();
+
+			if (count(self::$data_info) > 0) {
+				self::bindValue(self::$data_info);
+			}
+
 			if (!self::$stmt->execute()) {
 				return self::$response->error("An unexpected error has occurred");
 			}
@@ -134,8 +122,16 @@ class MySQLDriver extends Connection {
 		}
 	}
 
-	public static function fetchAll(): array|object {
+	public static function getAll(): array|object {
+		$request = null;
+
 		try {
+			self::prepare();
+
+			if (count(self::$data_info) > 0) {
+				self::bindValue(self::$data_info);
+			}
+
 			if (!self::$stmt->execute()) {
 				return self::$response->error("An unexpected error has occurred");
 			}
