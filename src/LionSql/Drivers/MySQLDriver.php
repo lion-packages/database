@@ -372,4 +372,8 @@ class MySQLDriver extends Connection {
 		return trim(str_replace("?", $column, self::$keywords['month']));
 	}
 
+	public static function year(string $column): string {
+		return trim(str_replace("?", $column, self::$keywords['year']));
+	}
+
 }
