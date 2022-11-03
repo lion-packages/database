@@ -5,6 +5,9 @@ namespace LionSQL;
 class Keywords {
 
 	protected static array $keywords = [
+		'year' => " YEAR(?)",
+		'month' => " MONTH(?)",
+		'day' => " DAY(?)",
 		'in' => " IN(?)",
 		'where' => " WHERE",
 		'as' => " AS",

@@ -364,4 +364,8 @@ class MySQLDriver extends Connection {
 		return trim(str_replace("?", $column, self::$keywords['count']));
 	}
 
+	public static function day(string $column): string {
+		return trim(str_replace("?", $column, self::$keywords['day']));
+	}
+
 }
