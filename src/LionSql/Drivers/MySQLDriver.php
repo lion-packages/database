@@ -29,8 +29,11 @@ class MySQLDriver extends Connection {
 	// ---------------------------------------------------------------------------------------------
 
 	private static function clean(): void {
+		self::$cont = 1;
 		self::$sql = "";
+		self::$class_name = "";
 		self::$table = "";
+		self::$message = "";
 		self::$data_info = [];
 	}
 
