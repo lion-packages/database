@@ -220,8 +220,8 @@ class MySQLDriver extends Connection {
 		return self::$mySQLDriver;
 	}
 
-	public static function groupBy(string $column): MySQLDriver {
-		self::$sql.= self::$keywords['groupBy'] . " {$column}";
+	public static function groupBy(): MySQLDriver {
+		self::$sql.= self::$keywords['groupBy'] . " " . self::addColumns(func_get_args());
 		return self::$mySQLDriver;
 	}
 
