@@ -8,16 +8,13 @@ use LionSQL\Connection;
 
 class MySQLDriver extends Connection {
 
-	protected static int $cont = 1;
-	protected static string $selected_fetch = "";
-	protected static string $sql = "";
-	protected static string $class_name = "";
-	protected static string $dbname = "";
-	protected static string $table = "";
-	protected static string $store_procedure = "";
-	protected static string $success_message = "";
-	protected static string $message = "";
-	protected static array $data_info = [];
+	private static int $cont = 1;
+	private static string $sql = "";
+	private static string $class_name = "";
+	private static string $dbname = "";
+	private static string $table = "";
+	private static string $message = "";
+	private static array $data_info = [];
 
 	public function __construct() {
 
@@ -205,8 +202,7 @@ class MySQLDriver extends Connection {
 	}
 
 	public static function select(): MySQLDriver {
-		$columns = func_get_args();
-		$stringColumns = self::addColumns(count($columns) > 0 ? $columns : []);
+		$stringColumns = self::addColumns(func_get_args());
 		self::$sql = self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
 		return self::$mySQLDriver;
 	}
@@ -246,18 +242,26 @@ class MySQLDriver extends Connection {
 		return self::$mySQLDriver;
 	}
 
-	public static function asc(): MySQLDriver {
+	public static function asc(bool $is_string = false): MySQLDriver|string {
+		if ($is_string) {
+			return self::$keywords['asc'];
+		}
+
 		self::$sql.= self::$keywords['asc'];
 		return self::$mySQLDriver;
 	}
 
-	public static function desc(): MySQLDriver {
+	public static function desc(bool $is_string = false): MySQLDriver|string {
+		if ($is_string) {
+			return self::$keywords['desc'];
+		}
+
 		self::$sql.= self::$keywords['desc'];
 		return self::$mySQLDriver;
 	}
 
-	public static function orderBy(string $column): MySQLDriver {
-		self::$sql.= self::$keywords['orderBy'] . " {$column}";
+	public static function orderBy(): MySQLDriver {
+		self::$sql.= self::$keywords['orderBy'] . " " . self::addColumns(func_get_args());
 		return self::$mySQLDriver;
 	}
 
