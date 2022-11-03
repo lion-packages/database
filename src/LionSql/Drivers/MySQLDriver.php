@@ -31,29 +31,13 @@ class MySQLDriver extends Connection {
 
 	// ---------------------------------------------------------------------------------------------
 
-	public static function prepare(): MySQLDriver {
+	private static function prepare(): MySQLDriver {
 		echo(trim(self::$sql) . "\n");
 		self::$stmt = self::$conn->prepare(trim(self::$sql));
 		return self::$mySQLDriver;
 	}
 
-	public static function fetchClass(mixed $class): MySQLDriver {
-		self::$class_name = $class;
-		return self::$mySQLDriver;
-	}
-
-	private static function addRows($rows): void {
-		foreach ($rows as $key => $row) {
-			self::$data_info[] = $row;
-		}
-	}
-
-	public static function table(string $table): MySQLDriver {
-		self::$table = self::$dbname . ".{$table}";
-		return self::$mySQLDriver;
-	}
-
-	public static function bindValue(array $list): MySQLDriver {
+	private static function bindValue(array $list): MySQLDriver {
 		$type = function($value) {
 			if (gettype($value) === 'integer') {
 				return PDO::PARAM_INT;
@@ -71,6 +55,22 @@ class MySQLDriver extends Connection {
 			self::$cont++;
 		}
 
+		return self::$mySQLDriver;
+	}
+
+	private static function addRows($rows): void {
+		foreach ($rows as $key => $row) {
+			self::$data_info[] = $row;
+		}
+	}
+
+	public static function fetchClass(mixed $class): MySQLDriver {
+		self::$class_name = $class;
+		return self::$mySQLDriver;
+	}
+
+	public static function table(string $table): MySQLDriver {
+		self::$table = self::$dbname . ".{$table}";
 		return self::$mySQLDriver;
 	}
 
