@@ -75,6 +75,8 @@ class MySQLDriver extends Connection {
 			self::prepare();
 			self::bindValue(self::$data_info);
 			self::$stmt->execute();
+			self::$sql = "";
+
 			return self::$response->success(self::$message);
 		} catch (PDOException $e) {
 			return self::$response->response("database-error", $e->getMessage(), (object) [
@@ -106,6 +108,7 @@ class MySQLDriver extends Connection {
 				self::$class_name = "";
 			}
 
+			self::$sql = "";
 			return !$request ? self::$response->success("No data available") : $request;
 		} catch (PDOException $e) {
 			return self::$response->response("database-error", $e->getMessage(), (object) [
@@ -137,6 +140,7 @@ class MySQLDriver extends Connection {
 				self::$class_name = "";
 			}
 
+			self::$sql = "";
 			return !$request ? self::$response->success("No data available") : $request;
 		} catch (PDOException $e) {
 			return self::$response->response("database-error", $e->getMessage(), (object) [
