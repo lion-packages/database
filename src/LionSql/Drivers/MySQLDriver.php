@@ -28,6 +28,12 @@ class MySQLDriver extends Connection {
 
 	// ---------------------------------------------------------------------------------------------
 
+	private static function clean(): void {
+		self::$sql = "";
+		self::$table = "";
+		self::$data_info = [];
+	}
+
 	private static function prepare(): MySQLDriver {
 		self::$stmt = self::$conn->prepare(trim(self::$sql));
 		return self::$mySQLDriver;
@@ -75,7 +81,7 @@ class MySQLDriver extends Connection {
 			self::prepare();
 			self::bindValue(self::$data_info);
 			self::$stmt->execute();
-			self::$sql = "";
+			self::clean();
 
 			return self::$response->success(self::$message);
 		} catch (PDOException $e) {
@@ -108,7 +114,7 @@ class MySQLDriver extends Connection {
 				self::$class_name = "";
 			}
 
-			self::$sql = "";
+			self::clean();
 			return !$request ? self::$response->success("No data available") : $request;
 		} catch (PDOException $e) {
 			return self::$response->response("database-error", $e->getMessage(), (object) [
@@ -140,7 +146,7 @@ class MySQLDriver extends Connection {
 				self::$class_name = "";
 			}
 
-			self::$sql = "";
+			self::clean();
 			return !$request ? self::$response->success("No data available") : $request;
 		} catch (PDOException $e) {
 			return self::$response->response("database-error", $e->getMessage(), (object) [
