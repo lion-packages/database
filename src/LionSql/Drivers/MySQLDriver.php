@@ -33,7 +33,6 @@ class MySQLDriver extends Connection {
 		self::$sql = "";
 		self::$class_name = "";
 		self::$table = "";
-		self::$message = "";
 		self::$data_info = [];
 	}
 
