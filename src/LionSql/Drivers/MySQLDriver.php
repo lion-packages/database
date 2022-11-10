@@ -28,6 +28,10 @@ class MySQLDriver extends Connection {
 
 	// ---------------------------------------------------------------------------------------------
 
+	public static function getQueryString(): string {
+		return trim(self::$sql);
+	}
+
 	private static function clean(): void {
 		self::$cont = 1;
 		self::$sql = "";
@@ -159,6 +163,24 @@ class MySQLDriver extends Connection {
 	}
 
 	// ---------------------------------------------------------------------------------------------
+
+	public static function bulk(array $columns, array $rows): MySQLDriver {
+		if (count($columns) <= 0) {
+			return self::$response->response("database-error", "At least one column must be entered");
+		}
+
+		if (count($rows) <= 0) {
+			return self::$response->response("database-error", "At least one row must be entered");
+		}
+
+		foreach ($rows as $key => $row) {
+			self::addRows($row);
+		}
+
+		self::$sql = self::$keywords['insert'] . " " . self::$table . " (" . self::addColumns($columns) . ")" . self::$keywords['values'] . " " . self::addCharacterBulk($rows);
+		self::$message = "Execution finished";
+		return self::$mySQLDriver;
+	}
 
 	public static function in(): MySQLDriver {
 		$columns = func_get_args();

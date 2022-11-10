@@ -19,7 +19,7 @@ class Connection extends Keywords {
 	protected static MySQLDriver $mySQLDriver;
 	protected static PDOStatement $stmt;
 
-	private function __construct() {
+	public function __construct() {
 
 	}
 

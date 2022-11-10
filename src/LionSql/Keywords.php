@@ -44,8 +44,20 @@ class Keywords {
 		'columns' => ' COLUMNS'
 	];
 
-	private function __construct() {
+	public function __construct() {
 
+	}
+
+	protected static function addCharacterBulk(array $rows): string {
+		$addValues = "";
+		$indexSize = count($rows) - 1;
+
+		foreach ($rows as $key => $row) {
+			$str = "(" . self::addCharacter($row) . ")";
+			$addValues.= $key === $indexSize ? $str : "{$str}, ";
+		}
+
+		return $addValues;
 	}
 
 	protected static function addCharacterEqualTo(array $rows): string {
