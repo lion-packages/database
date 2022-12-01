@@ -20,7 +20,7 @@ class MySQLDriver extends Connection {
 
 	}
 
-	public static function init($config): object {
+	public static function init(array $config): object {
 		self::$dbname = $config['dbname'];
 		self::$mySQLDriver = new MySQLDriver();
 		return self::getConnection($config);
