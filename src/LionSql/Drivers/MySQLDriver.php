@@ -164,6 +164,12 @@ class MySQLDriver extends Connection {
 
 	// ---------------------------------------------------------------------------------------------
 
+	public static function query(string $sql): MySQLDriver {
+		self::$sql = $sql;
+		self::$message = "Execution finished";
+		return self::$mySQLDriver;
+	}
+
 	public static function bulk(array $columns, array $rows): MySQLDriver {
 		if (count($columns) <= 0) {
 			return self::$response->response("database-error", "At least one column must be entered");
