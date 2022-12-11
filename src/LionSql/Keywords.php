@@ -41,7 +41,12 @@ class Keywords {
 		'having' => ' HAVING',
 		'show' => ' SHOW',
 		'tables' => ' TABLES',
-		'columns' => ' COLUMNS'
+		'columns' => ' COLUMNS',
+		'drop' => ' DROP',
+		'table' => ' TABLE',
+		'index' => ' INDEX',
+		'create' => ' CREATE',
+		'view' => ' VIEW'
 	];
 
 	public function __construct() {
