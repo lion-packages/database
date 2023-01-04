@@ -6,7 +6,7 @@ use \PDO;
 use \PDOException;
 use LionSQL\Connection;
 
-class MySQLDriver extends Connection {
+class MySQL extends Connection {
 
 	private static int $cont = 1;
 	private static string $sql = "";
@@ -23,7 +23,7 @@ class MySQLDriver extends Connection {
 
 	public static function init(array $config): object {
 		self::$dbname = $config['dbname'];
-		self::$mySQLDriver = new MySQLDriver();
+		self::$mySQL = new MySQL();
 		return self::getConnection($config);
 	}
 
@@ -42,12 +42,12 @@ class MySQLDriver extends Connection {
 		self::$data_info = [];
 	}
 
-	private static function prepare(): MySQLDriver {
+	private static function prepare(): MySQL {
 		self::$stmt = self::$conn->prepare(trim(self::$sql));
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	private static function bindValue(array $list): MySQLDriver {
+	private static function bindValue(array $list): MySQL {
 		$type = function($value) {
 			if (gettype($value) === 'integer') {
 				return PDO::PARAM_INT;
@@ -65,7 +65,7 @@ class MySQLDriver extends Connection {
 			self::$cont++;
 		}
 
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
 	private static function addRows($rows): void {
@@ -74,29 +74,29 @@ class MySQLDriver extends Connection {
 		}
 	}
 
-	public static function fetchClass(mixed $class): MySQLDriver {
+	public static function fetchClass(mixed $class): MySQL {
 		self::$class_name = $class;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function table(string $table, bool $option = false): MySQLDriver {
+	public static function table(string $table, bool $option = false): MySQL {
 		if (!$option) {
 			self::$table = self::$dbname . "." . $table;
 		} else {
 			self::$table = $table;
 		}
 
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function view(string $view, bool $option = false): MySQLDriver {
+	public static function view(string $view, bool $option = false): MySQL {
 		if (!$option) {
 			self::$view = self::$dbname . "." . $view;
 		} else {
 			self::$view = $view;
 		}
 
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
 	public static function execute(): array|object {
@@ -181,54 +181,54 @@ class MySQLDriver extends Connection {
 
 	// ---------------------------------------------------------------------------------------------
 
-	public static function showCreateTable(): MySQLDriver {
+	public static function showCreateTable(): MySQL {
 		self::$sql = self::$keywords['show'] . self::$keywords['create'] . self::$keywords['table'] . " " . self::$table;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function show(): MySQLDriver {
+	public static function show(): MySQL {
 		self::$sql = self::$keywords['show'];
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function indexes(): MySQLDriver {
+	public static function indexes(): MySQL {
 		self::$sql .= self::$keywords['index'] . self::$keywords['from'] . " " . self::$table;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function drop(): MySQLDriver {
+	public static function drop(): MySQL {
 		if (self::$table === "") {
 			self::$sql = self::$keywords['drop'] . self::$keywords['view'] . " " . self::$view;
 		} else {
 			self::$sql = self::$keywords['drop'] . self::$keywords['table'] . " " . self::$table;
 		}
 
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function constraints(): MySQLDriver {
+	public static function constraints(): MySQL {
 		self::$sql = self::$keywords['select'] . " CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME" . self::$keywords['from'] . " information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=? AND TABLE_NAME=? AND REFERENCED_COLUMN_NAME IS NOT NULL";
 		self::addRows([self::$dbname, self::$table]);
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function tables(): MySQLDriver {
+	public static function tables(): MySQL {
 		self::$sql .= self::$keywords['tables'] . self::$keywords['from'] . " " . self::$dbname;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function columns(): MySQLDriver {
+	public static function columns(): MySQL {
 		self::$sql .= self::$keywords['columns'] . self::$keywords['from'] . " " . self::$table;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function query(string $sql): MySQLDriver {
+	public static function query(string $sql): MySQL {
 		self::$sql = $sql;
 		self::$message = "Execution finished";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function bulk(array $columns, array $rows): MySQLDriver {
+	public static function bulk(array $columns, array $rows): MySQL {
 		if (count($columns) <= 0) {
 			return self::$response->response("database-error", "At least one column must be entered");
 		}
@@ -243,17 +243,17 @@ class MySQLDriver extends Connection {
 
 		self::$sql = self::$keywords['insert'] . " " . self::$table . " (" . self::addColumns($columns) . ")" . self::$keywords['values'] . " " . self::addCharacterBulk($rows);
 		self::$message = "Execution finished";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function in(): MySQLDriver {
+	public static function in(): MySQL {
 		$columns = func_get_args();
 		self::addRows($columns);
 		self::$sql .= str_replace("?", self::addCharacter($columns), self::$keywords['in']);
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function call(string $store_procedure, array $rows = []): MySQLDriver {
+	public static function call(string $store_procedure, array $rows = []): MySQL {
 		if (count($rows) <= 0) {
 			return self::$response->response("database-error", "At least one row must be entered");
 		}
@@ -261,16 +261,16 @@ class MySQLDriver extends Connection {
 		self::addRows($rows);
 		self::$sql = self::$keywords['call'] . " " . self::$dbname . ".{$store_procedure}(" . self::addCharacter($rows) . ")";
 		self::$message = "Execution finished";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function delete(): MySQLDriver {
+	public static function delete(): MySQL {
 		self::$sql = self::$keywords['delete'] . self::$keywords['from'] . " " . self::$table;
 		self::$message = "Rows deleted successfully";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function update(array $rows = []): MySQLDriver {
+	public static function update(array $rows = []): MySQL {
 		if (count($rows) <= 0) {
 			return self::$response->response("database-error", "At least one row must be entered");
 		}
@@ -278,10 +278,10 @@ class MySQLDriver extends Connection {
 		self::addRows($rows);
 		self::$sql = self::$keywords['update'] . " " . self::$table . self::$keywords['set'] . " " . self::addCharacterEqualTo($rows);
 		self::$message = "Rows updated successfully";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function insert(array $rows = []): MySQLDriver {
+	public static function insert(array $rows = []): MySQL {
 		if (count($rows) <= 0) {
 			return self::$response->response("database-error", "At least one row must be entered");
 		}
@@ -289,40 +289,40 @@ class MySQLDriver extends Connection {
 		self::addRows($rows);
 		self::$sql = self::$keywords['insert'] . " " . self::$table . " (" . self::addColumns(array_keys($rows)) . ")" . self::$keywords['values'] . " (" . self::addCharacterAssoc($rows) . ")";
 		self::$message = "successfully executed";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function having(string $column, ?string $value = null): MySQLDriver {
+	public static function having(string $column, ?string $value = null): MySQL {
 		self::$sql .= self::$keywords['having'] . " {$column}";
 		self::$data_info[] = $value;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function select(): MySQLDriver {
+	public static function select(): MySQL {
 		$stringColumns = self::addColumns(func_get_args());
 		self::$sql = self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function between(mixed $between, mixed $and): MySQLDriver {
+	public static function between(mixed $between, mixed $and): MySQL {
 		self::$sql .= self::$keywords['between'] . " ?" . self::$keywords['and'] . " ? ";
 		self::$data_info[] = $between;
 		self::$data_info[] = $and;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function like(string $like): MySQLDriver {
+	public static function like(string $like): MySQL {
 		self::$sql .= self::$keywords['like'] . " " . self::addCharacter([$like]);
 		self::$data_info[] = $like;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function groupBy(): MySQLDriver {
+	public static function groupBy(): MySQL {
 		self::$sql .= self::$keywords['groupBy'] . " " . self::addColumns(func_get_args());
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function limit(int $start, ?int $limit = null): MySQLDriver {
+	public static function limit(int $start, ?int $limit = null): MySQL {
 		$items = [$start];
 
 		if (!empty($limit)) {
@@ -336,67 +336,67 @@ class MySQLDriver extends Connection {
 			self::$data_info[] = $limit;
 		}
 
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function asc(bool $is_string = false): MySQLDriver|string {
+	public static function asc(bool $is_string = false): MySQL|string {
 		if ($is_string) {
 			return self::$keywords['asc'];
 		}
 
 		self::$sql .= self::$keywords['asc'];
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function desc(bool $is_string = false): MySQLDriver|string {
+	public static function desc(bool $is_string = false): MySQL|string {
 		if ($is_string) {
 			return self::$keywords['desc'];
 		}
 
 		self::$sql .= self::$keywords['desc'];
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function orderBy(): MySQLDriver {
+	public static function orderBy(): MySQL {
 		self::$sql .= self::$keywords['orderBy'] . " " . self::addColumns(func_get_args());
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function innerJoin(string $table, string $value_from, string $value_up_to): MySQLDriver {
+	public static function innerJoin(string $table, string $value_from, string $value_up_to): MySQL {
 		self::$sql .= self::$keywords['inner'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function leftJoin(string $table, string $value_from, string $value_up_to): MySQLDriver {
+	public static function leftJoin(string $table, string $value_from, string $value_up_to): MySQL {
 		self::$sql .= self::$keywords['left'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function rightJoin(string $table, string $value_from, string $value_up_to): MySQLDriver {
+	public static function rightJoin(string $table, string $value_from, string $value_up_to): MySQL {
 		self::$sql .= self::$keywords['right'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function where(string $value_type, mixed $value = null): MySQLDriver {
+	public static function where(string $value_type, mixed $value = null): MySQL {
 		self::$sql .= !empty($value) ? self::$keywords['where'] . " {$value_type}" : self::$keywords['where'] . " {$value_type}";
 
 		if (!empty($value)) {
 			self::$data_info[] = $value;
 		}
 
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function and(string $value_type, mixed $value): MySQLDriver {
+	public static function and(string $value_type, mixed $value): MySQL {
 		self::$sql .= self::$keywords['and'] . " {$value_type}";
 		self::$data_info[] = $value;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
-	public static function or(string $value_type, mixed $value): MySQLDriver {
+	public static function or(string $value_type, mixed $value): MySQL {
 		self::$sql .= self::$keywords['or'] . " {$value_type}";
 		self::$data_info[] = $value;
-		return self::$mySQLDriver;
+		return self::$mySQL;
 	}
 
 	public static function alias(string $value, string $as, bool $isColumn = false): string {

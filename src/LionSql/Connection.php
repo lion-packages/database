@@ -7,7 +7,7 @@ use \PDOException;
 use \PDOStatement;
 use LionRequest\Response;
 use LionSQL\Keywords;
-use LionSQL\Drivers\MySQLDriver;
+use LionSQL\Drivers\MySQL;
 
 class Connection extends Keywords {
 
@@ -16,7 +16,7 @@ class Connection extends Keywords {
 
 	protected static PDO $conn;
 	protected static Response $response;
-	protected static MySQLDriver $mySQLDriver;
+	protected static MySQL $mySQL;
 	protected static PDOStatement $stmt;
 
 	public function __construct() {
