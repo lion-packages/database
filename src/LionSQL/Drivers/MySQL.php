@@ -181,8 +181,12 @@ class MySQL extends Connection {
 
 	// ---------------------------------------------------------------------------------------------
 
+	public static function as(string $column, string $as): string {
+		return $column . self::$keywords['as'] . " {$as}";
+	}
+
 	public static function concat() {
-		return implode(", ", func_get_args());
+		return str_replace("*", implode(", ", func_get_args()), self::$keywords['concat']);
 	}
 
 	public static function showCreateTable(): MySQL {
