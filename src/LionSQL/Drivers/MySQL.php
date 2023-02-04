@@ -181,6 +181,10 @@ class MySQL extends Connection {
 
 	// ---------------------------------------------------------------------------------------------
 
+	public static function concat() {
+		return implode(", ", func_get_args());
+	}
+
 	public static function showCreateTable(): MySQL {
 		self::$sql = self::$keywords['show'] . self::$keywords['create'] . self::$keywords['table'] . " " . self::$table;
 		return self::$mySQL;

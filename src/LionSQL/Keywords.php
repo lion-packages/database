@@ -46,7 +46,8 @@ class Keywords {
 		'table' => ' TABLE',
 		'index' => ' INDEX',
 		'create' => ' CREATE',
-		'view' => ' VIEW'
+		'view' => ' VIEW',
+		'concat' => ' CONCAT(*)'
 	];
 
 	public function __construct() {
