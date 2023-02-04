@@ -300,7 +300,13 @@ class MySQL extends Connection {
 
 	public static function select(): MySQL {
 		$stringColumns = self::addColumns(func_get_args());
-		self::$sql = self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
+
+		if (self::$table === "") {
+			self::$sql = self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$view;
+		} else {
+			self::$sql = self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
+		}
+
 		return self::$mySQL;
 	}
 
