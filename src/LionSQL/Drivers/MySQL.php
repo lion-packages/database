@@ -413,12 +413,12 @@ class MySQL extends Connection {
 		return self::$mySQL;
 	}
 
-	public static function alias(string $value, string $as, bool $isColumn = false): string {
-		if (!$isColumn) {
-			return $value . self::$keywords['as'] . " " . $as;
+	public static function column(string $value, string $table = ""): string {
+		if ($table === "") {
+			return $value;
 		}
 
-		return "{$as}.{$value}";
+		return "{$table}.{$value}";
 	}
 
 	public static function equalTo(string $column): string {
