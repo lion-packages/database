@@ -7,7 +7,6 @@ use \PDOException;
 use \PDOStatement;
 use LionRequest\Response;
 use LionSQL\Keywords;
-use LionSQL\Drivers\MySQL;
 
 class Connection extends Keywords {
 
@@ -15,23 +14,16 @@ class Connection extends Keywords {
 	const FETCH_ALL = "fetchAll";
 
 	protected static PDO $conn;
-	protected static Response $response;
-	protected static MySQL $mySQL;
 	protected static PDOStatement $stmt;
 
-	public function __construct() {
-
-	}
-
 	protected static function getConnection(array $config): object {
-		self::$response = Response::getInstance();
 		$type = strtolower($config['type']);
 
 		if ($type === 'mysql') {
 			return self::mysql($config);
 		}
 
-		return self::$response->error("The driver '{$type}' does not exist");
+		return Response::error("The driver '{$type}' does not exist");
 	}
 
 	private static function mysql(array $config): object {
@@ -46,9 +38,12 @@ class Connection extends Keywords {
 				]
 			);
 
-			return self::$response->success('mysql connection established');
+			return Response::success('MySQL connection established');
 		} catch (PDOException $e) {
-			return self::$response->error($e->getMessage());
+			return Response::response("database-error", $e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 

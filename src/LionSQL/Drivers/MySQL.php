@@ -4,74 +4,15 @@ namespace LionSQL\Drivers;
 
 use \PDO;
 use \PDOException;
-use LionSQL\Connection;
+use LionSQL\Functions;
 
-class MySQL extends Connection {
+class MySQL extends Functions {
 
-	private static int $cont = 1;
-	private static string $sql = "";
-	private static string $class_name = "";
-	private static string $dbname = "";
-	private static string $table = "";
-	private static string $view = "";
-	private static string $message = "";
-	private static array $data_info = [];
+	private static MySQL $mySQL;
 
-	public function __construct() {
-
-	}
-
-	public static function init(array $config): object {
-		self::$dbname = $config['dbname'];
+	public static function init(string $dbname): void {
 		self::$mySQL = new MySQL();
-		return self::getConnection($config);
-	}
-
-	// ---------------------------------------------------------------------------------------------
-
-	public static function getQueryString(): string {
-		return trim(self::$sql);
-	}
-
-	private static function clean(): void {
-		self::$cont = 1;
-		self::$sql = "";
-		self::$class_name = "";
-		self::$table = "";
-		self::$view = "";
-		self::$data_info = [];
-	}
-
-	private static function prepare(): MySQL {
-		self::$stmt = self::$conn->prepare(trim(self::$sql));
-		return self::$mySQL;
-	}
-
-	private static function bindValue(array $list): MySQL {
-		$type = function($value) {
-			if (gettype($value) === 'integer') {
-				return PDO::PARAM_INT;
-			} elseif (gettype($value) === 'boolean') {
-				return PDO::PARAM_BOOL;
-			} elseif (gettype($value) === 'NULL') {
-				return PDO::PARAM_NULL;
-			} else {
-				return PDO::PARAM_STR;
-			}
-		};
-
-		foreach ($list as $key => $value) {
-			self::$stmt->bindValue(self::$cont, $value, $type($value));
-			self::$cont++;
-		}
-
-		return self::$mySQL;
-	}
-
-	private static function addRows($rows): void {
-		foreach ($rows as $key => $row) {
-			self::$data_info[] = $row;
-		}
+		self::$dbname = $dbname;
 	}
 
 	public static function fetchClass(mixed $class): MySQL {
@@ -98,88 +39,6 @@ class MySQL extends Connection {
 
 		return self::$mySQL;
 	}
-
-	public static function execute(): array|object {
-		try {
-			self::prepare();
-			self::bindValue(self::$data_info);
-			self::$stmt->execute();
-			self::clean();
-
-			return self::$response->success(self::$message);
-		} catch (PDOException $e) {
-			return self::$response->response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
-		}
-	}
-
-	public static function get(): array|object {
-		$request = null;
-
-		try {
-			self::prepare();
-
-			if (count(self::$data_info) > 0) {
-				self::bindValue(self::$data_info);
-			}
-
-			if (!self::$stmt->execute()) {
-				return self::$response->error("An unexpected error has occurred");
-			}
-
-			if (empty(self::$class_name)) {
-				$request = self::$stmt->fetch();
-			} else {
-				self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_name);
-				$request = self::$stmt->fetch();
-				self::$class_name = "";
-			}
-
-			self::clean();
-			return !$request ? self::$response->success("No data available") : $request;
-		} catch (PDOException $e) {
-			return self::$response->response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
-		}
-	}
-
-	public static function getAll(): array|object {
-		$request = null;
-
-		try {
-			self::prepare();
-
-			if (count(self::$data_info) > 0) {
-				self::bindValue(self::$data_info);
-			}
-
-			if (!self::$stmt->execute()) {
-				return self::$response->error("An unexpected error has occurred");
-			}
-
-			if (empty(self::$class_name)) {
-				$request = self::$stmt->fetchAll();
-			} else {
-				self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_name);
-				$request = self::$stmt->fetchAll();
-				self::$class_name = "";
-			}
-
-			self::clean();
-			return !$request ? self::$response->success("No data available") : $request;
-		} catch (PDOException $e) {
-			return self::$response->response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
-		}
-	}
-
-	// ---------------------------------------------------------------------------------------------
 
 	public static function as(string $column, string $as): string {
 		return $column . self::$keywords['as'] . " {$as}";

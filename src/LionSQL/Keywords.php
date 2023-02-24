@@ -4,6 +4,15 @@ namespace LionSQL;
 
 class Keywords {
 
+	protected static int $cont = 1;
+	protected static string $sql = "";
+	protected static string $class_name = "";
+	protected static string $dbname = "";
+	protected static string $table = "";
+	protected static string $view = "";
+	protected static string $message = "";
+	protected static array $data_info = [];
+
 	protected static array $keywords = [
 		'year' => " YEAR(?)",
 		'month' => " MONTH(?)",
