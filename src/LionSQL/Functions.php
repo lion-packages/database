@@ -9,7 +9,7 @@ use \PDOException;
 
 class Functions extends Connection {
 
-	private static function clean(): void {
+	protected static function clean(): void {
 		self::$cont = 1;
 		self::$sql = "";
 		self::$class_name = "";
@@ -18,11 +18,11 @@ class Functions extends Connection {
 		self::$data_info = [];
 	}
 
-	private static function prepare(): void {
+	protected static function prepare(): void {
 		self::$stmt = self::$conn->prepare(trim(self::$sql));
 	}
 
-	private static function bindValue(array $list): void {
+	protected static function bindValue(array $list): void {
 		$type = function($value) {
 			if (gettype($value) === 'integer') {
 				return PDO::PARAM_INT;
@@ -41,7 +41,7 @@ class Functions extends Connection {
 		}
 	}
 
-	private static function addRows($rows): void {
+	protected static function addRows($rows): void {
 		foreach ($rows as $key => $row) {
 			self::$data_info[] = $row;
 		}
