@@ -186,6 +186,18 @@ class MySQL extends Functions {
 		return self::$mySQL;
 	}
 
+	public static function selectDistinct(): MySQL {
+		$stringColumns = self::addColumns(func_get_args());
+
+		if (self::$table === "") {
+			self::$sql .= self::$keywords['select'] . self::$keywords['distinct'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$view;
+		} else {
+			self::$sql .= self::$keywords['select'] . self::$keywords['distinct'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
+		}
+
+		return self::$mySQL;
+	}
+
 	public static function between(mixed $between, mixed $and): MySQL {
 		self::$sql .= self::$keywords['between'] . " ?" . self::$keywords['and'] . " ? ";
 		self::$data_info[] = $between;
