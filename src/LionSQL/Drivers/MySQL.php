@@ -19,6 +19,11 @@ class MySQL extends Functions {
 		return self::$mySQL;
 	}
 
+	public static function union(): MySQL {
+		self::$sql = "(" . trim(self::$sql) . ")" . self::$keywords['union'];
+		return self::$mySQL;
+	}
+
 	public static function table(string $table, bool $option = false): MySQL {
 		if (!$option) {
 			self::$table = self::$dbname . "." . $table;
@@ -168,9 +173,9 @@ class MySQL extends Functions {
 		$stringColumns = self::addColumns(func_get_args());
 
 		if (self::$table === "") {
-			self::$sql = self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$view;
+			self::$sql .= self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$view;
 		} else {
-			self::$sql = self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
+			self::$sql .= self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
 		}
 
 		return self::$mySQL;
