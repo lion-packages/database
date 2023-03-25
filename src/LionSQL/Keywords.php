@@ -57,7 +57,8 @@ class Keywords {
 		'create' => ' CREATE',
 		'view' => ' VIEW',
 		'concat' => ' CONCAT(*)',
-		'union' => ' UNION'
+		'union' => ' UNION',
+		'all' => ' ALL'
 	];
 
 	public function __construct() {
