@@ -2,8 +2,7 @@
 
 namespace LionSQL\Drivers;
 
-use \PDO;
-use \PDOException;
+use LionRequest\Response;
 use LionSQL\Functions;
 
 class MySQL extends Functions {
@@ -97,11 +96,11 @@ class MySQL extends Functions {
 
 	public static function bulk(array $columns, array $rows): MySQL {
 		if (count($columns) <= 0) {
-			return self::$response->response("database-error", "At least one column must be entered");
+			return Response::response("database-error", "At least one column must be entered");
 		}
 
 		if (count($rows) <= 0) {
-			return self::$response->response("database-error", "At least one row must be entered");
+			return Response::response("database-error", "At least one row must be entered");
 		}
 
 		foreach ($rows as $key => $row) {
@@ -122,7 +121,7 @@ class MySQL extends Functions {
 
 	public static function call(string $store_procedure, array $rows = []): MySQL {
 		if (count($rows) <= 0) {
-			return self::$response->response("database-error", "At least one row must be entered");
+			return Response::response("database-error", "At least one row must be entered");
 		}
 
 		self::addRows($rows);
@@ -139,7 +138,7 @@ class MySQL extends Functions {
 
 	public static function update(array $rows = []): MySQL {
 		if (count($rows) <= 0) {
-			return self::$response->response("database-error", "At least one row must be entered");
+			return Response::response("database-error", "At least one row must be entered");
 		}
 
 		self::addRows($rows);
@@ -150,7 +149,7 @@ class MySQL extends Functions {
 
 	public static function insert(array $rows = []): MySQL {
 		if (count($rows) <= 0) {
-			return self::$response->response("database-error", "At least one row must be entered");
+			return Response::response("database-error", "At least one row must be entered");
 		}
 
 		self::addRows($rows);
