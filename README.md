@@ -8,4 +8,5 @@ composer require lion/sql
 ```
 
 ## License
-Copyright © 2022 [MIT License](https://github.com/Sleon4/Lion-SQL/blob/main/LICENSE)
+
+The Lion-SQL library is open source software licensed under the [MIT License](https://github.com/Sleon4/Lion-SQL/blob/main/LICENSE).
