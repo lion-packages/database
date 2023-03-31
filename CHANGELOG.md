@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v7.2.0](https://github.com/Sleon4/Lion-SQL/compare/v7.1.0...v7.2.0) (2023-03-30)
+
+### Added
+- function was added to execute logger function
+
 ## [v7.1.0](https://github.com/Sleon4/Lion-SQL/compare/v7.0.0...v7.1.0) (2023-03-25)
 
 ### Added
