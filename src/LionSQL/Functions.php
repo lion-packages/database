@@ -59,6 +59,10 @@ class Functions extends Connection {
 			self::clean();
 			return Response::success(self::$message);
 		} catch (PDOException $e) {
+			if (self::$active_function) {
+				logger($e->getMessage(), "error");
+			}
+
 			return Response::response("database-error", $e->getMessage(), (object) [
 				'file' => $e->getFile(),
 				'line' => $e->getLine()
@@ -91,6 +95,10 @@ class Functions extends Connection {
 			self::clean();
 			return !$request ? Response::success("No data available") : $request;
 		} catch (PDOException $e) {
+			if (self::$active_function) {
+				logger($e->getMessage(), "error");
+			}
+
 			return Response::response("database-error", $e->getMessage(), (object) [
 				'file' => $e->getFile(),
 				'line' => $e->getLine()
@@ -123,6 +131,10 @@ class Functions extends Connection {
 			self::clean();
 			return !$request ? Response::success("No data available") : $request;
 		} catch (PDOException $e) {
+			if (self::$active_function) {
+				logger($e->getMessage(), "error");
+			}
+
 			return Response::response("database-error", $e->getMessage(), (object) [
 				'file' => $e->getFile(),
 				'line' => $e->getLine()

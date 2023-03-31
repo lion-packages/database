@@ -12,6 +12,10 @@ class Driver extends Connection {
 		$type = strtolower($options['type']);
 
 		if ($res->status === "database-error") {
+			if (self::$active_function) {
+				logger($res->message, 'error');
+			}
+
 			return $res;
 		}
 
@@ -20,6 +24,14 @@ class Driver extends Connection {
 		}
 
 		return $res;
+	}
+
+	public static function addLog() {
+		if (function_exists("logger")) {
+			self::$active_function = true;
+		} else {
+			self::$active_function = false;
+		}
 	}
 
 }
