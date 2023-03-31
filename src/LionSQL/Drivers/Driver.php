@@ -12,10 +12,6 @@ class Driver extends Connection {
 		$type = strtolower($options['type']);
 
 		if ($res->status === "database-error") {
-			if (self::$active_function) {
-				logger($res->message, 'error');
-			}
-
 			return $res;
 		}
 
