@@ -1,5 +1,15 @@
 # Release Notes
 
+## [v7.3.0](https://github.com/Sleon4/Lion-SQL/compare/v7.2.1...v7.3.0) (2023-04-05)
+
+### Added
+- added offset function for MySQL driver
+
+## [v7.2.1](https://github.com/Sleon4/Lion-SQL/compare/v7.2.0...v7.2.1) (2023-03-30)
+
+### Fixed
+- fixed incorrect logger call
+
 ## [v7.2.0](https://github.com/Sleon4/Lion-SQL/compare/v7.1.0...v7.2.0) (2023-03-30)
 
 ### Added
