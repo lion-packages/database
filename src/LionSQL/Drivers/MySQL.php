@@ -14,6 +14,12 @@ class MySQL extends Functions {
 		self::$dbname = $dbname;
 	}
 
+	public static function offset(int $increase = 0): MySQL {
+		self::$sql .= self::$keywords['offset'] . " ?";
+		self::addRows([$increase]);
+		return self::$mySQL;
+	}
+
 	public static function fetchClass(mixed $class): MySQL {
 		self::$class_name = $class;
 		return self::$mySQL;

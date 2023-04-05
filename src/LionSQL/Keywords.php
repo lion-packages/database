@@ -59,7 +59,8 @@ class Keywords {
 		'concat' => ' CONCAT(*)',
 		'union' => ' UNION',
 		'all' => ' ALL',
-		'distinct' => ' DISTINCT'
+		'distinct' => ' DISTINCT',
+		'offset' => ' OFFSET'
 	];
 
 	public function __construct() {
