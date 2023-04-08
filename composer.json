@@ -8,14 +8,6 @@
             "LionSQL\\": "src/LionSQL/"
         }
     },
-    "authors": [
-        {
-            "name": "Sergio León"
-        },
-        {
-            "name": "Santiago Ospina"
-        }
-    ],
     "require": {
         "php": ">=8.1",
         "lion/request": "^5.3"
