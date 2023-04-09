@@ -2,24 +2,25 @@
 
 namespace LionSQL\Drivers;
 
+use LionRequest\Response;
 use LionSQL\Connection;
 use LionSQL\Drivers\MySQL;
 
 class Driver extends Connection {
 
-	public static function run(array $options): object {
-		$res = self::getConnection($options);
-		$type = strtolower($options['type']);
-
-		if ($res->status === "database-error") {
-			return $res;
+	public static function run(array $connections): object {
+		if ($connections['default'] === "") {
+			return Response::response('database-error', "the default driver is required");
 		}
 
-		if ($type === "mysql") {
-			MySQL::init($options['dbname']);
+		$connection = $connections['connections'][$connections['default']];
+		if (strtolower($connection['type']) === "mysql") {
+			MySQL::init($connections);
+		} else {
+			return Response::response('database-error', "the driver does not exist");
 		}
 
-		return $res;
+		return Response::success('enabled connections');
 	}
 
 	public static function addLog() {

@@ -2,7 +2,11 @@
 
 namespace LionSQL;
 
+use LionSQL\Drivers\MySQL;
+
 class Keywords {
+
+	protected static ?MySQL $mySQL = null;
 
 	protected static int $cont = 1;
 	protected static string $sql = "";
@@ -12,6 +16,9 @@ class Keywords {
 	protected static string $view = "";
 	protected static string $message = "";
 	protected static array $data_info = [];
+	protected static string $active_connection = "";
+	protected static bool $active_function = false;
+	protected static array $connections = [];
 
 	protected static array $keywords = [
 		'year' => " YEAR(?)",
@@ -63,8 +70,15 @@ class Keywords {
 		'offset' => ' OFFSET'
 	];
 
-	public function __construct() {
-
+	protected static function clean(): void {
+		self::$cont = 1;
+		self::$sql = "";
+		self::$class_name = "";
+		self::$table = "";
+		self::$view = "";
+		self::$data_info = [];
+		self::$active_connection = self::$connections['default'];
+		self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
 	}
 
 	protected static function addCharacterBulk(array $rows): string {

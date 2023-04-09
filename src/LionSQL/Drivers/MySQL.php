@@ -7,21 +7,20 @@ use LionSQL\Functions;
 
 class MySQL extends Functions {
 
-	private static MySQL $mySQL;
+	public static function init(array $connections): void {
+		if (self::$mySQL === null) {
+			self::$mySQL = new MySQL();
+		}
 
-	public static function init(string $dbname): void {
-		self::$mySQL = new MySQL();
-		self::$dbname = $dbname;
+		self::$connections = $connections;
+		self::$active_connection = self::$connections['default'];
+		self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
+		self::mysql();
 	}
 
 	public static function offset(int $increase = 0): MySQL {
 		self::$sql .= self::$keywords['offset'] . " ?";
 		self::addRows([$increase]);
-		return self::$mySQL;
-	}
-
-	public static function fetchClass(mixed $class): MySQL {
-		self::$class_name = $class;
 		return self::$mySQL;
 	}
 

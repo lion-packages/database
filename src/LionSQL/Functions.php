@@ -2,20 +2,26 @@
 
 namespace LionSQL;
 
+use \Exception;
 use LionRequest\Response;
 use LionSQL\Connection;
+use LionSQL\Drivers\MySQL;
 use \PDO;
 use \PDOException;
 
 class Functions extends Connection {
 
-	protected static function clean(): void {
-		self::$cont = 1;
-		self::$sql = "";
-		self::$class_name = "";
-		self::$table = "";
-		self::$view = "";
-		self::$data_info = [];
+	public static function connection(string $connection_name): MySQL {
+		self::$active_connection = $connection_name;
+		self::$dbname = self::$connections['connections'][$connection_name]['dbname'];
+		self::mysql();
+
+		return self::$mySQL;
+	}
+
+	public static function fetchClass(mixed $class): MySQL {
+		self::$class_name = $class;
+		return self::$mySQL;
 	}
 
 	protected static function prepare(): void {
@@ -57,8 +63,18 @@ class Functions extends Connection {
 			self::bindValue(self::$data_info);
 			self::$stmt->execute();
 			self::clean();
+
 			return Response::success(self::$message);
 		} catch (PDOException $e) {
+			if (self::$active_function) {
+				logger($e->getMessage(), "error");
+			}
+
+			return Response::response("database-error", $e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
+		} catch (Exception $e) {
 			if (self::$active_function) {
 				logger($e->getMessage(), "error");
 			}
@@ -103,6 +119,15 @@ class Functions extends Connection {
 				'file' => $e->getFile(),
 				'line' => $e->getLine()
 			]);
+		} catch (Exception $e) {
+			if (self::$active_function) {
+				logger($e->getMessage(), "error");
+			}
+
+			return Response::response("database-error", $e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
 		}
 	}
 
@@ -131,6 +156,15 @@ class Functions extends Connection {
 			self::clean();
 			return !$request ? Response::success("No data available") : $request;
 		} catch (PDOException $e) {
+			if (self::$active_function) {
+				logger($e->getMessage(), "error");
+			}
+
+			return Response::response("database-error", $e->getMessage(), (object) [
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			]);
+		} catch (Exception $e) {
 			if (self::$active_function) {
 				logger($e->getMessage(), "error");
 			}
