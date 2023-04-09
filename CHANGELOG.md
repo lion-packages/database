@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v7.4.0](https://github.com/Sleon4/Lion-SQL/compare/v7.3.0...v7.4.0) (2023-04-09)
+
+### Added
+- function has been added to connect multiple connections to mysql databases
+
 ## [v7.3.0](https://github.com/Sleon4/Lion-SQL/compare/v7.2.1...v7.3.0) (2023-04-05)
 
 ### Added
