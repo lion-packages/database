@@ -11,6 +11,10 @@ use \PDOException;
 
 class Functions extends Connection {
 
+	public static function getConnections(): array {
+		return self::$connections;
+	}
+
 	public static function connection(string $connection_name): MySQL {
 		self::$active_connection = $connection_name;
 		self::$dbname = self::$connections['connections'][$connection_name]['dbname'];
