@@ -19,6 +19,7 @@ class Keywords {
 	protected static string $active_connection = "";
 	protected static bool $active_function = false;
 	protected static array $connections = [];
+	protected static int $fetch_mode = 4;
 
 	protected static array $keywords = [
 		'year' => " YEAR(?)",
@@ -79,6 +80,7 @@ class Keywords {
 		self::$data_info = [];
 		self::$active_connection = self::$connections['default'];
 		self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
+		self::$fetch_mode = 4;
 	}
 
 	protected static function addCharacterBulk(array $rows): string {

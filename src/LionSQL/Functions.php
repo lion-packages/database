@@ -11,6 +11,12 @@ use \PDOException;
 
 class Functions extends Connection {
 
+	public static function fetchMode(int $fetch_mode, string $class = ""): MySQL {
+		self::$fetch_mode = $fetch_mode;
+		self::$class_name = $class;
+		return self::$mySQL;
+	}
+
 	public static function getConnections(): array {
 		return self::$connections;
 	}
@@ -104,6 +110,10 @@ class Functions extends Connection {
 				return Response::error("An unexpected error has occurred");
 			}
 
+			if (self::$fetch_mode != 4) {
+				self::$stmt->setFetchMode(self::$fetch_mode);
+			}
+
 			if (empty(self::$class_name)) {
 				$request = self::$stmt->fetch();
 			} else {
@@ -147,6 +157,10 @@ class Functions extends Connection {
 
 			if (!self::$stmt->execute()) {
 				return Response::error("An unexpected error has occurred");
+			}
+
+			if (self::$fetch_mode != 4) {
+				self::$stmt->setFetchMode(self::$fetch_mode);
 			}
 
 			if (empty(self::$class_name)) {
