@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v7.6.0](https://github.com/Sleon4/Lion-SQL/compare/v7.5.0...v7.6.0) (2023-04-16)
+
+### Added
+- added function to change the fetchMode
+
 ## [v7.5.0](https://github.com/Sleon4/Lion-SQL/compare/v7.4.0...v7.5.0) (2023-04-10)
 
 ### Added
