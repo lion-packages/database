@@ -69,7 +69,8 @@ class Keywords {
 		'all' => ' ALL',
 		'distinct' => ' DISTINCT',
 		'offset' => ' OFFSET',
-		'is-not-null' => " IS NOT NULL"
+		'is-not-null' => " IS NOT NULL",
+		'is-null' => " IS NULL"
 	];
 
 	protected static function clean(): void {
