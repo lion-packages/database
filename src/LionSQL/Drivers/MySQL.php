@@ -18,6 +18,11 @@ class MySQL extends Functions {
 		self::mysql();
 	}
 
+	public static function isNotNull(): MySQL {
+		self::$sql .= self::$keywords['is-not-null'];
+		return self::$mySQL;
+	}
+
 	public static function offset(int $increase = 0): MySQL {
 		self::$sql .= self::$keywords['offset'] . " ?";
 		self::addRows([$increase]);
