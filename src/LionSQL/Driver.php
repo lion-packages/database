@@ -13,7 +13,7 @@ class Driver extends \LionSQL\Connection {
 
 		$connection = $connections['connections'][$connections['default']];
 		if (strtolower($connection['type']) === "mysql") {
-			\LionSQL\Drivers\MySQL::init($connections);
+			\LionSQL\Drivers\MySQL\MySQL::init($connections);
 		} else {
 			return Response::response('database-error', "the driver does not exist");
 		}

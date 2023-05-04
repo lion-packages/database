@@ -2,7 +2,7 @@
 
 namespace LionSQL;
 
-use LionSQL\Drivers\MySQL;
+use LionSQL\Drivers\MySQL\MySQL;
 
 class Keywords {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace LionSQL\Drivers;
+namespace LionSQL\Drivers\MySQL;
 
 use LionRequest\Response;
 use LionSQL\Functions;
