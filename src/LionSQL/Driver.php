@@ -1,12 +1,10 @@
 <?php
 
-namespace LionSQL\Drivers;
+namespace LionSQL;
 
 use LionRequest\Response;
-use LionSQL\Connection;
-use LionSQL\Drivers\MySQL;
 
-class Driver extends Connection {
+class Driver extends \LionSQL\Connection {
 
 	public static function run(array $connections): object {
 		if ($connections['default'] === "") {
@@ -15,7 +13,7 @@ class Driver extends Connection {
 
 		$connection = $connections['connections'][$connections['default']];
 		if (strtolower($connection['type']) === "mysql") {
-			MySQL::init($connections);
+			\LionSQL\Drivers\MySQL::init($connections);
 		} else {
 			return Response::response('database-error', "the driver does not exist");
 		}
