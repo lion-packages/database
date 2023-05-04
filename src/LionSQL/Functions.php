@@ -5,7 +5,7 @@ namespace LionSQL;
 use \Exception;
 use LionRequest\Response;
 use LionSQL\Connection;
-use LionSQL\Drivers\MySQL;
+use LionSQL\Drivers\MySQL\MySQL;
 use \PDO;
 use \PDOException;
 
