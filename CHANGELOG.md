@@ -1,5 +1,13 @@
 # Release Notes
 
+## [v8.0.1](https://github.com/Sleon4/Lion-SQL/compare/v8.0.0...v8.0.1) (2023-05-05)
+
+### Changed
+- function or has been modified to be able to add a single parameter
+
+### Fixed
+- bug for reading constraints has been fixed
+
 ## [v8.0.0](https://github.com/Sleon4/Lion-SQL/compare/v7.6.0...v8.0.0) (2023-05-04)
 
 ### Added
