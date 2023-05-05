@@ -1,6 +1,6 @@
 # Release Notes
 
-## [v8.0.0](https://github.com/Sleon4/Lion-SQL/compare/v7.6.0...v8.0.0) (2023-04-16)
+## [v8.0.0](https://github.com/Sleon4/Lion-SQL/compare/v7.6.0...v8.0.0) (2023-05-04)
 
 ### Added
 - schema class has been added to dynamically create tables with array parameters
