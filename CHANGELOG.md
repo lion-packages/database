@@ -1,5 +1,15 @@
 # Release Notes
 
+## [v8.0.0](https://github.com/Sleon4/Lion-SQL/compare/v7.6.0...v8.0.0) (2023-04-16)
+
+### Added
+- schema class has been added to dynamically create tables with array parameters
+
+### Changed
+- driver class has been relocated
+- MySQL driver namespace has been modified
+- function and has been modified to be able to add a single parameter
+
 ## [v7.6.0](https://github.com/Sleon4/Lion-SQL/compare/v7.5.0...v7.6.0) (2023-04-16)
 
 ### Added
