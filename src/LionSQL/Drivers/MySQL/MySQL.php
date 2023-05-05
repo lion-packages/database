@@ -18,6 +18,34 @@ class MySQL extends Functions {
 		self::mysql();
 	}
 
+	public static function connection(string $connection_name): MySQL {
+		self::$active_connection = $connection_name;
+		self::$dbname = self::$connections['connections'][$connection_name]['dbname'];
+		self::mysql();
+
+		return self::$mySQL;
+	}
+
+	public static function table(string $table, bool $option = false): MySQL {
+		if (!$option) {
+			self::$table = self::$dbname . "." . $table;
+		} else {
+			self::$table = $table;
+		}
+
+		return self::$mySQL;
+	}
+
+	public static function view(string $view, bool $option = false): MySQL {
+		if (!$option) {
+			self::$view = self::$dbname . "." . $view;
+		} else {
+			self::$view = $view;
+		}
+
+		return self::$mySQL;
+	}
+
 	public static function isNull(): MySQL {
 		self::$sql .= self::$keywords['is-null'];
 		return self::$mySQL;

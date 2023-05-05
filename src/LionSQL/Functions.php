@@ -11,26 +11,6 @@ use \PDOException;
 
 class Functions extends Connection {
 
-	public static function table(string $table, bool $option = false): MySQL {
-		if (!$option) {
-			self::$table = self::$dbname . "." . $table;
-		} else {
-			self::$table = $table;
-		}
-
-		return self::$mySQL;
-	}
-
-	public static function view(string $view, bool $option = false): MySQL {
-		if (!$option) {
-			self::$view = self::$dbname . "." . $view;
-		} else {
-			self::$view = $view;
-		}
-
-		return self::$mySQL;
-	}
-
 	public static function fetchMode(int $fetch_mode, string $class = ""): MySQL {
 		self::$fetch_mode = $fetch_mode;
 		self::$class_name = $class;
@@ -41,21 +21,17 @@ class Functions extends Connection {
 		return self::$connections;
 	}
 
-	public static function connection(string $connection_name): MySQL {
-		self::$active_connection = $connection_name;
-		self::$dbname = self::$connections['connections'][$connection_name]['dbname'];
-		self::mysql();
-
-		return self::$mySQL;
-	}
-
 	public static function fetchClass(mixed $class): MySQL {
 		self::$class_name = $class;
 		return self::$mySQL;
 	}
 
 	protected static function prepare(): void {
-		self::$stmt = self::$conn->prepare(trim(self::$sql));
+		if (!self::$is_schema) {
+			self::$stmt = self::$conn->prepare(trim(self::$sql));
+		} else {
+			self::$stmt = self::$conn->prepare(trim(self::getColumnSettings()));
+		}
 	}
 
 	protected static function bindValue(array $list): void {
@@ -83,8 +59,24 @@ class Functions extends Connection {
 		}
 	}
 
-	public static function getQueryString(): string {
-		return trim(self::$sql);
+	public static function getQueryString(): object {
+		if (!self::$is_schema) {
+			return Response::success("SQL query generated successfully", [
+				'sql' => trim(self::$sql)
+			]);
+		}
+
+		return Response::success("SQL query generated successfully", (object) [
+			'sql' => self::getColumnSettings(),
+			'options' => (object) [
+				'columns' => self::$schema_options['columns'],
+				'indexes' => self::cleanSettings(self::$schema_options['indexes']),
+				'foreigns' => (object) [
+					'index' => self::cleanSettings(self::$schema_options['foreign']['index']),
+					'constraint' => self::cleanSettings(self::$schema_options['foreign']['constraint'])
+				]
+			]
+		]);
 	}
 
 	public static function execute(): array|object {
