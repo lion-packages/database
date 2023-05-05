@@ -107,7 +107,7 @@ class MySQL extends Functions {
 
 	public static function constraints(): MySQL {
 		self::$sql = self::$keywords['select'] . " CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME" . self::$keywords['from'] . " information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=? AND TABLE_NAME=? AND REFERENCED_COLUMN_NAME IS NOT NULL";
-		self::addRows([self::$dbname, self::$table]);
+		self::addRows(explode(".", self::$table));
 		return self::$mySQL;
 	}
 
