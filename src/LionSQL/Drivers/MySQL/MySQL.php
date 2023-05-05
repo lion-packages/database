@@ -304,9 +304,13 @@ class MySQL extends Functions {
 		return self::$mySQL;
 	}
 
-	public static function and(string $value_type, mixed $value): MySQL {
-		self::$sql .= self::$keywords['and'] . " {$value_type}";
-		self::$data_info[] = $value;
+	public static function and(string $value_type, mixed $value = null): MySQL {
+		self::$sql .= !empty($value) ? self::$keywords['and'] . " {$value_type}" : self::$keywords['and'] . " {$value_type}";
+
+		if (!empty($value)) {
+			self::$data_info[] = $value;
+		}
+
 		return self::$mySQL;
 	}
 
