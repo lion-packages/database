@@ -315,8 +315,11 @@ class MySQL extends Functions {
 	}
 
 	public static function or(string $value_type, mixed $value): MySQL {
-		self::$sql .= self::$keywords['or'] . " {$value_type}";
-		self::$data_info[] = $value;
+		self::$sql .= !empty($value) ? self::$keywords['or'] . " {$value_type}" : self::$keywords['or'] . " {$value_type}";
+
+		if (!empty($value)) {
+			self::$data_info[] = $value;
+		}
 		return self::$mySQL;
 	}
 
