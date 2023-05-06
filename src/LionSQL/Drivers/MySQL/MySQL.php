@@ -68,7 +68,7 @@ class MySQL extends Functions {
 	}
 
 	public static function union(): MySQL {
-		self::$sql = "(" . trim(self::$sql) . ")" . self::$keywords['union'];
+		self::$sql = trim(self::$sql) . self::$keywords['union'];
 		return self::$mySQL;
 	}
 
