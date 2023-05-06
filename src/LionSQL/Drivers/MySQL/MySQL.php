@@ -63,12 +63,12 @@ class MySQL extends Functions {
 	}
 
 	public static function unionAll(): MySQL {
-		self::$sql = "(" . trim(self::$sql) . ")" . self::$keywords['union'] . self::$keywords['all'];
+		self::$sql .= self::$keywords['union'] . self::$keywords['all'];
 		return self::$mySQL;
 	}
 
 	public static function union(): MySQL {
-		self::$sql = trim(self::$sql) . self::$keywords['union'];
+		self::$sql .= self::$keywords['union'];
 		return self::$mySQL;
 	}
 
