@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v8.0.2](https://github.com/Sleon4/Lion-SQL/compare/v8.0.1...v8.0.2) (2023-05-05)
+
+### Fixed
+- union function format has been corrected
+- unionAll function format fixed
+
 ## [v8.0.1](https://github.com/Sleon4/Lion-SQL/compare/v8.0.0...v8.0.1) (2023-05-05)
 
 ### Changed
