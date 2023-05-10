@@ -97,6 +97,8 @@ class Functions extends Connection {
 				'line' => $e->getLine()
 			]);
 		} catch (Exception $e) {
+			self::clean();
+
 			if (self::$active_function) {
 				logger($e->getMessage(), "error");
 			}
@@ -146,6 +148,8 @@ class Functions extends Connection {
 				'line' => $e->getLine()
 			]);
 		} catch (Exception $e) {
+			self::clean();
+
 			if (self::$active_function) {
 				logger($e->getMessage(), "error");
 			}
@@ -186,6 +190,8 @@ class Functions extends Connection {
 			self::clean();
 			return !$request ? Response::success("No data available") : $request;
 		} catch (PDOException $e) {
+			self::clean();
+
 			if (self::$active_function) {
 				logger($e->getMessage(), "error");
 			}
