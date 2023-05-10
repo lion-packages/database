@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v8.0.3](https://github.com/Sleon4/Lion-SQL/compare/v8.0.2...v8.0.3) (2023-05-09)
+
+### Fixed
+- fixed nesting of query in exception
+
 ## [v8.0.2](https://github.com/Sleon4/Lion-SQL/compare/v8.0.1...v8.0.2) (2023-05-05)
 
 ### Fixed
