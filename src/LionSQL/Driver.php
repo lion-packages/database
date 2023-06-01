@@ -23,7 +23,7 @@ class Driver extends \LionSQL\Connection {
 			];
 		}
 
-		return [
+		return (object) [
 			'status' => 'success',
 			'message' => 'enabled connections'
 		];
