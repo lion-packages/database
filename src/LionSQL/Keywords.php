@@ -13,7 +13,6 @@ class Keywords {
 
 	protected static int $cont = 1;
 	protected static string $sql = "";
-	protected static array $sub_sql = [];
 	protected static string $class_name = "";
 	protected static string $dbname = "";
 	protected static string $table = "";
@@ -121,7 +120,6 @@ class Keywords {
 	];
 
 	protected static function clean(): void {
-		self::$sub_sql = [];
 		self::$cont = 1;
 		self::$sql = "";
 		self::$class_name = "";
@@ -136,12 +134,6 @@ class Keywords {
 		self::$collate = "UTF8_SPANISH_CI";
 		self::$schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 		self::$is_schema = false;
-	}
-
-	protected static function replaceSubQuerys(): void {
-		foreach (self::$sub_sql as $key => $query) {
-			str_replace($key, $query, self::$sql);
-		}
 	}
 
 	protected static function getColumnSettings(): string {

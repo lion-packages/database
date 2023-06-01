@@ -2,24 +2,29 @@
 
 namespace LionSQL\Drivers\MySQL;
 
+use \Closure;
 use LionRequest\Response;
 use LionSQL\Functions;
 
 class MySQL extends Functions {
 
 	public static function init(array $connections): void {
-		if (self::$mySQL === null) {
-			self::$mySQL = new MySQL();
-		}
-
+		self::$mySQL = new MySQL();
 		self::$connections = $connections;
 		self::$active_connection = self::$connections['default'];
 		self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
 		self::mysql();
 	}
 
+	public static function groupQuery(Closure $callback): MySQL {
+		self::openGroup(self::$mySQL);
+		$callback(self::$mySQL);
+		self::closeGroup(self::$mySQL);
+		return self::$mySQL;
+	}
+
 	public static function recursive(string $name): MySQL|string {
-		self::$sql .= self::$keywords['recursive'] . self::$keywords['as'] . " {$name}";
+		self::$sql .= self::$keywords['recursive'] . " {$name}" . self::$keywords['as'];
 		return self::$mySQL;
 	}
 
@@ -293,8 +298,13 @@ class MySQL extends Functions {
 		return self::$mySQL;
 	}
 
-	public static function innerJoin(string $table, string $value_from, string $value_up_to): MySQL {
-		self::$sql .= self::$keywords['inner'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
+	public static function innerJoin(string $table, string $value_from, string $value_up_to, bool $option = false): MySQL {
+		if (!$option) {
+			self::$sql .= self::$keywords['inner'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
+		} else {
+			self::$sql .= self::$keywords['inner'] . self::$keywords['join'] . " {$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
+		}
+
 		return self::$mySQL;
 	}
 

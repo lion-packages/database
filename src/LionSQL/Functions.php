@@ -10,6 +10,16 @@ use \PDOException;
 
 class Functions extends Connection {
 
+	protected static function openGroup(mixed $object): mixed {
+		self::$sql .= " (";
+		return $object;
+	}
+
+	protected static function closeGroup(mixed $object): mixed {
+		self::$sql .= " )";
+		return $object;
+	}
+
 	public static function fetchMode(int $fetch_mode, string $class = ""): MySQL {
 		self::$fetch_mode = $fetch_mode;
 		self::$class_name = $class;
@@ -59,13 +69,11 @@ class Functions extends Connection {
 	}
 
 	public static function getQueryString(): object {
-		self::replaceSubQuerys();
-
 		if (!self::$is_schema) {
 			return (object) [
 				'status' => 'success',
 				'message' => 'SQL query generated successfully',
-				'data' => [
+				'data' => (object) [
 					'sql' => trim(self::$sql)
 				]
 			];
@@ -74,7 +82,7 @@ class Functions extends Connection {
 		return (object) [
 			'status' => 'success',
 			'message' => 'SQL query generated successfully',
-			'data' => [
+			'data' => (object) [
 				'sql' => self::getColumnSettings(),
 				'options' => (object) [
 					'columns' => self::$schema_options['columns'],
@@ -90,7 +98,6 @@ class Functions extends Connection {
 
 	public static function execute(): array|object {
 		try {
-			self::replaceSubQuerys();
 			self::prepare();
 			self::bindValue(self::$data_info);
 			self::$stmt->execute();
@@ -137,7 +144,6 @@ class Functions extends Connection {
 		$request = null;
 
 		try {
-			self::replaceSubQuerys();
 			self::prepare();
 
 			if (count(self::$data_info) > 0) {
@@ -210,7 +216,6 @@ class Functions extends Connection {
 		$request = null;
 
 		try {
-			self::replaceSubQuerys();
 			self::prepare();
 
 			if (count(self::$data_info) > 0) {
