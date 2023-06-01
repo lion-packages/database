@@ -1,5 +1,15 @@
 # Release Notes
 
+## [v8.1.0](https://github.com/Sleon4/Lion-SQL/compare/v8.0.3...v8.1.0) (2023-06-01)
+
+### Added
+- function has been added to add with to the current statement and to add sub queries and replace them
+- function has been added to add recursive to the current sentence
+- function has been added to group queries by means of subqueries
+
+### Changed
+- removed lion/request library
+
 ## [v8.0.3](https://github.com/Sleon4/Lion-SQL/compare/v8.0.2...v8.0.3) (2023-05-09)
 
 ### Fixed
