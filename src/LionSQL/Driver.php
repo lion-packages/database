@@ -2,13 +2,14 @@
 
 namespace LionSQL;
 
-use LionRequest\Response;
-
 class Driver extends \LionSQL\Connection {
 
 	public static function run(array $connections): object {
 		if ($connections['default'] === "") {
-			return Response::response('database-error', "the default driver is required");
+			return (object) [
+				'status' => 'database-error',
+				'message' => 'the default driver is required'
+			];
 		}
 
 		$connection = $connections['connections'][$connections['default']];
@@ -16,10 +17,16 @@ class Driver extends \LionSQL\Connection {
 			\LionSQL\Drivers\MySQL\MySQL::init($connections);
 			\LionSQL\Drivers\MySQL\Schema::init();
 		} else {
-			return Response::response('database-error', "the driver does not exist");
+			return (object) [
+				'status' => 'database-error',
+				'message' => 'the driver does not exist'
+			];
 		}
 
-		return Response::success('enabled connections');
+		return [
+			'status' => 'success',
+			'message' => 'enabled connections'
+		];
 	}
 
 	public static function addLog() {
