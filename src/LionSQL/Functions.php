@@ -3,7 +3,6 @@
 namespace LionSQL;
 
 use \Exception;
-use LionRequest\Response;
 use LionSQL\Connection;
 use LionSQL\Drivers\MySQL\MySQL;
 use \PDO;
@@ -60,33 +59,47 @@ class Functions extends Connection {
 	}
 
 	public static function getQueryString(): object {
+		self::replaceSubQuerys();
+
 		if (!self::$is_schema) {
-			return Response::success("SQL query generated successfully", [
-				'sql' => trim(self::$sql)
-			]);
+			return (object) [
+				'status' => 'success',
+				'message' => 'SQL query generated successfully',
+				'data' => [
+					'sql' => trim(self::$sql)
+				]
+			];
 		}
 
-		return Response::success("SQL query generated successfully", (object) [
-			'sql' => self::getColumnSettings(),
-			'options' => (object) [
-				'columns' => self::$schema_options['columns'],
-				'indexes' => self::cleanSettings(self::$schema_options['indexes']),
-				'foreigns' => (object) [
-					'index' => self::cleanSettings(self::$schema_options['foreign']['index']),
-					'constraint' => self::cleanSettings(self::$schema_options['foreign']['constraint'])
+		return (object) [
+			'status' => 'success',
+			'message' => 'SQL query generated successfully',
+			'data' => [
+				'sql' => self::getColumnSettings(),
+				'options' => (object) [
+					'columns' => self::$schema_options['columns'],
+					'indexes' => self::cleanSettings(self::$schema_options['indexes']),
+					'foreigns' => (object) [
+						'index' => self::cleanSettings(self::$schema_options['foreign']['index']),
+						'constraint' => self::cleanSettings(self::$schema_options['foreign']['constraint'])
+					]
 				]
 			]
-		]);
+		];
 	}
 
 	public static function execute(): array|object {
 		try {
+			self::replaceSubQuerys();
 			self::prepare();
 			self::bindValue(self::$data_info);
 			self::$stmt->execute();
 			self::clean();
 
-			return Response::success(self::$message);
+			return (object) [
+				'status' => 'success',
+				'message' => self::$message
+			];
 		} catch (PDOException $e) {
 			self::clean();
 
@@ -94,10 +107,14 @@ class Functions extends Connection {
 				logger($e->getMessage(), "error");
 			}
 
-			return Response::response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
+			return (object) [
+				'status' => 'database-error',
+				'message' => $e->getMessage(),
+				'data' => (object) [
+					'file' => $e->getFile(),
+					'line' => $e->getLine()
+				]
+			];
 		} catch (Exception $e) {
 			self::clean();
 
@@ -105,10 +122,14 @@ class Functions extends Connection {
 				logger($e->getMessage(), "error");
 			}
 
-			return Response::response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
+			return (object) [
+				'status' => 'database-error',
+				'message' => $e->getMessage(),
+				'data' => (object) [
+					'file' => $e->getFile(),
+					'line' => $e->getLine()
+				]
+			];
 		}
 	}
 
@@ -116,6 +137,7 @@ class Functions extends Connection {
 		$request = null;
 
 		try {
+			self::replaceSubQuerys();
 			self::prepare();
 
 			if (count(self::$data_info) > 0) {
@@ -123,7 +145,10 @@ class Functions extends Connection {
 			}
 
 			if (!self::$stmt->execute()) {
-				return Response::error("An unexpected error has occurred");
+				return (object) [
+					'status' => 'database-error',
+					'message' => 'An unexpected error has occurred'
+				];
 			}
 
 			if (self::$fetch_mode != 4) {
@@ -139,7 +164,15 @@ class Functions extends Connection {
 			}
 
 			self::clean();
-			return !$request ? Response::success("No data available") : $request;
+
+			if (!request) {
+				return (object) [
+					'status' => 'success',
+					'message' => 'No data available'
+				];
+			} else {
+				return $request;
+			}
 		} catch (PDOException $e) {
 			self::clean();
 
@@ -147,10 +180,14 @@ class Functions extends Connection {
 				logger($e->getMessage(), "error");
 			}
 
-			return Response::response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
+			return (object) [
+				'status' => 'database-error',
+				'message' => $e->getMessage(),
+				'data' => (object) [
+					'file' => $e->getFile(),
+					'line' => $e->getLine()
+				]
+			];
 		} catch (Exception $e) {
 			self::clean();
 
@@ -158,10 +195,14 @@ class Functions extends Connection {
 				logger($e->getMessage(), "error");
 			}
 
-			return Response::response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
+			return (object) [
+				'status' => 'database-error',
+				'message' => $e->getMessage(),
+				'data' => (object) [
+					'file' => $e->getFile(),
+					'line' => $e->getLine()
+				]
+			];
 		}
 	}
 
@@ -169,6 +210,7 @@ class Functions extends Connection {
 		$request = null;
 
 		try {
+			self::replaceSubQuerys();
 			self::prepare();
 
 			if (count(self::$data_info) > 0) {
@@ -176,7 +218,10 @@ class Functions extends Connection {
 			}
 
 			if (!self::$stmt->execute()) {
-				return Response::error("An unexpected error has occurred");
+				return (object) [
+					'status' => 'database-error',
+					'message' => 'An unexpected error has occurred'
+				];
 			}
 
 			if (self::$fetch_mode != 4) {
@@ -192,7 +237,15 @@ class Functions extends Connection {
 			}
 
 			self::clean();
-			return !$request ? Response::success("No data available") : $request;
+
+			if (!request) {
+				return (object) [
+					'status' => 'success',
+					'message' => 'No data available'
+				];
+			} else {
+				return $request;
+			}
 		} catch (PDOException $e) {
 			self::clean();
 
@@ -200,10 +253,14 @@ class Functions extends Connection {
 				logger($e->getMessage(), "error");
 			}
 
-			return Response::response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
+			return (object) [
+				'status' => 'database-error',
+				'message' => $e->getMessage(),
+				'data' => (object) [
+					'file' => $e->getFile(),
+					'line' => $e->getLine()
+				]
+			];
 		} catch (Exception $e) {
 			self::clean();
 
@@ -211,10 +268,14 @@ class Functions extends Connection {
 				logger($e->getMessage(), "error");
 			}
 
-			return Response::response("database-error", $e->getMessage(), (object) [
-				'file' => $e->getFile(),
-				'line' => $e->getLine()
-			]);
+			return (object) [
+				'status' => 'database-error',
+				'message' => $e->getMessage(),
+				'data' => (object) [
+					'file' => $e->getFile(),
+					'line' => $e->getLine()
+				]
+			];
 		}
 	}
 

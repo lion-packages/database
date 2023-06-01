@@ -18,6 +18,15 @@ class MySQL extends Functions {
 		self::mysql();
 	}
 
+	public static function with(bool $return = false): MySQL|string {
+		if ($return) {
+			return self::$keywords['with'];
+		}
+
+		self::$sql .= self::$keywords['with'];
+		return self::$mySQL;
+	}
+
 	public static function connection(string $connection_name): MySQL {
 		self::$active_connection = $connection_name;
 		self::$dbname = self::$connections['connections'][$connection_name]['dbname'];
