@@ -18,6 +18,11 @@ class MySQL extends Functions {
 		self::mysql();
 	}
 
+	public static function recursive(string $name): MySQL|string {
+		self::$sql .= self::$keywords['recursive'] . self::$keywords['as'] . " {$name}";
+		return self::$mySQL;
+	}
+
 	public static function with(bool $return = false): MySQL|string {
 		if ($return) {
 			return self::$keywords['with'];
