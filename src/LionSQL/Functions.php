@@ -171,7 +171,7 @@ class Functions extends Connection {
 
 			self::clean();
 
-			if (!request) {
+			if (!$request) {
 				return (object) [
 					'status' => 'success',
 					'message' => 'No data available'
@@ -243,7 +243,7 @@ class Functions extends Connection {
 
 			self::clean();
 
-			if (!request) {
+			if (!$request) {
 				return (object) [
 					'status' => 'success',
 					'message' => 'No data available'
