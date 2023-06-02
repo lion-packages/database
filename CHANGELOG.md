@@ -1,6 +1,6 @@
 # Release Notes
 
-## [v8.2.0](https://github.com/Sleon4/Lion-SQL/compare/v8.1.0...v8.2.0) (2023-06-02)
+## [v8.1.1](https://github.com/Sleon4/Lion-SQL/compare/v8.1.0...v8.1.1) (2023-06-02)
 
 ### Fixed
 - validation in get and getAll function is corrected
