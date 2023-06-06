@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v8.2.0](https://github.com/Sleon4/Lion-SQL/compare/v8.1.1...v8.2.0) (2023-06-06)
+
+### Added
+- full function has been added for the mysql service
+
 ## [v8.1.1](https://github.com/Sleon4/Lion-SQL/compare/v8.1.0...v8.1.1) (2023-06-02)
 
 ### Fixed
