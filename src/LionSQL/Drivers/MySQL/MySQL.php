@@ -15,6 +15,11 @@ class MySQL extends Functions {
 		self::mysql();
 	}
 
+	public static function full(): MySQL {
+		self::$sql .= self::$keywords['full'];
+		return self::$mySQL;
+	}
+
 	public static function groupQuery(Closure $callback): MySQL {
 		self::openGroup(self::$mySQL);
 		$callback(self::$mySQL);

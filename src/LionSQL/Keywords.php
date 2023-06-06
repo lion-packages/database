@@ -29,6 +29,7 @@ class Keywords {
 	protected static array $schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 
 	protected static array $keywords = [
+		'full' => " FULL",
 		'with' => " WITH",
 		'recursive' => " RECURSIVE",
 		'year' => " YEAR(?)",
