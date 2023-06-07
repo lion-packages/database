@@ -113,6 +113,20 @@ class MySQL extends Functions {
 		return self::$mySQL;
 	}
 
+	public static function from(string $table = null): MySQL {
+		if ($table === null) {
+			if (self::$table === "") {
+				self::$sql .= self::$keywords['from'] . " " . self::$view;
+			} else {
+				self::$sql .= self::$keywords['from'] . " " . self::$table;
+			}
+		} else {
+
+		}
+
+		return self::$mySQL;
+	}
+
 	public static function indexes(): MySQL {
 		self::$sql .= self::$keywords['index'] . self::$keywords['from'] . " " . self::$table;
 		return self::$mySQL;
