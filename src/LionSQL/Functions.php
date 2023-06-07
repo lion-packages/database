@@ -70,20 +70,26 @@ class Functions extends Connection {
 
 	public static function getQueryString(): object {
 		if (!self::$is_schema) {
+			$new_sql = self::$sql;
+			self::$sql = "";
+
 			return (object) [
 				'status' => 'success',
 				'message' => 'SQL query generated successfully',
 				'data' => (object) [
-					'sql' => trim(self::$sql)
+					'sql' => trim($new_sql)
 				]
 			];
 		}
+
+		$new_sql = self::getColumnSettings();
+		self::$sql = "";
 
 		return (object) [
 			'status' => 'success',
 			'message' => 'SQL query generated successfully',
 			'data' => (object) [
-				'sql' => self::getColumnSettings(),
+				'sql' => $new_sql,
 				'options' => (object) [
 					'columns' => self::$schema_options['columns'],
 					'indexes' => self::cleanSettings(self::$schema_options['indexes']),
