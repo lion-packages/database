@@ -9,9 +9,10 @@ class Keywords {
 
 	protected static ?MySQL $mySQL = null;
 	protected static ?Schema $schema = null;
-	public static bool $is_schema = false;
+	protected static bool $is_schema = false;
 	protected static bool $is_create_schema = false;
 	protected static bool $is_create_table = false;
+	protected static bool $is_create_view = false;
 	protected static bool $is_create_procedure = false;
 
 	protected static int $cont = 1;
@@ -34,6 +35,7 @@ class Keywords {
 	protected static array $schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 
 	protected static array $keywords = [
+		'replace' => " REPLACE",
 		'end' => " END",
 		'begin' => " BEGIN",
 		'exists' => " EXISTS",
@@ -157,6 +159,7 @@ class Keywords {
 		self::$is_schema = false;
 		self::$is_create_schema = false;
 		self::$is_create_table = false;
+		self::$is_create_view = false;
 		self::$is_create_procedure = false;
 	}
 

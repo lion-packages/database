@@ -4,6 +4,7 @@ namespace LionSQL\Drivers\MySQL;
 
 use \Closure;
 use LionSQL\Functions;
+use \ReflectionFunction;
 
 class Schema extends Functions {
 
@@ -12,8 +13,14 @@ class Schema extends Functions {
 	}
 
 	public static function groupQuery(Closure $callback): Schema {
+		$parameters = (new ReflectionFunction($callback))->getParameters();
+
 		self::openGroup(self::$schema);
-		$callback(self::$schema);
+		$callback(
+			$parameters[0]->getClass()->getName() === self::$mySQL::class
+				? self::$mySQL
+				: self::$schema
+		);
 		self::closeGroup(self::$schema);
 
 		return self::$schema;
@@ -61,7 +68,7 @@ class Schema extends Functions {
 	}
 
 	public static function view(string $view, bool $option = false): Schema {
-		self::$is_create_schema = false;
+		self::$is_create_view = true;
 
 		if (!$option) {
 			self::$view = self::$dbname . "." . $view;
@@ -241,6 +248,11 @@ class Schema extends Functions {
 
 		if (self::$is_create_procedure === true) {
 			self::$sql .= self::$keywords['use'] . " `" . self::$dbname . "`;" . self::$keywords['drop'] . self::$keywords['procedure'] . self::$keywords['if'] . self::$keywords['exists'] . " `" . self::$procedure . "`;" . self::$keywords['create'] . self::$keywords['procedure']  . " `" . self::$procedure . "`";
+		}
+
+		if (self::$is_create_view === true) {
+			self::$message = "View created";
+			self::$sql .= self::$keywords['use'] . " `" . self::$dbname . "`;" . self::$keywords['create'] . self::$keywords['or'] . self::$keywords['replace'] . self::$keywords['view'] . " " . self::$view . self::$keywords['as'];
 		}
 
 		return self::$schema;
