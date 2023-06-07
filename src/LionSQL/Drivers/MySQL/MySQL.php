@@ -113,15 +113,15 @@ class MySQL extends Functions {
 		return self::$mySQL;
 	}
 
-	public static function from(string $table = null): MySQL {
-		if ($table === null) {
+	public static function from(string $from = null): MySQL {
+		if ($from === null) {
 			if (self::$table === "") {
 				self::$sql .= self::$keywords['from'] . " " . self::$view;
 			} else {
 				self::$sql .= self::$keywords['from'] . " " . self::$table;
 			}
 		} else {
-
+			self::$sql .= self::$keywords['from'] . " " . $from;
 		}
 
 		return self::$mySQL;
@@ -149,12 +149,12 @@ class MySQL extends Functions {
 	}
 
 	public static function tables(): MySQL {
-		self::$sql .= self::$keywords['tables'] . self::$keywords['from'] . " " . self::$dbname;
+		self::$sql .= self::$keywords['tables'];
 		return self::$mySQL;
 	}
 
 	public static function columns(): MySQL {
-		self::$sql .= self::$keywords['columns'] . self::$keywords['from'] . " " . self::$table;
+		self::$sql .= self::$keywords['columns'];
 		return self::$mySQL;
 	}
 
