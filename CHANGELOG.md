@@ -1,5 +1,48 @@
 # Release Notes
 
+## [v8.3.0](https://github.com/Sleon4/Lion-SQL/compare/v8.2.0...v8.3.0) (2023-06-07)
+
+### Added
+- added from function in LionSQL\Drivers\MySQL\MySQL class
+- added schema function in LionSQL\Drivers\MySQL\Schema class
+- added procedure function in LionSQL\Drivers\MySQL\Schema class
+- added end function in LionSQL\Drivers\MySQL\Schema class
+- added in function in LionSQL\Drivers\MySQL\Schema class
+- added int function in LionSQL\Drivers\MySQL\Schema class
+- added bigInt function in LionSQL\Drivers\MySQL\Schema class
+- added decimal function in LionSQL\Drivers\MySQL\Schema class
+- added double function in LionSQL\Drivers\MySQL\Schema class
+- added float function in LionSQL\Drivers\MySQL\Schema class
+- added mediumInt function in LionSQL\Drivers\MySQL\Schema class
+- added real function in LionSQL\Drivers\MySQL\Schema class
+- added smallInt function in LionSQL\Drivers\MySQL\Schema class
+- added tinyInt function in LionSQL\Drivers\MySQL\Schema class
+- added blob function in LionSQL\Drivers\MySQL\Schema class
+- added char function in LionSQL\Drivers\MySQL\Schema class
+- added json function in LionSQL\Drivers\MySQL\Schema class
+- added nchar function in LionSQL\Drivers\MySQL\Schema class
+- added nvarchar function in LionSQL\Drivers\MySQL\Schema class
+- added varchar function in LionSQL\Drivers\MySQL\Schema class
+- added longText function in LionSQL\Drivers\MySQL\Schema class
+- added mediumText function in LionSQL\Drivers\MySQL\Schema class
+- added text function in LionSQL\Drivers\MySQL\Schema class
+- added tinyText function in LionSQL\Drivers\MySQL\Schema class
+- added enum function in LionSQL\Drivers\MySQL\Schema class
+- added date function in LionSQL\Drivers\MySQL\Schema class
+- added time function in LionSQL\Drivers\MySQL\Schema class
+- added timeStamp function in LionSQL\Drivers\MySQL\Schema class
+- added dateTime function in LionSQL\Drivers\MySQL\Schema class
+- added groupQueryBegin function in LionSQL\Drivers\MySQL\Schema class
+- added groupQueryParams function in LionSQL\Drivers\MySQL\Schema class
+- added groupQuery function in LionSQL\Drivers\MySQL\Schema class
+
+### Changed
+- cleaned up query when generating sql with getQueryString to avoid nesting previous queries
+- added property into to generate insert
+
+### Refactoring
+- the columns and tabs function has been refactored to nest the current statement in the LionSQL\Drivers\MySQL\MySQL class
+
 ## [v8.2.0](https://github.com/Sleon4/Lion-SQL/compare/v8.1.1...v8.2.0) (2023-06-06)
 
 ### Added
