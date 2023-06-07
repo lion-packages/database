@@ -10,12 +10,14 @@ class Keywords {
 	protected static ?MySQL $mySQL = null;
 	protected static ?Schema $schema = null;
 	protected static bool $is_schema = false;
+	protected static bool $is_create_schema = false;
 
 	protected static int $cont = 1;
 	protected static string $sql = "";
 	protected static string $class_name = "";
 	protected static string $dbname = "";
 	protected static string $table = "";
+	protected static string $schema_str = "";
 	protected static string $view = "";
 	protected static string $message = "";
 	protected static array $data_info = [];
@@ -29,6 +31,11 @@ class Keywords {
 	protected static array $schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 
 	protected static array $keywords = [
+		'engine' => " ENGINE",
+		'collate' => " COLLATE",
+		'character' => " CHARACTER",
+		'schema' => " SCHEMA",
+		'database' => " DATABASE",
 		'full' => " FULL",
 		'with' => " WITH",
 		'recursive' => " RECURSIVE",
@@ -126,6 +133,7 @@ class Keywords {
 		self::$class_name = "";
 		self::$table = "";
 		self::$view = "";
+		self::$schema_str = "";
 		self::$data_info = [];
 		self::$active_connection = self::$connections['default'];
 		self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
@@ -135,6 +143,7 @@ class Keywords {
 		self::$collate = "UTF8_SPANISH_CI";
 		self::$schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 		self::$is_schema = false;
+		self::$is_create_schema = false;
 	}
 
 	protected static function getColumnSettings(): string {

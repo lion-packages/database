@@ -12,7 +12,15 @@ class Schema extends Functions {
 		}
 	}
 
+	public static function schema(string $schema): Schema {
+		self::$is_create_schema = true;
+		self::$schema_str = $schema;
+		return self::$schema;
+	}
+
 	public static function table(string $table, bool $option = false): Schema {
+		self::$is_create_schema = false;
+
 		if (!$option) {
 			self::$table = self::$dbname . "." . $table;
 		} else {
@@ -23,6 +31,8 @@ class Schema extends Functions {
 	}
 
 	public static function view(string $view, bool $option = false): Schema {
+		self::$is_create_schema = false;
+
 		if (!$option) {
 			self::$view = self::$dbname . "." . $view;
 		} else {
@@ -40,10 +50,20 @@ class Schema extends Functions {
 		return self::$schema;
 	}
 
-	public static function create(): Schema {
+	public static function create(string $character_set = "UTF8", string $collate = "UTF8_SPANISH_CI", string $engine = "INNODB"): Schema {
 		self::$is_schema = true;
-		self::$message = "Execution finished";
-		self::$sql .= self::$keywords['create'] . self::$keywords['table'] . " " . self::$table . "(--COLUMN_SETTINGS--) ENGINE=" . self::$engine . " DEFAULT CHARACTER SET=" . self::$character_set . " COLLATE = " . self::$collate . ";--FOREIGN_INDEX----FOREIGN_CONSTRAINT--";
+		self::$character_set = $character_set;
+		self::$collate = $collate;
+
+		if (!self::$is_create_schema) {
+			self::$engine = $engine;
+			self::$message = "Table created";
+			self::$sql .= self::$keywords['create'] . self::$keywords['table'] . " " . self::$table . " (--COLUMN_SETTINGS--)" . self::$keywords['engine'] . " = " . self::$engine . self::$keywords['default'] . self::$keywords['character'] . self::$keywords['set'] . " = " . self::$character_set . self::$keywords['collate'] . " = " . self::$collate . ";--FOREIGN_INDEX----FOREIGN_CONSTRAINT--";
+		} else {
+			self::$message = "Database created";
+			self::$sql .= self::$keywords['create'] . self::$keywords['schema'] . " " . self::$schema_str . self::$keywords['default'] . self::$keywords['character'] . self::$keywords['set'] . " " . self::$character_set . self::$keywords['collate'] . " " . self::$collate;
+		}
+
 		return self::$schema;
 	}
 
