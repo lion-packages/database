@@ -44,21 +44,31 @@ class Functions extends Connection {
 	}
 
 	protected static function bindValue(array $list): void {
-		$type = function($value) {
-			if (gettype($value) === 'integer') {
-				return PDO::PARAM_INT;
-			} elseif (gettype($value) === 'boolean') {
-				return PDO::PARAM_BOOL;
-			} elseif (gettype($value) === 'NULL') {
-				return PDO::PARAM_NULL;
-			} else {
-				return PDO::PARAM_STR;
-			}
-		};
+		if (!self::$is_schema) {
+			$type = function($value) {
+				if (gettype($value) === 'integer') {
+					return PDO::PARAM_INT;
+				} elseif (gettype($value) === 'boolean') {
+					return PDO::PARAM_BOOL;
+				} elseif (gettype($value) === 'NULL') {
+					return PDO::PARAM_NULL;
+				} else {
+					return PDO::PARAM_STR;
+				}
+			};
 
-		foreach ($list as $key => $value) {
-			self::$stmt->bindValue(self::$cont, $value, $type($value));
-			self::$cont++;
+			foreach ($list as $key => $value) {
+				self::$stmt->bindValue(self::$cont, $value, $type($value));
+				self::$cont++;
+			}
+		} else {
+			$index = 0;
+
+			self::$sql = preg_replace_callback('/\?/', function($matches) use ($list, &$index) {
+				$value = $list[$index];
+				$index++;
+				return $value;
+			}, self::$sql);
 		}
 	}
 
@@ -69,6 +79,8 @@ class Functions extends Connection {
 	}
 
 	public static function getQueryString(): object {
+		self::bindValue(self::$data_info);
+
 		if (!self::$is_schema) {
 			$new_sql = self::$sql;
 			self::$sql = "";
@@ -104,8 +116,14 @@ class Functions extends Connection {
 
 	public static function execute(): array|object {
 		try {
-			self::prepare();
-			self::bindValue(self::$data_info);
+			if (self::$is_schema) {
+				self::bindValue(self::$data_info);
+				self::prepare();
+			} else {
+				self::prepare();
+				self::bindValue(self::$data_info);
+			}
+
 			self::$stmt->execute();
 			self::clean();
 

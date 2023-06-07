@@ -15,6 +15,11 @@ class MySQL extends Functions {
 		self::mysql();
 	}
 
+	public static function end(string $end = ";"): MySQL {
+		self::$sql .= $end;
+		return self::$mySQL;
+	}
+
 	public static function full(): MySQL {
 		self::$sql .= self::$keywords['full'];
 		return self::$mySQL;
@@ -177,8 +182,8 @@ class MySQL extends Functions {
 			self::addRows($row);
 		}
 
+		self::$message = "Rows inserted successfully";
 		self::$sql = self::$keywords['insert'] . " " . self::$table . " (" . self::addColumns($columns) . ")" . self::$keywords['values'] . " " . self::addCharacterBulk($rows);
-		self::$message = "Execution finished";
 		return self::$mySQL;
 	}
 
@@ -195,14 +200,15 @@ class MySQL extends Functions {
 		}
 
 		self::addRows($rows);
-		self::$sql = self::$keywords['call'] . " " . self::$dbname . ".{$store_procedure}(" . self::addCharacter($rows) . ")";
-		self::$message = "Execution finished";
+		self::$message = "Procedure executed successfully";
+		self::$sql .= self::$keywords['call'] . " " . self::$dbname . ".{$store_procedure}(" . self::addCharacter($rows) . ")";
+
 		return self::$mySQL;
 	}
 
 	public static function delete(): MySQL {
-		self::$sql = self::$keywords['delete'] . self::$keywords['from'] . " " . self::$table;
 		self::$message = "Rows deleted successfully";
+		self::$sql .= self::$keywords['delete'] . self::$keywords['from'] . " " . self::$table;
 		return self::$mySQL;
 	}
 
@@ -212,8 +218,9 @@ class MySQL extends Functions {
 		}
 
 		self::addRows($rows);
-		self::$sql = self::$keywords['update'] . " " . self::$table . self::$keywords['set'] . " " . self::addCharacterEqualTo($rows);
 		self::$message = "Rows updated successfully";
+		self::$sql .= self::$keywords['update'] . " " . self::$table . self::$keywords['set'] . " " . self::addCharacterEqualTo($rows);
+
 		return self::$mySQL;
 	}
 
@@ -223,8 +230,9 @@ class MySQL extends Functions {
 		}
 
 		self::addRows($rows);
-		self::$sql = self::$keywords['insert'] . self::$keywords['into'] . " " . self::$table . " (" . self::addColumns(array_keys($rows)) . ")" . self::$keywords['values'] . " (" . self::addCharacterAssoc($rows) . ")";
 		self::$message = "Rows inserted successfully";
+		self::$sql .= self::$keywords['insert'] . self::$keywords['into'] . " " . self::$table . " (" . self::addColumns(array_keys($rows)) . ")" . self::$keywords['values'] . " (" . self::addCharacterAssoc($rows) . ")";
+
 		return self::$mySQL;
 	}
 

@@ -9,14 +9,17 @@ class Keywords {
 
 	protected static ?MySQL $mySQL = null;
 	protected static ?Schema $schema = null;
-	protected static bool $is_schema = false;
+	public static bool $is_schema = false;
 	protected static bool $is_create_schema = false;
+	protected static bool $is_create_table = false;
+	protected static bool $is_create_procedure = false;
 
 	protected static int $cont = 1;
 	protected static string $sql = "";
 	protected static string $class_name = "";
 	protected static string $dbname = "";
 	protected static string $table = "";
+	protected static string $procedure = "";
 	protected static string $schema_str = "";
 	protected static string $view = "";
 	protected static string $message = "";
@@ -31,6 +34,12 @@ class Keywords {
 	protected static array $schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 
 	protected static array $keywords = [
+		'end' => " END",
+		'begin' => " BEGIN",
+		'exists' => " EXISTS",
+		'if' => " IF",
+		'procedure' => " PROCEDURE",
+		'use' => " USE",
 		'engine' => " ENGINE",
 		'collate' => " COLLATE",
 		'character' => " CHARACTER",
@@ -105,6 +114,7 @@ class Keywords {
 		'real' => " REAL",
 		'smallint' => " SMALLINT(?)",
 		'tinyint' => " TINYINT(?)",
+		'blob' => " BLOB",
 		'char' => " CHAR(?)",
 		'json' => " JSON",
 		'nchar' => " NCHAR(?)",
@@ -134,6 +144,7 @@ class Keywords {
 		self::$class_name = "";
 		self::$table = "";
 		self::$view = "";
+		self::$procedure = "";
 		self::$schema_str = "";
 		self::$data_info = [];
 		self::$active_connection = self::$connections['default'];
@@ -145,6 +156,8 @@ class Keywords {
 		self::$schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 		self::$is_schema = false;
 		self::$is_create_schema = false;
+		self::$is_create_table = false;
+		self::$is_create_procedure = false;
 	}
 
 	protected static function getColumnSettings(): string {
