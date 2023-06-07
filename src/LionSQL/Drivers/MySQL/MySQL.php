@@ -209,8 +209,8 @@ class MySQL extends Functions {
 		}
 
 		self::addRows($rows);
-		self::$sql = self::$keywords['insert'] . " " . self::$table . " (" . self::addColumns(array_keys($rows)) . ")" . self::$keywords['values'] . " (" . self::addCharacterAssoc($rows) . ")";
-		self::$message = "successfully executed";
+		self::$sql = self::$keywords['insert'] . self::$keywords['into'] . " " . self::$table . " (" . self::addColumns(array_keys($rows)) . ")" . self::$keywords['values'] . " (" . self::addCharacterAssoc($rows) . ")";
+		self::$message = "Rows inserted successfully";
 		return self::$mySQL;
 	}
 
