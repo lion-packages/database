@@ -243,7 +243,7 @@ class Schema extends Functions {
 		if (self::$is_create_table === true) {
 			self::$engine = $engine;
 			self::$message = "Table created";
-			self::$sql .= self::$keywords['create'] . self::$keywords['table'] . " " . self::$table . " (--COLUMN_SETTINGS--)" . self::$keywords['engine'] . " = " . self::$engine . self::$keywords['default'] . self::$keywords['character'] . self::$keywords['set'] . " = " . self::$character_set . self::$keywords['collate'] . " = " . self::$collate . ";--FOREIGN_INDEX----FOREIGN_CONSTRAINT--";
+			self::$sql .= self::$keywords['use'] . " `" . self::$dbname . "`;" . self::$keywords['drop'] . self::$keywords['table'] . self::$keywords['if'] . self::$keywords['exists'] . " `" . self::$table . "`;" . self::$keywords['create'] . self::$keywords['table'] . " " . self::$table . " (--COLUMN_SETTINGS--)" . self::$keywords['engine'] . " = " . self::$engine . self::$keywords['default'] . self::$keywords['character'] . self::$keywords['set'] . " = " . self::$character_set . self::$keywords['collate'] . " = " . self::$collate . ";--FOREIGN_INDEX----FOREIGN_CONSTRAINT--";
 		}
 
 		if (self::$is_create_procedure === true) {
