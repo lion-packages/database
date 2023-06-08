@@ -203,7 +203,7 @@ class Keywords {
 		$str_column_indexes = "";
 
 		// columns
-		if (in_array($settings['type'], ["enum", "char", "nchar", "nvarchar", "varchar", "longtext", "mediumtext", "text", "tinytext"])) {
+		if (in_array($settings['type'], ["enum", "char", "nchar", "nvarchar", "varchar", "longtext", "mediumtext", "text", "tinytext", "blob"])) {
 			if ($settings['type'] === "enum") {
 				$str_column_setting .= str_replace(
 					"?",
