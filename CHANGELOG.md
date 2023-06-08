@@ -1,6 +1,6 @@
 # Release Notes
 
-## [v8.3.0](https://github.com/Sleon4/Lion-SQL/compare/v8.2.0...v8.3.0) (2023-06-07)
+## [v8.3.0](https://github.com/Sleon4/Lion-SQL/compare/v8.2.0...v8.3.0) (2023-06-08)
 
 ### Added
 - added from function in LionSQL\Drivers\MySQL\MySQL class
