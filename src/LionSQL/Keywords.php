@@ -194,9 +194,13 @@ class Keywords {
 		$separate_table = explode(".", self::$table);
 
 		if (!isset($settings['primary-key'])) {
-			$column = !isset($settings['foreign-key']) ? "{$separate_table[1]}_{$column}" : $column;
+            if (!isset($settings['foreign-key'])) {
+                $column = isset($separate_table[1]) ? "{$separate_table[1]}_{$column}" : "{$separate_table[0]}_{$column}";
+            } else {
+                $column = $column;
+            }
 		} else {
-			$column = "{$column}{$separate_table[1]}";
+			$column = isset($separate_table[1]) ? "{$column}{$separate_table[1]}" : "{$column}{$separate_table[0]}";
 		}
 
 		$str_column_setting = $column;
