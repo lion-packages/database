@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v8.4.0](https://github.com/Sleon4/Lion-SQL/compare/v8.3.0...v8.4.0) (2023-06-10)
+
+### Added
+- procedure function has been added to the LionSQL\Drivers\MySQL\MySQL class
+- status function has been added to the LionSQL\Drivers\MySQL\MySQL class
+
 ## [v8.3.0](https://github.com/Sleon4/Lion-SQL/compare/v8.2.0...v8.3.0) (2023-06-08)
 
 ### Added
