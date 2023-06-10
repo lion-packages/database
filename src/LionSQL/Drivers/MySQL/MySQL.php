@@ -15,6 +15,18 @@ class MySQL extends Functions {
 		self::mysql();
 	}
 
+	// ---------------------------------------------------------------------------------------------
+
+	public static function procedure(): MySQL {
+		self::$sql .= self::$keywords['procedure'];
+		return self::$mySQL;
+	}
+
+	public static function status(): MySQL {
+		self::$sql .= self::$keywords['status'];
+		return self::$mySQL;
+	}
+
 	public static function end(string $end = ";"): MySQL {
 		self::$sql .= $end;
 		return self::$mySQL;
