@@ -71,21 +71,37 @@ class MySQL extends Functions {
 		return self::$mySQL;
 	}
 
-	public static function table(string $table, bool $option = false): MySQL {
+	public static function table(string $table, bool $option = false, bool $nest = false): MySQL {
 		if (!$option) {
-			self::$table = self::$dbname . "." . $table;
+			if (!$nest) {
+				self::$table = self::$dbname . "." . $table;
+			} else {
+				self::$sql .= self::$keywords['table'] . " " . self::$dbname . "." . $table;
+			}
 		} else {
-			self::$table = $table;
+			if (!$nest) {
+				self::$table = $table;
+			} else {
+				self::$sql .= self::$keywords['table'] . " " . $table;
+			}
 		}
 
 		return self::$mySQL;
 	}
 
-	public static function view(string $view, bool $option = false): MySQL {
+	public static function view(string $view, bool $option = false, bool $nest = false): MySQL {
 		if (!$option) {
-			self::$view = self::$dbname . "." . $view;
+			if (!$nest) {
+				self::$view = self::$dbname . "." . $view;
+			} else {
+				self::$sql .= self::$keywords['view'] . " " . self::$dbname . "." . $view;
+			}
 		} else {
-			self::$view = $view;
+			if (!$nest) {
+				self::$view = $view;
+			} else {
+				self::$sql .= self::$keywords['view'] . " " . $view;
+			}
 		}
 
 		return self::$mySQL;
