@@ -1,5 +1,14 @@
 # Release Notes
 
+## [v8.5.0](https://github.com/Sleon4/Lion-SQL/compare/v8.4.0...v8.5.0) (2023-06-11)
+
+### Added
+- added create function in LionSQL\Drivers\MySQL\MySQL class
+
+### Refactoring
+- refactored table method in LionSQL\Driver\MySQL\MySQL class
+- refactored view method in LionSQL\Driver\MySQL\MySQL class
+
 ## [v8.4.0](https://github.com/Sleon4/Lion-SQL/compare/v8.3.0...v8.4.0) (2023-06-10)
 
 ### Added
