@@ -276,7 +276,7 @@ class Keywords {
 		}
 
 		if (isset($settings['foreign-key'])) {
-			$column_fk = " {$separate_table[1]}_{$column}_FK";
+			$column_fk = " {$separate_table[0]}_{$column}_FK";
 
 			if (count(self::$schema_options['foreign']['index']) > 0) {
 				self::$schema_options['foreign']['index'][] = self::$keywords['add'] . self::$keywords['index'] . "{$column_fk}_idx ({$column} " . self::$keywords['asc'] . ")";
@@ -285,9 +285,9 @@ class Keywords {
 			}
 
 			if (count(self::$schema_options['foreign']['constraint']) > 0) {
-				self::$schema_options['foreign']['constraint'][] = self::$keywords['add'] . self::$keywords['constraint'] . $column_fk . self::$keywords['foreign'] . self::$keywords['key'] . " ({$column})" . self::$keywords['references'] . " {$separate_table[0]}.{$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$keywords['on'] . self::$keywords['delete'] . self::$keywords['restrict'] . self::$keywords['on'] . self::$keywords['update'] . self::$keywords['restrict'];
+				self::$schema_options['foreign']['constraint'][] = self::$keywords['add'] . self::$keywords['constraint'] . $column_fk . self::$keywords['foreign'] . self::$keywords['key'] . " ({$column})" . self::$keywords['references'] . " {$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$keywords['on'] . self::$keywords['delete'] . self::$keywords['restrict'] . self::$keywords['on'] . self::$keywords['update'] . self::$keywords['restrict'];
 			} else {
-				self::$schema_options['foreign']['constraint'][] .= self::$keywords['alter'] . self::$keywords['table'] . " " . self::$table . self::$keywords['add'] . self::$keywords['constraint'] . $column_fk . self::$keywords['foreign'] . self::$keywords['key'] . " ({$column})" . self::$keywords['references'] . " {$separate_table[0]}.{$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$keywords['on'] . self::$keywords['delete'] . self::$keywords['restrict'] . self::$keywords['on'] . self::$keywords['update'] . self::$keywords['restrict'];
+				self::$schema_options['foreign']['constraint'][] .= self::$keywords['alter'] . self::$keywords['table'] . " " . self::$table . self::$keywords['add'] . self::$keywords['constraint'] . $column_fk . self::$keywords['foreign'] . self::$keywords['key'] . " ({$column})" . self::$keywords['references'] . " {$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$keywords['on'] . self::$keywords['delete'] . self::$keywords['restrict'] . self::$keywords['on'] . self::$keywords['update'] . self::$keywords['restrict'];
 			}
 		}
 
