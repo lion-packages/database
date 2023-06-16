@@ -217,65 +217,65 @@ class Keywords {
 				$str_column_setting .= str_replace(
 					"?",
 					self::addEnumColumns($settings['options']),
-					self::$keywords[$settings['type']]
+					self::$words[$settings['type']]
 				);
 			} else {
 				$str_column_setting .= str_replace(
 					"?",
 					isset($settings['lenght']) ? $settings['lenght'] : 45,
-					self::$keywords[$settings['type']]
+					self::$words[$settings['type']]
 				);
 			}
 		}
 
 		if (in_array($settings['type'], ["date", "time", "timestamp", "datetime"])) {
-			$str_column_setting .= self::$keywords[$settings['type']];
+			$str_column_setting .= self::$words[$settings['type']];
 		}
 
 		if (in_array($settings['type'], ["int", "bigint", "decimal", "double", "float", "mediumint", "real", "smallint", "tinyint"])) {
 			$str_column_setting .= str_replace(
 				"?",
 				isset($settings['lenght']) ? $settings['lenght'] : 11,
-				self::$keywords[$settings['type']]
+				self::$words[$settings['type']]
 			);
 		}
 
 		if (isset($settings['null'])) {
-			$str_column_setting .= !$settings['null'] ? self::$keywords['not-null'] : self::$keywords['null'];
+			$str_column_setting .= !$settings['null'] ? self::$words['not-null'] : self::$words['null'];
 		} else {
-			$str_column_setting .= self::$keywords['null'];
+			$str_column_setting .= self::$words['null'];
 		}
 
 		if (isset($settings['auto-increment'])) {
 			if ($settings['auto-increment']) {
-				$str_column_setting .= self::$keywords['auto-increment'];
+				$str_column_setting .= self::$words['auto-increment'];
 			}
 		}
 
 		if (isset($settings['default'])) {
 			if ($settings['default'] != false) {
-				$str_column_setting .= self::$keywords['default'] . " '{$settings['default']}'";
+				$str_column_setting .= self::$words['default'] . " '{$settings['default']}'";
 			}
 		} else {
 			if (!isset($settings['primary-key'])) {
-				$str_column_setting .= self::$keywords['default'] . self::$keywords['null'];
+				$str_column_setting .= self::$words['default'] . self::$words['null'];
 			}
 		}
 
 		if (isset($settings['comment'])) {
-			$str_column_setting .= self::$keywords['comment'] . " '{$settings['comment']}'";
+			$str_column_setting .= self::$words['comment'] . " '{$settings['comment']}'";
 		}
 
 		// Indexes
 		if (isset($settings['primary-key'])) {
 			if ($settings['primary-key']) {
-				$str_column_indexes .= str_replace("?", $column, self::$keywords['primary-key']);
+				$str_column_indexes .= str_replace("?", $column, self::$words['primary-key']);
 			}
 		}
 
 		if (isset($settings['unique'])) {
 			if ($settings['unique']) {
-				$str_column_indexes .= self::$keywords['unique'] . self::$keywords['index'] . " {$column}_UNIQUE ({$column}" . self::$keywords['asc'] . ")";
+				$str_column_indexes .= self::$words['unique'] . self::$words['index'] . " {$column}_UNIQUE ({$column}" . self::$words['asc'] . ")";
 			}
 		}
 
@@ -283,15 +283,15 @@ class Keywords {
 			$column_fk = " {$separate_table[0]}_{$column}_FK";
 
 			if (count(self::$schema_options['foreign']['index']) > 0) {
-				self::$schema_options['foreign']['index'][] = self::$keywords['add'] . self::$keywords['index'] . "{$column_fk}_idx ({$column} " . self::$keywords['asc'] . ")";
+				self::$schema_options['foreign']['index'][] = self::$words['add'] . self::$words['index'] . "{$column_fk}_idx ({$column} " . self::$words['asc'] . ")";
 			} else {
-				self::$schema_options['foreign']['index'][] = self::$keywords['alter'] . self::$keywords['table'] . " " . self::$table . self::$keywords['add'] . self::$keywords['index'] . "{$column_fk}_idx ({$column} " . self::$keywords['asc'] . ")";
+				self::$schema_options['foreign']['index'][] = self::$words['alter'] . self::$words['table'] . " " . self::$table . self::$words['add'] . self::$words['index'] . "{$column_fk}_idx ({$column} " . self::$words['asc'] . ")";
 			}
 
 			if (count(self::$schema_options['foreign']['constraint']) > 0) {
-				self::$schema_options['foreign']['constraint'][] = self::$keywords['add'] . self::$keywords['constraint'] . $column_fk . self::$keywords['foreign'] . self::$keywords['key'] . " ({$column})" . self::$keywords['references'] . " {$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$keywords['on'] . self::$keywords['delete'] . self::$keywords['restrict'] . self::$keywords['on'] . self::$keywords['update'] . self::$keywords['restrict'];
+				self::$schema_options['foreign']['constraint'][] = self::$words['add'] . self::$words['constraint'] . $column_fk . self::$words['foreign'] . self::$words['key'] . " ({$column})" . self::$words['references'] . " {$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$words['on'] . self::$words['delete'] . self::$words['restrict'] . self::$words['on'] . self::$words['update'] . self::$words['restrict'];
 			} else {
-				self::$schema_options['foreign']['constraint'][] .= self::$keywords['alter'] . self::$keywords['table'] . " " . self::$table . self::$keywords['add'] . self::$keywords['constraint'] . $column_fk . self::$keywords['foreign'] . self::$keywords['key'] . " ({$column})" . self::$keywords['references'] . " {$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$keywords['on'] . self::$keywords['delete'] . self::$keywords['restrict'] . self::$keywords['on'] . self::$keywords['update'] . self::$keywords['restrict'];
+				self::$schema_options['foreign']['constraint'][] .= self::$words['alter'] . self::$words['table'] . " " . self::$table . self::$words['add'] . self::$words['constraint'] . $column_fk . self::$words['foreign'] . self::$words['key'] . " ({$column})" . self::$words['references'] . " {$settings['foreign-key']['table']} ({$settings['foreign-key']['column']})" . self::$words['on'] . self::$words['delete'] . self::$words['restrict'] . self::$words['on'] . self::$words['update'] . self::$words['restrict'];
 			}
 		}
 

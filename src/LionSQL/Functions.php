@@ -2,12 +2,11 @@
 
 namespace LionSQL;
 
-use LionSQL\Connection;
 use LionSQL\Drivers\MySQL\MySQL;
 use \PDO;
 use \PDOException;
 
-class Functions extends Connection {
+class Functions extends \LionSQL\Connection {
 
 	protected static function openGroup(mixed $object): mixed {
 		self::$sql .= " (";
@@ -79,37 +78,49 @@ class Functions extends Connection {
 
 	public static function getQueryString(): object {
 		if (!self::$is_schema) {
-			$new_sql = self::$sql;
+			$new_sql = trim(self::$sql);
+			$split = explode(";", trim(self::$sql));
+			$new_list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
 			self::$sql = "";
+			self::$list_sql = [];
 
 			return (object) [
 				'status' => 'success',
 				'message' => 'SQL query generated successfully',
 				'data' => (object) [
-					'sql' => trim($new_sql)
+					'sql' => [
+						'query' => $new_sql,
+						'split' => $new_list_sql
+					]
 				]
 			];
 		}
 
-		// self::bindValue();
-		// $new_sql = self::getColumnSettings();
-		// self::$sql = "";
+		self::bindValue(self::$actual_code);
+		$new_sql = self::getColumnSettings(trim(self::$sql));
+		$split = explode(";", trim($new_sql));
+		$new_list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
+		self::$sql = "";
+		self::$list_sql = [];
 
-		// return (object) [
-		// 	'status' => 'success',
-		// 	'message' => 'SQL query generated successfully',
-		// 	'data' => (object) [
-		// 		'sql' => $new_sql,
-		// 		'options' => (object) [
-		// 			'columns' => self::$schema_options['columns'],
-		// 			'indexes' => self::cleanSettings(self::$schema_options['indexes']),
-		// 			'foreigns' => (object) [
-		// 				'index' => self::cleanSettings(self::$schema_options['foreign']['index']),
-		// 				'constraint' => self::cleanSettings(self::$schema_options['foreign']['constraint'])
-		// 			]
-		// 		]
-		// 	]
-		// ];
+		return (object) [
+			'status' => 'success',
+			'message' => 'SQL query generated successfully',
+			'data' => (object) [
+				'sql' => [
+					'query' => $new_sql,
+					'split' => $new_list_sql
+				],
+				'options' => (object) [
+					'columns' => self::$schema_options['columns'],
+					'indexes' => self::cleanSettings(self::$schema_options['indexes']),
+					'foreigns' => (object) [
+						'index' => self::cleanSettings(self::$schema_options['foreign']['index']),
+						'constraint' => self::cleanSettings(self::$schema_options['foreign']['constraint'])
+					]
+				]
+			]
+		];
 	}
 
 	public static function execute(): object {
@@ -123,19 +134,33 @@ class Functions extends Connection {
 			self::$list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
 
 			try {
-				foreach (array_keys(self::$data_info) as $key => $code) {
-					$sql = self::$list_sql[$key];
+				$data_info_keys = array_keys(self::$data_info);
 
+				if (count($data_info_keys) > 0) {
+					foreach ($data_info_keys as $key => $code) {
+						$sql = self::$list_sql[$key];
+
+						if (self::$is_schema) {
+							self::bindValue($code);
+							self::prepare($sql);
+						} else {
+							self::prepare($sql);
+							self::bindValue($code);
+						}
+
+						self::$stmt->execute();
+						self::$stmt->closeCursor();
+					}
+				} else {
 					if (self::$is_schema) {
-						self::bindValue($code);
-						self::prepare($sql);
+						self::bindValue(self::$actual_code);
+						self::prepare(self::$sql);
 					} else {
-						self::prepare($sql);
-						self::bindValue($code);
+						self::prepare(self::$sql);
+						self::bindValue(self::$actual_code);
 					}
 
 					self::$stmt->execute();
-					self::$stmt->closeCursor();
 				}
 
 				if (self::$is_transaction) {
@@ -162,26 +187,49 @@ class Functions extends Connection {
 		});
 	}
 
-	public static function get(): array {
+	public static function get(): array|object {
 		return self::mysql(function() {
 			$responses = [];
 			$split = explode(";", trim(self::$sql));
 			self::$list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
 
 			try {
-				foreach (array_keys(self::$data_info) as $key => $code) {
-					self::prepare(self::$list_sql[$key]);
+				$data_info_keys = array_keys(self::$data_info);
 
-					if (count(self::$data_info[$code]) > 0) {
-						self::bindValue($code);
+				if (count($data_info_keys)) {
+					foreach ($data_info_keys as $key => $code) {
+						self::prepare(self::$list_sql[$key]);
+
+						if (count(self::$data_info[$code]) > 0) {
+							self::bindValue($code);
+						}
+
+						if (isset(self::$fetch_mode[$code])) {
+							self::$stmt->setFetchMode(self::$fetch_mode[$code]);
+						}
+
+						if (isset(self::$class_list[$code])) {
+							self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[$code]);
+						}
+
+						self::$stmt->execute();
+						$request = self::$stmt->fetch();
+
+						if (!$request) {
+							$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						} else {
+							$responses[] = $request;
+						}
+					}
+				} else {
+					self::prepare(self::$sql);
+
+					if (isset(self::$fetch_mode[self::$actual_code])) {
+						self::$stmt->setFetchMode(self::$fetch_mode[self::$actual_code]);
 					}
 
-					if (isset(self::$fetch_mode[$code])) {
-						self::$stmt->setFetchMode(self::$fetch_mode[$code]);
-					}
-
-					if (isset(self::$class_list[$code])) {
-						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[$code]);
+					if (isset(self::$class_list[self::$actual_code])) {
+						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[self::$actual_code]);
 					}
 
 					self::$stmt->execute();
@@ -201,33 +249,63 @@ class Functions extends Connection {
 				}
 
 				self::clean();
-				$responses[] = (object) ['status' => 'database-error', 'message' => $e->getMessage(), 'data' => (object) ['file' => $e->getFile(), 'line' => $e->getLine()]];
+				$responses[] = (object) [
+					'status' => 'database-error',
+					'message' => $e->getMessage(),
+					'data' => (object) [
+						'file' => $e->getFile(),
+						'line' => $e->getLine()
+					]
+				];
 			}
 
 			return count($responses) > 1 ? $responses : $responses[0];
 		});
 	}
 
-	public static function getAll(): array {
+	public static function getAll(): array|object {
 		return self::mysql(function() {
 			$responses = [];
 			$split = explode(";", trim(self::$sql));
 			self::$list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
 
 			try {
-				foreach (array_keys(self::$data_info) as $key => $code) {
-					self::prepare(self::$list_sql[$key]);
+				$data_info_keys = array_keys(self::$data_info);
 
-					if (count(self::$data_info[$code]) > 0) {
-						self::bindValue($code);
+				if (count($data_info_keys)) {
+					foreach ($data_info_keys as $key => $code) {
+						self::prepare(self::$list_sql[$key]);
+
+						if (count(self::$data_info[$code]) > 0) {
+							self::bindValue($code);
+						}
+
+						if (isset(self::$fetch_mode[$code])) {
+							self::$stmt->setFetchMode(self::$fetch_mode[$code]);
+						}
+
+						if (isset(self::$class_list[$code])) {
+							self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[$code]);
+						}
+
+						self::$stmt->execute();
+						$request = self::$stmt->fetchAll();
+
+						if (!$request) {
+							$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						} else {
+							$responses[] = $request;
+						}
+					}
+				} else {
+					self::prepare(self::$sql);
+
+					if (isset(self::$fetch_mode[self::$actual_code])) {
+						self::$stmt->setFetchMode(self::$fetch_mode[self::$actual_code]);
 					}
 
-					if (isset(self::$fetch_mode[$code])) {
-						self::$stmt->setFetchMode(self::$fetch_mode[$code]);
-					}
-
-					if (isset(self::$class_list[$code])) {
-						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[$code]);
+					if (isset(self::$class_list[self::$actual_code])) {
+						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[self::$actual_code]);
 					}
 
 					self::$stmt->execute();
@@ -247,7 +325,14 @@ class Functions extends Connection {
 				}
 
 				self::clean();
-				$responses[] = (object) ['status' => 'database-error', 'message' => $e->getMessage(), 'data' => (object) ['file' => $e->getFile(), 'line' => $e->getLine()]];
+				$responses[] = (object) [
+					'status' => 'database-error',
+					'message' => $e->getMessage(),
+					'data' => (object) [
+						'file' => $e->getFile(),
+						'line' => $e->getLine()
+					]
+				];
 			}
 
 			return count($responses) > 1 ? $responses : $responses[0];

@@ -229,6 +229,7 @@ class Schema extends Functions {
 	}
 
 	public static function create(string $character_set = "UTF8", string $collate = "UTF8_SPANISH_CI", string $engine = "INNODB"): Schema {
+		self::$actual_code = uniqid();
 		self::$is_schema = true;
 		self::$character_set = $character_set;
 		self::$collate = $collate;
