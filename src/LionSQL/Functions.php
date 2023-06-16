@@ -19,9 +19,8 @@ class Functions extends Connection {
 		return $object;
 	}
 
-	public static function fetchMode(int $fetch_mode, string $class = ""): MySQL {
-		self::$fetch_mode = $fetch_mode;
-		self::$class_name = $class;
+	public static function fetchMode(int $fetch_mode): MySQL {
+		self::$fetch_mode[self::$actual_code] = $fetch_mode;
 		return self::$mySQL;
 	}
 
@@ -30,7 +29,7 @@ class Functions extends Connection {
 	}
 
 	public static function fetchClass(mixed $class): MySQL {
-		self::$class_name = $class;
+		self::$class_list[self::$actual_code] = $class;
 		return self::$mySQL;
 	}
 
@@ -115,7 +114,11 @@ class Functions extends Connection {
 
 	public static function execute(): object {
 		return self::mysql(function() {
-			$response = (object) [];
+			if (self::$is_transaction) {
+				self::$message = "Transaction executed successfully";
+			}
+
+			$response = (object) ['status' => 'success', 'message' => self::$message];
 			$split = explode(";", trim(self::$sql));
 			self::$list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
 
@@ -131,13 +134,8 @@ class Functions extends Connection {
 						self::bindValue($code);
 					}
 
-					if (self::$is_transaction) {
-						self::$message = "Transaction executed successfully";
-					}
-
 					self::$stmt->execute();
 					self::$stmt->closeCursor();
-					$response = (object) ['status' => 'success', 'message' => self::$message];
 				}
 
 				if (self::$is_transaction) {
@@ -164,96 +162,96 @@ class Functions extends Connection {
 		});
 	}
 
-	public static function get(): void {
-		// return self::mysql(function() {
-		// 	$request = null;
+	public static function get(): array {
+		return self::mysql(function() {
+			$responses = [];
+			$split = explode(";", trim(self::$sql));
+			self::$list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
 
-		// 	try {
-		// 		self::prepare();
+			try {
+				foreach (array_keys(self::$data_info) as $key => $code) {
+					self::prepare(self::$list_sql[$key]);
 
-		// 		if (count(self::$data_info) > 0) {
-		// 			self::bindValue();
-		// 		}
+					if (count(self::$data_info[$code]) > 0) {
+						self::bindValue($code);
+					}
 
-		// 		if (!self::$stmt->execute()) {
-		// 			return (object) ['status' => 'database-error', 'message' => 'An unexpected error has occurred'];
-		// 		}
+					if (isset(self::$fetch_mode[$code])) {
+						self::$stmt->setFetchMode(self::$fetch_mode[$code]);
+					}
 
-		// 		if (self::$fetch_mode != 4) {
-		// 			self::$stmt->setFetchMode(self::$fetch_mode);
-		// 		}
+					if (isset(self::$class_list[$code])) {
+						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[$code]);
+					}
 
-		// 		if (empty(self::$class_name)) {
-		// 			$request = self::$stmt->fetch();
-		// 		} else {
-		// 			self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_name);
-		// 			$request = self::$stmt->fetch();
-		// 			self::$class_name = "";
-		// 		}
+					self::$stmt->execute();
+					$request = self::$stmt->fetch();
 
-		// 		self::clean();
+					if (!$request) {
+						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+					} else {
+						$responses[] = $request;
+					}
+				}
 
-		// 		if (!$request) {
-		// 			return (object) ['status' => 'success', 'message' => 'No data available'];
-		// 		} else {
-		// 			return $request;
-		// 		}
-		// 	} catch (PDOException $e) {
-		// 		self::clean();
+				self::clean();
+			} catch (PDOException $e) {
+				if (self::$active_function) {
+					logger($e->getMessage(), "error");
+				}
 
-		// 		if (self::$active_function) {
-		// 			logger($e->getMessage(), "error");
-		// 		}
+				self::clean();
+				$responses[] = (object) ['status' => 'database-error', 'message' => $e->getMessage(), 'data' => (object) ['file' => $e->getFile(), 'line' => $e->getLine()]];
+			}
 
-		// 		return (object) ['status' => 'database-error', 'message' => $e->getMessage(), 'data' => (object) ['file' => $e->getFile(), 'line' => $e->getLine()]];
-		// 	}
-		// });
+			return count($responses) > 1 ? $responses : $responses[0];
+		});
 	}
 
-	public static function getAll(): void {
-		// return self::mysql(function() {
-		// 	$request = null;
+	public static function getAll(): array {
+		return self::mysql(function() {
+			$responses = [];
+			$split = explode(";", trim(self::$sql));
+			self::$list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
 
-		// 	try {
-		// 		self::prepare();
+			try {
+				foreach (array_keys(self::$data_info) as $key => $code) {
+					self::prepare(self::$list_sql[$key]);
 
-		// 		if (count(self::$data_info) > 0) {
-		// 			self::bindValue();
-		// 		}
+					if (count(self::$data_info[$code]) > 0) {
+						self::bindValue($code);
+					}
 
-		// 		if (!self::$stmt->execute()) {
-		// 			return (object) ['status' => 'database-error', 'message' => 'An unexpected error has occurred'];
-		// 		}
+					if (isset(self::$fetch_mode[$code])) {
+						self::$stmt->setFetchMode(self::$fetch_mode[$code]);
+					}
 
-		// 		if (self::$fetch_mode != 4) {
-		// 			self::$stmt->setFetchMode(self::$fetch_mode);
-		// 		}
+					if (isset(self::$class_list[$code])) {
+						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[$code]);
+					}
 
-		// 		if (empty(self::$class_name)) {
-		// 			$request = self::$stmt->fetchAll();
-		// 		} else {
-		// 			self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_name);
-		// 			$request = self::$stmt->fetchAll();
-		// 			self::$class_name = "";
-		// 		}
+					self::$stmt->execute();
+					$request = self::$stmt->fetchAll();
 
-		// 		self::clean();
+					if (!$request) {
+						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+					} else {
+						$responses[] = $request;
+					}
+				}
 
-		// 		if (!$request) {
-		// 			return (object) ['status' => 'success', 'message' => 'No data available'];
-		// 		} else {
-		// 			return $request;
-		// 		}
-		// 	} catch (PDOException $e) {
-		// 		self::clean();
+				self::clean();
+			} catch (PDOException $e) {
+				if (self::$active_function) {
+					logger($e->getMessage(), "error");
+				}
 
-		// 		if (self::$active_function) {
-		// 			logger($e->getMessage(), "error");
-		// 		}
+				self::clean();
+				$responses[] = (object) ['status' => 'database-error', 'message' => $e->getMessage(), 'data' => (object) ['file' => $e->getFile(), 'line' => $e->getLine()]];
+			}
 
-		// 		return (object) ['status' => 'database-error', 'message' => $e->getMessage(), 'data' => (object) ['file' => $e->getFile(), 'line' => $e->getLine()]];
-		// 	}
-		// });
+			return count($responses) > 1 ? $responses : $responses[0];
+		});
 	}
 
 }

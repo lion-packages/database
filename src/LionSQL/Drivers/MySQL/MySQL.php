@@ -263,6 +263,7 @@ class MySQL extends Functions {
 	}
 
 	public static function select(): MySQL {
+		self::$actual_code = uniqid();
 		$stringColumns = self::addColumns(func_get_args());
 
 		if (self::$table === "") {
@@ -275,6 +276,7 @@ class MySQL extends Functions {
 	}
 
 	public static function selectDistinct(): MySQL {
+		self::$actual_code = uniqid();
 		$stringColumns = self::addColumns(func_get_args());
 
 		if (self::$table === "") {

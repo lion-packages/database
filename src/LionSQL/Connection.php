@@ -15,7 +15,7 @@ class Connection extends \LionSQL\Keywords {
 	protected static PDO $conn;
 	protected static PDOStatement|bool $stmt;
 
-	protected static function mysql(Closure $callback): object {
+	protected static function mysql(Closure $callback): array|object {
 		$connection = self::$connections['connections'][self::$active_connection];
 		$dbname = $connection['dbname'];
 		$host = $connection['host'];

@@ -19,7 +19,7 @@ class Keywords {
 	protected static array $list_sql = [];
 	protected static string $actual_code = "";
 	protected static string $sql = "";
-	protected static string $class_name = "";
+	protected static array $class_list = [];
 	protected static string $dbname = "";
 	protected static string $table = "";
 	protected static string $procedure = "";
@@ -30,7 +30,7 @@ class Keywords {
 	protected static string $active_connection = "";
 	protected static bool $active_function = false;
 	protected static array $connections = [];
-	protected static int $fetch_mode = 4;
+	protected static array $fetch_mode = [];
 	protected static string $engine = "INNODB";
 	protected static string $character_set = "UTF8";
 	protected static string $collate = "UTF8_SPANISH_CI";
@@ -147,7 +147,7 @@ class Keywords {
 		self::$list_sql = [];
 		self::$actual_code = "";
 		self::$sql = "";
-		self::$class_name = "";
+		self::$class_list = [];
 		self::$table = "";
 		self::$view = "";
 		self::$procedure = "";
@@ -155,7 +155,7 @@ class Keywords {
 		self::$data_info = [];
 		self::$active_connection = self::$connections['default'];
 		self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-		self::$fetch_mode = 4;
+		self::$fetch_mode = [];
 		self::$engine == "INNODB";
 		self::$character_set = "UTF8";
 		self::$collate = "UTF8_SPANISH_CI";
