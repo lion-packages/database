@@ -14,8 +14,10 @@ class Keywords {
 	protected static bool $is_create_table = false;
 	protected static bool $is_create_view = false;
 	protected static bool $is_create_procedure = false;
+	protected static bool $is_transaction = false;
 
-	protected static int $cont = 1;
+	protected static array $list_sql = [];
+	protected static string $actual_code = "";
 	protected static string $sql = "";
 	protected static string $class_name = "";
 	protected static string $dbname = "";
@@ -34,7 +36,7 @@ class Keywords {
 	protected static string $collate = "UTF8_SPANISH_CI";
 	protected static array $schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 
-	protected static array $keywords = [
+	protected static array $words = [
 		'status' => " STATUS",
 		'replace' => " REPLACE",
 		'end' => " END",
@@ -142,7 +144,8 @@ class Keywords {
 	];
 
 	protected static function clean(): void {
-		self::$cont = 1;
+		self::$list_sql = [];
+		self::$actual_code = "";
 		self::$sql = "";
 		self::$class_name = "";
 		self::$table = "";
@@ -162,9 +165,10 @@ class Keywords {
 		self::$is_create_table = false;
 		self::$is_create_view = false;
 		self::$is_create_procedure = false;
+		self::$is_transaction = false;
 	}
 
-	protected static function getColumnSettings(): string {
+	protected static function getColumnSettings(string $sql): string {
 		$union = "";
 		$foreign_index = "";
 		$foreign_constraint = "";
@@ -185,7 +189,7 @@ class Keywords {
 			$foreign_constraint .= self::addColumns(self::$schema_options['foreign']['constraint'], false)  . ";";
 		}
 
-		$new_sql = str_replace("--FOREIGN_INDEX--", $foreign_index, self::$sql);
+		$new_sql = str_replace("--FOREIGN_INDEX--", $foreign_index, $sql);
 		$new_sql = str_replace("--FOREIGN_CONSTRAINT--", $foreign_constraint, $new_sql);
 
 		return str_replace("--COLUMN_SETTINGS--", $union, trim($new_sql));

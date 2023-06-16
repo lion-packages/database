@@ -12,23 +12,27 @@ class MySQL extends Functions {
 		self::$connections = $connections;
 		self::$active_connection = self::$connections['default'];
 		self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-		self::mysql();
 	}
 
 	// ---------------------------------------------------------------------------------------------
 
+	public static function transaction(): MySQL {
+		self::$is_transaction = true;
+		return self::$mySQL;
+	}
+
 	public static function create(): MySQL {
-		self::$sql .= self::$keywords['create'];
+		self::$sql .= self::$words['create'];
 		return self::$mySQL;
 	}
 
 	public static function procedure(): MySQL {
-		self::$sql .= self::$keywords['procedure'];
+		self::$sql .= self::$words['procedure'];
 		return self::$mySQL;
 	}
 
 	public static function status(): MySQL {
-		self::$sql .= self::$keywords['status'];
+		self::$sql .= self::$words['status'];
 		return self::$mySQL;
 	}
 
@@ -38,7 +42,7 @@ class MySQL extends Functions {
 	}
 
 	public static function full(): MySQL {
-		self::$sql .= self::$keywords['full'];
+		self::$sql .= self::$words['full'];
 		return self::$mySQL;
 	}
 
@@ -50,24 +54,22 @@ class MySQL extends Functions {
 	}
 
 	public static function recursive(string $name): MySQL|string {
-		self::$sql .= self::$keywords['recursive'] . " {$name}" . self::$keywords['as'];
+		self::$sql .= self::$words['recursive'] . " {$name}" . self::$words['as'];
 		return self::$mySQL;
 	}
 
 	public static function with(bool $return = false): MySQL|string {
 		if ($return) {
-			return self::$keywords['with'];
+			return self::$words['with'];
 		}
 
-		self::$sql .= self::$keywords['with'];
+		self::$sql .= self::$words['with'];
 		return self::$mySQL;
 	}
 
 	public static function connection(string $connection_name): MySQL {
 		self::$active_connection = $connection_name;
 		self::$dbname = self::$connections['connections'][$connection_name]['dbname'];
-		self::mysql();
-
 		return self::$mySQL;
 	}
 
@@ -76,13 +78,13 @@ class MySQL extends Functions {
 			if (!$nest) {
 				self::$table = self::$dbname . "." . $table;
 			} else {
-				self::$sql .= self::$keywords['table'] . " " . self::$dbname . "." . $table;
+				self::$sql .= self::$words['table'] . " " . self::$dbname . "." . $table;
 			}
 		} else {
 			if (!$nest) {
 				self::$table = $table;
 			} else {
-				self::$sql .= self::$keywords['table'] . " " . $table;
+				self::$sql .= self::$words['table'] . " " . $table;
 			}
 		}
 
@@ -94,13 +96,13 @@ class MySQL extends Functions {
 			if (!$nest) {
 				self::$view = self::$dbname . "." . $view;
 			} else {
-				self::$sql .= self::$keywords['view'] . " " . self::$dbname . "." . $view;
+				self::$sql .= self::$words['view'] . " " . self::$dbname . "." . $view;
 			}
 		} else {
 			if (!$nest) {
 				self::$view = $view;
 			} else {
-				self::$sql .= self::$keywords['view'] . " " . $view;
+				self::$sql .= self::$words['view'] . " " . $view;
 			}
 		}
 
@@ -108,91 +110,92 @@ class MySQL extends Functions {
 	}
 
 	public static function isNull(): MySQL {
-		self::$sql .= self::$keywords['is-null'];
+		self::$sql .= self::$words['is-null'];
 		return self::$mySQL;
 	}
 
 	public static function isNotNull(): MySQL {
-		self::$sql .= self::$keywords['is-not-null'];
+		self::$sql .= self::$words['is-not-null'];
 		return self::$mySQL;
 	}
 
 	public static function offset(int $increase = 0): MySQL {
-		self::$sql .= self::$keywords['offset'] . " ?";
+		self::$sql .= self::$words['offset'] . " ?";
 		self::addRows([$increase]);
 		return self::$mySQL;
 	}
 
 	public static function unionAll(): MySQL {
-		self::$sql .= self::$keywords['union'] . self::$keywords['all'];
+		self::$sql .= self::$words['union'] . self::$words['all'];
 		return self::$mySQL;
 	}
 
 	public static function union(): MySQL {
-		self::$sql .= self::$keywords['union'];
+		self::$sql .= self::$words['union'];
 		return self::$mySQL;
 	}
 
 	public static function as(string $column, string $as): string {
-		return $column . self::$keywords['as'] . " {$as}";
+		return $column . self::$words['as'] . " {$as}";
 	}
 
 	public static function concat() {
-		return str_replace("*", implode(", ", func_get_args()), self::$keywords['concat']);
+		return str_replace("*", implode(", ", func_get_args()), self::$words['concat']);
 	}
 
 	public static function showCreateTable(): MySQL {
-		self::$sql = self::$keywords['show'] . self::$keywords['create'] . self::$keywords['table'] . " " . self::$table;
+		self::$sql = self::$words['show'] . self::$words['create'] . self::$words['table'] . " " . self::$table;
 		return self::$mySQL;
 	}
 
 	public static function show(): MySQL {
-		self::$sql = self::$keywords['show'];
+		self::$actual_code = uniqid();
+		self::$sql = self::$words['show'];
 		return self::$mySQL;
 	}
 
 	public static function from(string $from = null): MySQL {
 		if ($from === null) {
 			if (self::$table === "") {
-				self::$sql .= self::$keywords['from'] . " " . self::$view;
+				self::$sql .= self::$words['from'] . " " . self::$view;
 			} else {
-				self::$sql .= self::$keywords['from'] . " " . self::$table;
+				self::$sql .= self::$words['from'] . " " . self::$table;
 			}
 		} else {
-			self::$sql .= self::$keywords['from'] . " " . $from;
+			self::$sql .= self::$words['from'] . " " . $from;
 		}
 
 		return self::$mySQL;
 	}
 
 	public static function indexes(): MySQL {
-		self::$sql .= self::$keywords['index'] . self::$keywords['from'] . " " . self::$table;
+		self::$sql .= self::$words['index'] . self::$words['from'] . " " . self::$table;
 		return self::$mySQL;
 	}
 
 	public static function drop(): MySQL {
 		if (self::$table === "") {
-			self::$sql = self::$keywords['drop'] . self::$keywords['view'] . " " . self::$view;
+			self::$sql = self::$words['drop'] . self::$words['view'] . " " . self::$view;
 		} else {
-			self::$sql = self::$keywords['drop'] . self::$keywords['table'] . " " . self::$table;
+			self::$sql = self::$words['drop'] . self::$words['table'] . " " . self::$table;
 		}
 
 		return self::$mySQL;
 	}
 
 	public static function constraints(): MySQL {
-		self::$sql = self::$keywords['select'] . " CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME" . self::$keywords['from'] . " information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=? AND TABLE_NAME=? AND REFERENCED_COLUMN_NAME IS NOT NULL";
+		self::$sql = self::$words['select'] . " CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME" . self::$words['from'] . " information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=? AND TABLE_NAME=? AND REFERENCED_COLUMN_NAME IS NOT NULL";
 		self::addRows(explode(".", self::$table));
 		return self::$mySQL;
 	}
 
 	public static function tables(): MySQL {
-		self::$sql .= self::$keywords['tables'];
+		self::$sql .= self::$words['tables'];
 		return self::$mySQL;
 	}
 
 	public static function columns(): MySQL {
-		self::$sql .= self::$keywords['columns'];
+		self::$sql .= self::$words['columns'];
 		return self::$mySQL;
 	}
 
@@ -203,75 +206,59 @@ class MySQL extends Functions {
 	}
 
 	public static function bulk(array $columns, array $rows): MySQL {
-		if (count($columns) <= 0) {
-			return (object) ['status' => 'database-error', 'message' => 'At least one column must be entered'];
-		}
-
-		if (count($rows) <= 0) {
-			return (object) ['status' => 'database-error', 'message' => 'At least one row must be entered'];
-		}
-
+		self::$actual_code = uniqid();
 		foreach ($rows as $key => $row) {
 			self::addRows($row);
 		}
 
 		self::$message = "Rows inserted successfully";
-		self::$sql = self::$keywords['insert'] . " " . self::$table . " (" . self::addColumns($columns) . ")" . self::$keywords['values'] . " " . self::addCharacterBulk($rows);
+		self::$sql = self::$words['insert'] . " " . self::$table . " (" . self::addColumns($columns) . ")" . self::$words['values'] . " " . self::addCharacterBulk($rows);
 		return self::$mySQL;
 	}
 
 	public static function in(): MySQL {
 		$columns = func_get_args();
 		self::addRows($columns);
-		self::$sql .= str_replace("?", self::addCharacter($columns), self::$keywords['in']);
+		self::$sql .= str_replace("?", self::addCharacter($columns), self::$words['in']);
 		return self::$mySQL;
 	}
 
 	public static function call(string $store_procedure, array $rows = []): MySQL {
-		if (count($rows) <= 0) {
-			return (object) ['status' => 'database-error', 'message' => 'At least one row must be entered'];
-		}
-
+		self::$actual_code = uniqid();
 		self::addRows($rows);
 		self::$message = "Procedure executed successfully";
-		self::$sql .= self::$keywords['call'] . " " . self::$dbname . ".{$store_procedure}(" . self::addCharacter($rows) . ")";
-
+		self::$sql .= self::$words['call'] . " " . self::$dbname . ".{$store_procedure}(" . self::addCharacter($rows) . ")";
 		return self::$mySQL;
 	}
 
 	public static function delete(): MySQL {
+		self::$actual_code = uniqid();
 		self::$message = "Rows deleted successfully";
-		self::$sql .= self::$keywords['delete'] . self::$keywords['from'] . " " . self::$table;
+		self::$sql .= self::$words['delete'] . self::$words['from'] . " " . self::$table;
 		return self::$mySQL;
 	}
 
 	public static function update(array $rows = []): MySQL {
-		if (count($rows) <= 0) {
-			return (object) ['status' => 'database-error', 'message' => 'At least one row must be entered'];
-		}
-
+		self::$actual_code = uniqid();
 		self::addRows($rows);
 		self::$message = "Rows updated successfully";
-		self::$sql .= self::$keywords['update'] . " " . self::$table . self::$keywords['set'] . " " . self::addCharacterEqualTo($rows);
+		self::$sql .= self::$words['update'] . " " . self::$table . self::$words['set'] . " " . self::addCharacterEqualTo($rows);
 
 		return self::$mySQL;
 	}
 
 	public static function insert(array $rows = []): MySQL {
-		if (count($rows) <= 0) {
-			return (object) ['status' => 'database-error', 'message' => 'At least one row must be entered'];
-		}
-
+		self::$actual_code = uniqid();
 		self::addRows($rows);
 		self::$message = "Rows inserted successfully";
-		self::$sql .= self::$keywords['insert'] . self::$keywords['into'] . " " . self::$table . " (" . self::addColumns(array_keys($rows)) . ")" . self::$keywords['values'] . " (" . self::addCharacterAssoc($rows) . ")";
+		self::$sql .= self::$words['insert'] . self::$words['into'] . " " . self::$table . " (" . self::addColumns(array_keys($rows)) . ")" . self::$words['values'] . " (" . self::addCharacterAssoc($rows) . ")";
 
 		return self::$mySQL;
 	}
 
 	public static function having(string $column, ?string $value = null): MySQL {
-		self::$sql .= self::$keywords['having'] . " {$column}";
-		self::$data_info[] = $value;
+		self::$sql .= self::$words['having'] . " {$column}";
+		self::addRows([$value]);
 		return self::$mySQL;
 	}
 
@@ -279,9 +266,9 @@ class MySQL extends Functions {
 		$stringColumns = self::addColumns(func_get_args());
 
 		if (self::$table === "") {
-			self::$sql .= self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$view;
+			self::$sql .= self::$words['select'] . " {$stringColumns}" . self::$words['from'] . " " . self::$view;
 		} else {
-			self::$sql .= self::$keywords['select'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
+			self::$sql .= self::$words['select'] . " {$stringColumns}" . self::$words['from'] . " " . self::$table;
 		}
 
 		return self::$mySQL;
@@ -291,29 +278,28 @@ class MySQL extends Functions {
 		$stringColumns = self::addColumns(func_get_args());
 
 		if (self::$table === "") {
-			self::$sql .= self::$keywords['select'] . self::$keywords['distinct'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$view;
+			self::$sql .= self::$words['select'] . self::$words['distinct'] . " {$stringColumns}" . self::$words['from'] . " " . self::$view;
 		} else {
-			self::$sql .= self::$keywords['select'] . self::$keywords['distinct'] . " {$stringColumns}" . self::$keywords['from'] . " " . self::$table;
+			self::$sql .= self::$words['select'] . self::$words['distinct'] . " {$stringColumns}" . self::$words['from'] . " " . self::$table;
 		}
 
 		return self::$mySQL;
 	}
 
 	public static function between(mixed $between, mixed $and): MySQL {
-		self::$sql .= self::$keywords['between'] . " ?" . self::$keywords['and'] . " ? ";
-		self::$data_info[] = $between;
-		self::$data_info[] = $and;
+		self::$sql .= self::$words['between'] . " ?" . self::$words['and'] . " ? ";
+		self::addRows([$between, $and]);
 		return self::$mySQL;
 	}
 
 	public static function like(string $like): MySQL {
-		self::$sql .= self::$keywords['like'] . " " . self::addCharacter([$like]);
-		self::$data_info[] = $like;
+		self::$sql .= self::$words['like'] . " " . self::addCharacter([$like]);
+		self::addRows([$like]);
 		return self::$mySQL;
 	}
 
 	public static function groupBy(): MySQL {
-		self::$sql .= self::$keywords['groupBy'] . " " . self::addColumns(func_get_args());
+		self::$sql .= self::$words['groupBy'] . " " . self::addColumns(func_get_args());
 		return self::$mySQL;
 	}
 
@@ -324,11 +310,11 @@ class MySQL extends Functions {
 			$items[] = $limit;
 		}
 
-		self::$sql .= self::$keywords['limit'] . " " . self::addCharacter($items);
-		self::$data_info[] = $start;
+		self::$sql .= self::$words['limit'] . " " . self::addCharacter($items);
+		self::addRows([$start]);
 
 		if (!empty($limit)) {
-			self::$data_info[] = $limit;
+			self::addRows([$limit]);
 		}
 
 		return self::$mySQL;
@@ -336,73 +322,74 @@ class MySQL extends Functions {
 
 	public static function asc(bool $is_string = false): MySQL|string {
 		if ($is_string) {
-			return self::$keywords['asc'];
+			return self::$words['asc'];
 		}
 
-		self::$sql .= self::$keywords['asc'];
+		self::$sql .= self::$words['asc'];
 		return self::$mySQL;
 	}
 
 	public static function desc(bool $is_string = false): MySQL|string {
 		if ($is_string) {
-			return self::$keywords['desc'];
+			return self::$words['desc'];
 		}
 
-		self::$sql .= self::$keywords['desc'];
+		self::$sql .= self::$words['desc'];
 		return self::$mySQL;
 	}
 
 	public static function orderBy(): MySQL {
-		self::$sql .= self::$keywords['orderBy'] . " " . self::addColumns(func_get_args());
+		self::$sql .= self::$words['orderBy'] . " " . self::addColumns(func_get_args());
 		return self::$mySQL;
 	}
 
 	public static function innerJoin(string $table, string $value_from, string $value_up_to, bool $option = false): MySQL {
 		if (!$option) {
-			self::$sql .= self::$keywords['inner'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
+			self::$sql .= self::$words['inner'] . self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		} else {
-			self::$sql .= self::$keywords['inner'] . self::$keywords['join'] . " {$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
+			self::$sql .= self::$words['inner'] . self::$words['join'] . " {$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		}
 
 		return self::$mySQL;
 	}
 
 	public static function leftJoin(string $table, string $value_from, string $value_up_to): MySQL {
-		self::$sql .= self::$keywords['left'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
+		self::$sql .= self::$words['left'] . self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		return self::$mySQL;
 	}
 
 	public static function rightJoin(string $table, string $value_from, string $value_up_to): MySQL {
-		self::$sql .= self::$keywords['right'] . self::$keywords['join'] . " " . self::$dbname . ".{$table}" . self::$keywords['on'] . " {$value_from}={$value_up_to}";
+		self::$sql .= self::$words['right'] . self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		return self::$mySQL;
 	}
 
 	public static function where(string $value_type, mixed $value = null): MySQL {
-		self::$sql .= !empty($value) ? self::$keywords['where'] . " {$value_type}" : self::$keywords['where'] . " {$value_type}";
+		self::$sql .= !empty($value) ? (self::$words['where'] . " {$value_type}") : (self::$words['where'] . " {$value_type}");
 
 		if (!empty($value)) {
-			self::$data_info[] = $value;
+			self::addRows([$value]);
 		}
 
 		return self::$mySQL;
 	}
 
 	public static function and(string $value_type, mixed $value = null): MySQL {
-		self::$sql .= !empty($value) ? self::$keywords['and'] . " {$value_type}" : self::$keywords['and'] . " {$value_type}";
+		self::$sql .= !empty($value) ? (self::$words['and'] . " {$value_type}") : (self::$words['and'] . " {$value_type}");
 
 		if (!empty($value)) {
-			self::$data_info[] = $value;
+			self::addRows([$value]);
 		}
 
 		return self::$mySQL;
 	}
 
-	public static function or(string $value_type, mixed $value): MySQL {
-		self::$sql .= !empty($value) ? self::$keywords['or'] . " {$value_type}" : self::$keywords['or'] . " {$value_type}";
+	public static function or(string $value_type, mixed $value = null): MySQL {
+		self::$sql .= !empty($value) ? (self::$words['or'] . " {$value_type}") : (self::$words['or'] . " {$value_type}");
 
 		if (!empty($value)) {
-			self::$data_info[] = $value;
+			self::addRows([$value]);
 		}
+
 		return self::$mySQL;
 	}
 
@@ -439,35 +426,35 @@ class MySQL extends Functions {
 	}
 
 	public static function min(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['min']));
+		return trim(str_replace("?", $column, self::$words['min']));
 	}
 
 	public static function max(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['max']));
+		return trim(str_replace("?", $column, self::$words['max']));
 	}
 
 	public static function avg(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['avg']));
+		return trim(str_replace("?", $column, self::$words['avg']));
 	}
 
 	public static function sum(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['sum']));
+		return trim(str_replace("?", $column, self::$words['sum']));
 	}
 
 	public static function count(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['count']));
+		return trim(str_replace("?", $column, self::$words['count']));
 	}
 
 	public static function day(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['day']));
+		return trim(str_replace("?", $column, self::$words['day']));
 	}
 
 	public static function month(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['month']));
+		return trim(str_replace("?", $column, self::$words['month']));
 	}
 
 	public static function year(string $column): string {
-		return trim(str_replace("?", $column, self::$keywords['year']));
+		return trim(str_replace("?", $column, self::$words['year']));
 	}
 
 }
