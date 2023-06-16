@@ -1,5 +1,12 @@
 # Release Notes
 
+## [v8.6.0](https://github.com/Sleon4/Lion-SQL/compare/v8.5.0...v8.6.0) (2023-06-16)
+
+### Added
+- validation has been added to execute multiple sql statements
+- configuration to execute transactions with execute function has been added
+- added logic for multiple queries with get and getAll
+
 ## [v8.5.0](https://github.com/Sleon4/Lion-SQL/compare/v8.4.0...v8.5.0) (2023-06-11)
 
 ### Added

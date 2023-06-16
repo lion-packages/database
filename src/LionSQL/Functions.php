@@ -163,10 +163,7 @@ class Functions extends \LionSQL\Connection {
 					self::$stmt->execute();
 				}
 
-				if (self::$is_transaction) {
-					self::$conn->commit();
-				}
-
+				if (self::$is_transaction) self::$conn->commit();
 				self::clean();
 			} catch (PDOException $e) {
 				if (self::$is_transaction) self::$conn->rollBack();
