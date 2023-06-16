@@ -43,7 +43,7 @@ class Functions extends Connection {
 		}
 	}
 
-	protected static function bindValue(array $list): void {
+	protected static function bindValue(): void {
 		if (!self::$is_schema) {
 			$type = function($value) {
 				if (gettype($value) === 'integer') {
@@ -57,15 +57,23 @@ class Functions extends Connection {
 				}
 			};
 
-			foreach ($list as $key => $value) {
-				self::$stmt->bindValue(self::$cont, $value, $type($value));
-				self::$cont++;
+			try {
+				foreach (self::$data_info as $key => $value) {
+					self::$stmt->bindValue(self::$cont, $value, $type($value));
+					self::$cont++;
+				}
+			} catch (PDOException $e) {
+				self::clean();
+
+				if (self::$active_function) {
+					logger($e->getMessage(), "error");
+				}
 			}
 		} else {
 			$index = 0;
 
-			self::$sql = preg_replace_callback('/\?/', function($matches) use ($list, &$index) {
-				$value = $list[$index];
+			self::$sql = preg_replace_callback('/\?/', function($matches) use (&$index) {
+				$value = self::$data_info[$index];
 				$index++;
 				return $value;
 			}, self::$sql);
@@ -79,8 +87,6 @@ class Functions extends Connection {
 	}
 
 	public static function getQueryString(): object {
-		self::bindValue(self::$data_info);
-
 		if (!self::$is_schema) {
 			$new_sql = self::$sql;
 			self::$sql = "";
@@ -94,6 +100,7 @@ class Functions extends Connection {
 			];
 		}
 
+		self::bindValue();
 		$new_sql = self::getColumnSettings();
 		self::$sql = "";
 
@@ -117,11 +124,11 @@ class Functions extends Connection {
 	public static function execute(): array|object {
 		try {
 			if (self::$is_schema) {
-				self::bindValue(self::$data_info);
+				self::bindValue();
 				self::prepare();
 			} else {
 				self::prepare();
-				self::bindValue(self::$data_info);
+				self::bindValue();
 			}
 
 			self::$stmt->execute();
@@ -171,7 +178,7 @@ class Functions extends Connection {
 			self::prepare();
 
 			if (count(self::$data_info) > 0) {
-				self::bindValue(self::$data_info);
+				self::bindValue();
 			}
 
 			if (!self::$stmt->execute()) {
@@ -243,7 +250,7 @@ class Functions extends Connection {
 			self::prepare();
 
 			if (count(self::$data_info) > 0) {
-				self::bindValue(self::$data_info);
+				self::bindValue();
 			}
 
 			if (!self::$stmt->execute()) {

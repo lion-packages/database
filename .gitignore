@@ -1,4 +1,7 @@
 /vendor/
 /tests/
 /class/
+Dockerfile
+docker-compose.yml
+.env
 index.php
