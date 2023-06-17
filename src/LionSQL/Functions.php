@@ -42,22 +42,24 @@ class Functions extends \LionSQL\Connection {
 
 	protected static function bindValue(string $code): void {
 		if (!self::$is_schema) {
-			$type = function($value) {
-				if (gettype($value) === 'integer') {
-					return PDO::PARAM_INT;
-				} elseif (gettype($value) === 'boolean') {
-					return PDO::PARAM_BOOL;
-				} elseif (gettype($value) === 'NULL') {
-					return PDO::PARAM_NULL;
-				} else {
-					return PDO::PARAM_STR;
-				}
-			};
+			if (isset(self::$data_info[$code])) {
+				$type = function($value) {
+					if (gettype($value) === 'integer') {
+						return PDO::PARAM_INT;
+					} elseif (gettype($value) === 'boolean') {
+						return PDO::PARAM_BOOL;
+					} elseif (gettype($value) === 'NULL') {
+						return PDO::PARAM_NULL;
+					} else {
+						return PDO::PARAM_STR;
+					}
+				};
 
-			$cont = 1;
-			foreach (self::$data_info[$code] as $keyValue => $value) {
-				self::$stmt->bindValue($cont, $value, $type($value));
-				$cont++;
+				$cont = 1;
+				foreach (self::$data_info[$code] as $keyValue => $value) {
+					self::$stmt->bindValue($cont, $value, $type($value));
+					$cont++;
+				}
 			}
 		} else {
 			$index = 0;

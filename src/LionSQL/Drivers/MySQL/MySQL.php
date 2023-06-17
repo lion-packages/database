@@ -200,7 +200,8 @@ class MySQL extends Functions {
 	}
 
 	public static function query(string $sql): MySQL {
-		self::$sql = $sql;
+		self::$actual_code = uniqid();
+		self::$sql .= $sql;
 		self::$message = "Execution finished";
 		return self::$mySQL;
 	}
