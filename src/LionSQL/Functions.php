@@ -219,23 +219,25 @@ class Functions extends \LionSQL\Connection {
 						}
 					}
 				} else {
-					self::prepare(self::$sql);
+					foreach (self::$list_sql as $key => $sql) {
+						self::prepare($sql);
 
-					if (isset(self::$fetch_mode[self::$actual_code])) {
-						self::$stmt->setFetchMode(self::$fetch_mode[self::$actual_code]);
-					}
+						if (isset(self::$fetch_mode[self::$actual_code])) {
+							self::$stmt->setFetchMode(self::$fetch_mode[self::$actual_code]);
+						}
 
-					if (isset(self::$class_list[self::$actual_code])) {
-						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[self::$actual_code]);
-					}
+						if (isset(self::$class_list[self::$actual_code])) {
+							self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[self::$actual_code]);
+						}
 
-					self::$stmt->execute();
-					$request = self::$stmt->fetch();
+						self::$stmt->execute();
+						$request = self::$stmt->fetch();
 
-					if (!$request) {
-						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
-					} else {
-						$responses[] = $request;
+						if (!$request) {
+							$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						} else {
+							$responses[] = $request;
+						}
 					}
 				}
 
@@ -295,23 +297,25 @@ class Functions extends \LionSQL\Connection {
 						}
 					}
 				} else {
-					self::prepare(self::$sql);
+					foreach (self::$list_sql as $key => $sql) {
+						self::prepare($sql);
 
-					if (isset(self::$fetch_mode[self::$actual_code])) {
-						self::$stmt->setFetchMode(self::$fetch_mode[self::$actual_code]);
-					}
+						if (isset(self::$fetch_mode[self::$actual_code])) {
+							self::$stmt->setFetchMode(self::$fetch_mode[self::$actual_code]);
+						}
 
-					if (isset(self::$class_list[self::$actual_code])) {
-						self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[self::$actual_code]);
-					}
+						if (isset(self::$class_list[self::$actual_code])) {
+							self::$stmt->setFetchMode(PDO::FETCH_CLASS, self::$class_list[self::$actual_code]);
+						}
 
-					self::$stmt->execute();
-					$request = self::$stmt->fetchAll();
+						self::$stmt->execute();
+						$request = self::$stmt->fetchAll();
 
-					if (!$request) {
-						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
-					} else {
-						$responses[] = $request;
+						if (!$request) {
+							$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						} else {
+							$responses[] = $request;
+						}
 					}
 				}
 
