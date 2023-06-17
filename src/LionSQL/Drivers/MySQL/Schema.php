@@ -152,6 +152,11 @@ class Schema extends Functions {
 		return self::$schema;
 	}
 
+	public static function varBinary(string $name): Schema {
+		self::$sql .= " {$name}" . self::$words['varbinary'];
+		return self::$schema;
+	}
+
 	public static function char(string $name, int $lenght): Schema {
 		$char = str_replace("?", $lenght, self::$words['char']);
 		self::$sql .= " {$name}{$char}";

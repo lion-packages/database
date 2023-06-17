@@ -120,6 +120,7 @@ class Keywords {
 		'smallint' => " SMALLINT(?)",
 		'tinyint' => " TINYINT(?)",
 		'blob' => " BLOB",
+		'varbinary' => " VARBINARY(?)",
 		'char' => " CHAR(?)",
 		'json' => " JSON",
 		'nchar' => " NCHAR(?)",
@@ -212,7 +213,7 @@ class Keywords {
 		$str_column_indexes = "";
 
 		// columns
-		if (in_array($settings['type'], ["enum", "char", "nchar", "nvarchar", "varchar", "longtext", "mediumtext", "text", "tinytext", "blob"])) {
+		if (in_array($settings['type'], ["enum", "char", "nchar", "nvarchar", "varchar", "longtext", "mediumtext", "text", "tinytext", "blob", "varbinary"])) {
 			if ($settings['type'] === "enum") {
 				$str_column_setting .= str_replace(
 					"?",
