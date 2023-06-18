@@ -52,9 +52,14 @@ class Functions extends \LionSQL\Connection {
 		if (!self::$is_schema) {
 			if (isset(self::$data_info[$code])) {
 				$cont = 1;
+                $value_type = null;
 
 				foreach (self::$data_info[$code] as $keyValue => $value) {
-					$value_type = (!preg_match('/^0x/', $value) ? gettype($value) : "HEX");
+                    if ($value === null) {
+                        $value_type = "NULL";
+                    } else {
+                        $value_type = (!preg_match('/^0x/', $value) ? gettype($value) : "HEX");
+                    }
 
 					if ($value_type === "HEX") {
 						self::$stmt->bindValue($cont, hex2bin(str_replace("0x", "", $value)), self::getValueType($value_type));
