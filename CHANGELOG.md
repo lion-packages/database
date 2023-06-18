@@ -1,6 +1,6 @@
 # Release Notes
 
-## [v8.6.0](https://github.com/Sleon4/Lion-SQL/compare/v8.5.0...v8.6.0) (2023-06-17)
+## [v8.6.0](https://github.com/Sleon4/Lion-SQL/compare/v8.5.0...v8.6.0) (2023-06-18)
 
 ### Added
 - validation has been added to execute multiple sql statements
@@ -8,6 +8,7 @@
 - added logic for multiple queries with get and getAll
 - varBinary function has been added in the LionSQL\Drivers\MySQL\Schema class
 - added support for importing columns with hexadecimal format
+- the scope of the addRows function has been changed to public of the LionSQL\Functions class
 
 ## [v8.5.0](https://github.com/Sleon4/Lion-SQL/compare/v8.4.0...v8.5.0) (2023-06-11)
 
