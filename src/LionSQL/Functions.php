@@ -40,24 +40,28 @@ class Functions extends \LionSQL\Connection {
 		}
 	}
 
+	private static function getValueType(mixed $value_type): int {
+		if ($value_type === 'integer') return PDO::PARAM_INT;
+		if ($value_type === 'boolean') return PDO::PARAM_BOOL;
+		if ($value_type === 'NULL') return PDO::PARAM_NULL;
+		if ($value_type === 'HEX') return PDO::PARAM_LOB;
+		return PDO::PARAM_STR;
+	}
+
 	protected static function bindValue(string $code): void {
 		if (!self::$is_schema) {
 			if (isset(self::$data_info[$code])) {
-				$type = function($value) {
-					if (gettype($value) === 'integer') {
-						return PDO::PARAM_INT;
-					} elseif (gettype($value) === 'boolean') {
-						return PDO::PARAM_BOOL;
-					} elseif (gettype($value) === 'NULL') {
-						return PDO::PARAM_NULL;
-					} else {
-						return PDO::PARAM_STR;
-					}
-				};
-
 				$cont = 1;
+
 				foreach (self::$data_info[$code] as $keyValue => $value) {
-					self::$stmt->bindValue($cont, $value, $type($value));
+					$value_type = (!preg_match('/^0x/', $value) ? gettype($value) : "HEX");
+
+					if ($value_type === "HEX") {
+						self::$stmt->bindValue($cont, hex2bin(str_replace("0x", "", $value)), self::getValueType($value_type));
+					} else {
+						self::$stmt->bindValue($cont, $value, self::getValueType($value_type));
+					}
+
 					$cont++;
 				}
 			}
