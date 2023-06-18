@@ -7,6 +7,7 @@
 - configuration to execute transactions with execute function has been added
 - added logic for multiple queries with get and getAll
 - varBinary function has been added in the LionSQL\Drivers\MySQL\Schema class
+- added support for importing columns with hexadecimal format
 
 ## [v8.5.0](https://github.com/Sleon4/Lion-SQL/compare/v8.4.0...v8.5.0) (2023-06-11)
 
