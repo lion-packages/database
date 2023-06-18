@@ -3,6 +3,7 @@
 namespace LionSQL;
 
 use LionSQL\Drivers\MySQL\MySQL;
+use LionSQL\Drivers\MySQL\Schema;
 use \PDO;
 use \PDOException;
 
@@ -81,10 +82,12 @@ class Functions extends \LionSQL\Connection {
 		}
 	}
 
-	protected static function addRows(array $rows): void {
+	public static function addRows(array $rows): MySQL|Schema {
 		foreach ($rows as $keyRow => $row) {
 			self::$data_info[self::$actual_code][] = $row;
 		}
+
+		return !self::$is_schema ? self::$mySQL : self::$schema;
 	}
 
 	public static function getQueryString(): object {
