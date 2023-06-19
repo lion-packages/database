@@ -3,10 +3,9 @@
 namespace LionSQL\Drivers\MySQL;
 
 use \Closure;
-use LionSQL\Functions;
 use \ReflectionFunction;
 
-class Schema extends Functions {
+class Schema extends \LionSQL\Functions {
 
 	public static function init(): void {
 		self::$schema = new Schema();

@@ -9,6 +9,10 @@ use \PDOException;
 
 class Functions extends \LionSQL\Connection {
 
+	public static function addConnections(string $name, array $options) {
+		self::$connections['connections'][$name] = $options;
+	}
+
 	protected static function openGroup(mixed $object): mixed {
 		self::$sql .= " (";
 		return $object;

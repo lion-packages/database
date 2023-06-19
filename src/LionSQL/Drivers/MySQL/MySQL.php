@@ -3,9 +3,8 @@
 namespace LionSQL\Drivers\MySQL;
 
 use \Closure;
-use LionSQL\Functions;
 
-class MySQL extends Functions {
+class MySQL extends \LionSQL\Functions {
 
 	public static function init(array $connections): void {
 		self::$mySQL = new MySQL();
