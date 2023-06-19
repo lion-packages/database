@@ -24,6 +24,6 @@ COPY . .
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN a2enmod rewrite
 
-CMD php -S 0.0.0.0:8000
+CMD composer install && php -S 0.0.0.0:8000
 
 EXPOSE 8000
