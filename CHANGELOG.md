@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v8.7.0](https://github.com/Sleon4/Lion-SQL/compare/v8.6.0...v8.7.0) (2023-06-19)
+
+### Added
+- function has been added to add connections
+
 ## [v8.6.0](https://github.com/Sleon4/Lion-SQL/compare/v8.5.0...v8.6.0) (2023-06-18)
 
 ### Added
