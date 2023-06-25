@@ -246,7 +246,7 @@ class Schema extends \LionSQL\Functions {
 		if (self::$is_create_table === true) {
 			self::$engine = $engine;
 			self::$message = "Table created";
-			self::$sql .= self::$words['use'] . " `" . self::$dbname . "`;" . self::$words['drop'] . self::$words['table'] . self::$words['if'] . self::$words['exists'] . " `" . self::$table . "`;" . self::$words['create'] . self::$words['table'] . " " . self::$table . " (--COLUMN_SETTINGS--)" . self::$words['engine'] . " = " . self::$engine . self::$words['default'] . self::$words['character'] . self::$words['set'] . " = " . self::$character_set . self::$words['collate'] . " = " . self::$collate . ";--FOREIGN_INDEX----FOREIGN_CONSTRAINT--";
+			self::$sql .= self::$words['use'] . " `" . self::$dbname . "`;" . self::$words['drop'] . self::$words['table'] . self::$words['if'] . self::$words['exists'] . " `" . self::$table . "`;" . self::$words['create'] . self::$words['table'] . " " . self::$table . " (--COLUMN_SETTINGS--)" . self::$words['engine'] . "=" . self::$engine . self::$words['default'] . self::$words['charset'] . "=" . self::$character_set . self::$words['collate'] . "=" . self::$collate . ";--FOREIGN_INDEX----FOREIGN_CONSTRAINT--";
 		}
 
 		if (self::$is_create_procedure === true) {

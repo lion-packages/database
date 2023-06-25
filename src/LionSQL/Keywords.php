@@ -37,6 +37,7 @@ class Keywords {
 	protected static array $schema_options = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
 
 	protected static array $words = [
+		'charset' => " CHARSET",
 		'status' => " STATUS",
 		'replace' => " REPLACE",
 		'end' => " END",
