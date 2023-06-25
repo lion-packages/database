@@ -67,9 +67,17 @@ class Functions extends \LionSQL\Connection {
                     }
 
 					if ($value_type === "HEX") {
-						self::$stmt->bindValue($cont, hex2bin(str_replace("0x", "", $value)), self::getValueType($value_type));
+						self::$stmt->bindValue(
+                            $cont,
+                            hex2bin(str_replace("0x", "", $value)),
+                            self::getValueType($value_type)
+                        );
 					} else {
-						self::$stmt->bindValue($cont, $value, self::getValueType($value_type));
+						self::$stmt->bindValue(
+                            $cont,
+                            $value,
+                            self::getValueType($value_type)
+                        );
 					}
 
 					$cont++;
@@ -79,7 +87,7 @@ class Functions extends \LionSQL\Connection {
 			$index = 0;
 
 			self::$sql = preg_replace_callback('/\?/', function($matches) use (&$index) {
-				$value = self::$data_info[$index];
+				$value = self::$data_info[self::$actual_code][$index];
 				$index++;
 				return $value;
 			}, self::$sql);
@@ -143,46 +151,60 @@ class Functions extends \LionSQL\Connection {
 
 	public static function execute(): object {
 		return self::mysql(function() {
+            $response = (object) ['status' => 'success', 'message' => self::$message];
+
 			if (self::$is_transaction) {
 				self::$message = "Transaction executed successfully";
 			}
 
-			$response = (object) ['status' => 'success', 'message' => self::$message];
-			$split = explode(";", trim(self::$sql));
-			self::$list_sql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ""));
+            if (self::$is_schema) {
+                try {
+                    self::bindValue(self::$actual_code);
+                    self::prepare(self::$sql);
+                    self::$stmt->execute();
+                    if (self::$is_transaction) self::$conn->commit();
+                    self::clean();
+                    return $response;
+                } catch (PDOException $e) {
+                    if (self::$is_transaction) self::$conn->rollBack();
+                    if (self::$active_function) logger($e->getMessage(), "error");
+                    self::clean();
+
+                    return (object) [
+                        'status' => 'database-error',
+                        'message' => $e->getMessage(),
+                        'data' => (object) [
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine()
+                        ]
+                    ];
+                }
+            }
 
 			try {
+                $split = explode(";", trim(self::$sql));
+                self::$list_sql = array_map(
+                    fn($value) => trim($value),
+                    array_filter($split, fn($value) => trim($value) != "")
+                );
 				$data_info_keys = array_keys(self::$data_info);
 
 				if (count($data_info_keys) > 0) {
 					foreach ($data_info_keys as $key => $code) {
-						$sql = self::$list_sql[$key];
-
-						if (self::$is_schema) {
-							self::bindValue($code);
-							self::prepare($sql);
-						} else {
-							self::prepare($sql);
-							self::bindValue($code);
-						}
-
+						self::prepare(self::$list_sql[$key]);
+                        self::bindValue($code);
 						self::$stmt->execute();
 						self::$stmt->closeCursor();
 					}
 				} else {
-					if (self::$is_schema) {
-						self::bindValue(self::$actual_code);
-						self::prepare(self::$sql);
-					} else {
-						self::prepare(self::$sql);
-						self::bindValue(self::$actual_code);
-					}
-
+					self::prepare(self::$sql);
+                    self::bindValue(self::$actual_code);
 					self::$stmt->execute();
 				}
 
 				if (self::$is_transaction) self::$conn->commit();
 				self::clean();
+                return $response;
 			} catch (PDOException $e) {
 				if (self::$is_transaction) self::$conn->rollBack();
 				if (self::$active_function) logger($e->getMessage(), "error");
@@ -197,8 +219,6 @@ class Functions extends \LionSQL\Connection {
 					]
 				];
 			}
-
-			return $response;
 		});
 	}
 
