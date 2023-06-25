@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v8.7.1](https://github.com/Sleon4/Lion-SQL/compare/v8.7.0...v8.7.1) (2023-06-24)
+
+### Fixed
+- reading of information to add values to the executed sentence has been corrected
+
 ## [v8.7.0](https://github.com/Sleon4/Lion-SQL/compare/v8.6.0...v8.7.0) (2023-06-19)
 
 ### Added
