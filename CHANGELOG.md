@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v8.7.2](https://github.com/Sleon4/Lion-SQL/compare/v8.7.1...v8.7.2) (2023-06-25)
+
+### Fixed
+- statement to create tables in LionSQL\Drivers\MySQL\Schema has been corrected
+
 ## [v8.7.1](https://github.com/Sleon4/Lion-SQL/compare/v8.7.0...v8.7.1) (2023-06-24)
 
 ### Fixed
