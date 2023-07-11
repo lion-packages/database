@@ -1,0 +1,14 @@
+{
+    "name": "lion/database",
+    "description": "Package in charge of generating and executing MySQL processes",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LionDatabase\\": "src/LionDatabase/"
+        }
+    },
+    "require": {
+        "php": ">=8.1"
+    }
+}

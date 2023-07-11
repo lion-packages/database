@@ -1,0 +1,5 @@
+/vendor/
+/tests/
+/class/
+.env
+index.php
