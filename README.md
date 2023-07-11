@@ -9,17 +9,17 @@
 </p>
 
 <p align="center">
-  <img src="http://poser.pugx.org/lion/sql/v" alt="Latest Stable Version">
-  <img src="http://poser.pugx.org/lion/sql/downloads" alt="Total Downloads">
-  <img src="http://poser.pugx.org/lion/sql/license" alt="License">
-  <img src="http://poser.pugx.org/lion/sql/require/php" alt="PHP Version Require">
+  <img src="http://poser.pugx.org/lion/database/v" alt="Latest Stable Version">
+  <img src="http://poser.pugx.org/lion/database/downloads" alt="Total Downloads">
+  <img src="http://poser.pugx.org/lion/database/license" alt="License">
+  <img src="http://poser.pugx.org/lion/database/require/php" alt="PHP Version Require">
 </p>
 
 ## Install
 ```shell
-composer require lion/sql
+composer require lion/database
 ```
 
 ## License
 
-The Lion-SQL library is open source software licensed under the [MIT License](https://github.com/Sleon4/Lion-SQL/blob/main/LICENSE).
+The <strong>database</strong> library is open source software licensed under the [MIT License](https://github.com/Lion-Packages/database/blob/main/LICENSE).
