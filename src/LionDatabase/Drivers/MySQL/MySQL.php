@@ -348,23 +348,28 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function innerJoin(string $table, string $value_from, string $value_up_to, bool $option = false): MySQL {
+	public static function inner(): MySQL {
+		self::$sql .= self::$words['inner'];
+		return self::$mySQL;
+	}
+
+	public static function left(): MySQL {
+		self::$sql .= self::$words['left'];
+		return self::$mySQL;
+	}
+
+	public static function right(): MySQL {
+		self::$sql .= self::$words['right'];
+		return self::$mySQL;
+	}
+
+	public static function join(string $table, string $value_from, string $value_up_to, bool $option = false) {
 		if (!$option) {
-			self::$sql .= self::$words['inner'] . self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
+			self::$sql .= self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		} else {
-			self::$sql .= self::$words['inner'] . self::$words['join'] . " {$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
+			self::$sql .= self::$words['join'] . " {$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		}
 
-		return self::$mySQL;
-	}
-
-	public static function leftJoin(string $table, string $value_from, string $value_up_to): MySQL {
-		self::$sql .= self::$words['left'] . self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
-		return self::$mySQL;
-	}
-
-	public static function rightJoin(string $table, string $value_from, string $value_up_to): MySQL {
-		self::$sql .= self::$words['right'] . self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		return self::$mySQL;
 	}
 
