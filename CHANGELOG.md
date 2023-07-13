@@ -2,8 +2,15 @@
 
 ## [v8.8.1](https://github.com/Lion-Packages/database/compare/v8.8.0...v8.8.1) (2023-07-13)
 
+### Changed
+- docker config updated
+
 ### Fixed
 - fixed format to generate sql query for LionDatabase\Functions
+- added fetchMode initialization for functions
+
+### Refactoring
+- renamed innerJoin, leftJoin and rightJoin functions to join
 
 ## [v8.8.0](https://github.com/Lion-Packages/database/compare/v8.7.2...v8.8.0) (2023-07-11)
 
