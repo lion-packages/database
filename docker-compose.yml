@@ -1,11 +1,7 @@
 version: "3.8"
 services:
     app:
-<<<<<<< HEAD
         container_name: lion-database-app
-=======
-        container_name: lion-sql-app
->>>>>>> 093fd6e303f2ce62bb7b0e175967136476506e30
         build:
             context: .
             dockerfile: Dockerfile
@@ -18,17 +14,10 @@ services:
         depends_on:
             - db
         networks:
-<<<<<<< HEAD
             - lion_database
     db:
         image: mysql
         container_name: lion-database-mysql
-=======
-            - lion_sql
-    db:
-        image: mysql
-        container_name: lion-sql-mysql
->>>>>>> 093fd6e303f2ce62bb7b0e175967136476506e30
         command: --default-authentication-plugin=mysql_native_password
         environment:
             MYSQL_DATABASE: ${DB_NAME}
@@ -39,17 +28,10 @@ services:
         volumes:
             - db_data:/var/lib/mysql
         networks:
-<<<<<<< HEAD
             - lion_database
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         container_name: lion-database-phpmyadmin
-=======
-            - lion_sql
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        container_name: lion-sql-phpmyadmin
->>>>>>> 093fd6e303f2ce62bb7b0e175967136476506e30
         links:
             - db:db
         ports:
@@ -59,16 +41,8 @@ services:
             MYSQL_PASSWORD: ${DB_PASSWORD}
             MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
         networks:
-<<<<<<< HEAD
             - lion_database
 volumes:
     db_data:
 networks:
     lion_database:
-=======
-            - lion_sql
-volumes:
-    db_data:
-networks:
-    lion_sql:
->>>>>>> 093fd6e303f2ce62bb7b0e175967136476506e30
