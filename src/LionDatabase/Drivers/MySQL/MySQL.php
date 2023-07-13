@@ -149,6 +149,7 @@ class MySQL extends \LionDatabase\Functions {
 
 	public static function show(): MySQL {
 		self::$actual_code = uniqid();
+		self::$fetch_mode[self::$actual_code] = \PDO::FETCH_OBJ;
 		self::$sql = self::$words['show'];
 		return self::$mySQL;
 	}
@@ -278,6 +279,7 @@ class MySQL extends \LionDatabase\Functions {
 
 	public static function selectDistinct(): MySQL {
 		self::$actual_code = uniqid();
+		self::$fetch_mode[self::$actual_code] = \PDO::FETCH_OBJ;
 		$stringColumns = self::addColumns(func_get_args());
 
 		if (self::$table === "") {
@@ -397,35 +399,31 @@ class MySQL extends \LionDatabase\Functions {
 	}
 
 	public static function column(string $value, string $table = ""): string {
-		if ($table === "") {
-			return $value;
-		}
-
-		return "{$table}.{$value}";
+		return $table === "" ? trim($value) : trim("{$table}.{$value}");
 	}
 
 	public static function equalTo(string $column): string {
-		return $column . "=?";
+		return trim($column . "=?");
 	}
 
 	public static function greaterThan(string $column): string {
-		return $column . " > ?";
+		return trim($column . " > ?");
 	}
 
 	public static function lessThan(string $column): string {
-		return $column . " < ?";
+		return trim($column . " < ?");
 	}
 
 	public static function greaterThanOrEqualTo(string $column): string {
-		return $column . " >= ?";
+		return trim($column . " >= ?");
 	}
 
 	public static function lessThanOrEqualTo(string $column): string {
-		return $column . " <= ?";
+		return trim($column . " <= ?");
 	}
 
 	public static function notEqualTo(string $column): string {
-		return $column . " <> ?";
+		return trim($column . " <> ?");
 	}
 
 	public static function min(string $column): string {
