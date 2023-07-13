@@ -1,6 +1,6 @@
 {
     "name": "lion/database",
-    "description": "Package in charge of generating and executing MySQL processes",
+    "description": "Package in charge of the generation and execution of processes with databases",
     "type": "library",
     "license": "MIT",
     "autoload": {
