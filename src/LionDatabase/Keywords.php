@@ -176,7 +176,7 @@ class Keywords {
 		if (count(self::$schema_options['columns']) > 0) {
 			$union .= self::addColumns(self::$schema_options['columns']);
 		}
-		vd($union);
+
 		if (count(self::$schema_options['indexes']) > 0) {
 			$union .= ", " . self::addColumns(self::$schema_options['indexes']);
 		}
