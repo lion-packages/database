@@ -176,7 +176,7 @@ class Keywords {
 		if (count(self::$schema_options['columns']) > 0) {
 			$union .= self::addColumns(self::$schema_options['columns']);
 		}
-
+		vd($union);
 		if (count(self::$schema_options['indexes']) > 0) {
 			$union .= ", " . self::addColumns(self::$schema_options['indexes']);
 		}
@@ -191,8 +191,8 @@ class Keywords {
 
 		$new_sql = str_replace("--FOREIGN_INDEX--", $foreign_index, $sql);
 		$new_sql = str_replace("--FOREIGN_CONSTRAINT--", $foreign_constraint, $new_sql);
-
-		return str_replace("--COLUMN_SETTINGS--", $union, trim($new_sql));
+		$new_sql = str_replace("--COLUMN_SETTINGS--", $union, trim($new_sql));
+		return str_replace(", *", "", $new_sql);
 	}
 
 	protected static function addColumnSettings(string $column, array $settings): void {
