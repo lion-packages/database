@@ -16,7 +16,7 @@ class Schema extends \LionDatabase\Functions {
 
 		self::openGroup(self::$schema);
 		$callback(
-			$parameters[0]->getClass()->getName() === self::$mySQL::class
+			$parameters[0]->getType()->getName() === self::$mySQL::class
 				? self::$mySQL
 				: self::$schema
 		);
