@@ -256,7 +256,11 @@ class Functions extends \LionDatabase\Connection {
 					$request = self::$stmt->fetch();
 
 					if (!$request) {
-						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						if (count(self::$fetch_mode) > 1) {
+							$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						} else {
+							$responses = (object) ['status' => 'success', 'message' => 'No data available'];
+						}
 					} else {
 						if (count(self::$fetch_mode) > 1) {
 							$responses[] = $request;
@@ -321,7 +325,11 @@ class Functions extends \LionDatabase\Connection {
 					$request = self::$stmt->fetchAll();
 
 					if (!$request) {
-						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						if (count(self::$fetch_mode) > 1) {
+							$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+						} else {
+							$responses = (object) ['status' => 'success', 'message' => 'No data available'];
+						}
 					} else {
 						if (count(self::$fetch_mode) > 1) {
 							$responses[] = $request;
