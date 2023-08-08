@@ -1,5 +1,10 @@
 # Release Notes
 
+## [v8.9.0](https://github.com/Lion-Packages/database/compare/v8.8.2...v8.9.0) (2023-08-08)
+
+### Changed
+- validation has been modified to read data from multiple queries
+
 ## [v8.8.2](https://github.com/Lion-Packages/database/compare/v8.8.1...v8.8.2) (2023-07-15)
 
 ### Fixed
