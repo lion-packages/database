@@ -258,7 +258,11 @@ class Functions extends \LionDatabase\Connection {
 					if (!$request) {
 						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
 					} else {
-						$responses[] = $request;
+						if (count(self::$fetch_mode) > 1) {
+							$responses[] = $request;
+						} else {
+							$responses = $request;
+						}
 					}
 				}
 
@@ -279,7 +283,7 @@ class Functions extends \LionDatabase\Connection {
 				];
 			}
 
-			return count($responses) > 1 ? $responses : $responses[0];
+			return $responses;
 		});
 	}
 
@@ -319,7 +323,11 @@ class Functions extends \LionDatabase\Connection {
 					if (!$request) {
 						$responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
 					} else {
-						$responses[] = count($request) > 1 ? $request : $request[0];
+						if (count(self::$fetch_mode) > 1) {
+							$responses[] = $request;
+						} else {
+							$responses = $request;
+						}
 					}
 				}
 
@@ -340,7 +348,7 @@ class Functions extends \LionDatabase\Connection {
 				];
 			}
 
-			return count($responses) > 1 ? $responses : $responses[0];
+			return $responses;
 		});
 	}
 
