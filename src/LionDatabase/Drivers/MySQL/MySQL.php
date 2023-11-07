@@ -4,9 +4,11 @@ namespace LionDatabase\Drivers\MySQL;
 
 use \Closure;
 
-class MySQL extends \LionDatabase\Functions {
+class MySQL extends \LionDatabase\Functions
+{
 
-	public static function init(array $connections): void {
+	public static function init(array $connections): void
+	{
 		self::$mySQL = new MySQL();
 		self::$connections = $connections;
 		self::$active_connection = self::$connections['default'];
@@ -15,49 +17,58 @@ class MySQL extends \LionDatabase\Functions {
 
 	// ---------------------------------------------------------------------------------------------
 
-	public static function transaction(): MySQL {
+	public static function transaction(): MySQL
+	{
 		self::$is_transaction = true;
 		return self::$mySQL;
 	}
 
-	public static function create(): MySQL {
+	public static function create(): MySQL
+	{
 		self::$sql .= self::$words['create'];
 		return self::$mySQL;
 	}
 
-	public static function procedure(): MySQL {
+	public static function procedure(): MySQL
+	{
 		self::$sql .= self::$words['procedure'];
 		return self::$mySQL;
 	}
 
-	public static function status(): MySQL {
+	public static function status(): MySQL
+	{
 		self::$sql .= self::$words['status'];
 		return self::$mySQL;
 	}
 
-	public static function end(string $end = ";"): MySQL {
+	public static function end(string $end = ";"): MySQL
+	{
 		self::$sql .= $end;
 		return self::$mySQL;
 	}
 
-	public static function full(): MySQL {
+	public static function full(): MySQL
+	{
 		self::$sql .= self::$words['full'];
 		return self::$mySQL;
 	}
 
-	public static function groupQuery(Closure $callback): MySQL {
+	public static function groupQuery(Closure $callback): MySQL
+	{
 		self::openGroup(self::$mySQL);
 		$callback(self::$mySQL);
 		self::closeGroup(self::$mySQL);
 		return self::$mySQL;
 	}
 
-	public static function recursive(string $name): MySQL|string {
+	public static function recursive(string $name): MySQL|string
+	{
 		self::$sql .= self::$words['recursive'] . " {$name}" . self::$words['as'];
 		return self::$mySQL;
 	}
 
-	public static function with(bool $return = false): MySQL|string {
+	public static function with(bool $return = false): MySQL|string
+	{
 		if ($return) {
 			return self::$words['with'];
 		}
@@ -66,13 +77,15 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function connection(string $connection_name): MySQL {
+	public static function connection(string $connection_name): MySQL
+	{
 		self::$active_connection = $connection_name;
 		self::$dbname = self::$connections['connections'][$connection_name]['dbname'];
 		return self::$mySQL;
 	}
 
-	public static function table(string $table, bool $option = false, bool $nest = false): MySQL {
+	public static function table(string $table, bool $option = false, bool $nest = false): MySQL
+	{
 		if (!$option) {
 			if (!$nest) {
 				self::$table = self::$dbname . "." . $table;
@@ -90,7 +103,8 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function view(string $view, bool $option = false, bool $nest = false): MySQL {
+	public static function view(string $view, bool $option = false, bool $nest = false): MySQL
+	{
 		if (!$option) {
 			if (!$nest) {
 				self::$view = self::$dbname . "." . $view;
@@ -108,53 +122,63 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function isNull(): MySQL {
+	public static function isNull(): MySQL
+	{
 		self::$sql .= self::$words['is-null'];
 		return self::$mySQL;
 	}
 
-	public static function isNotNull(): MySQL {
+	public static function isNotNull(): MySQL
+	{
 		self::$sql .= self::$words['is-not-null'];
 		return self::$mySQL;
 	}
 
-	public static function offset(int $increase = 0): MySQL {
+	public static function offset(int $increase = 0): MySQL
+	{
 		self::$sql .= self::$words['offset'] . " ?";
 		self::addRows([$increase]);
 		return self::$mySQL;
 	}
 
-	public static function unionAll(): MySQL {
+	public static function unionAll(): MySQL
+	{
 		self::$sql .= self::$words['union'] . self::$words['all'];
 		return self::$mySQL;
 	}
 
-	public static function union(): MySQL {
+	public static function union(): MySQL
+	{
 		self::$sql .= self::$words['union'];
 		return self::$mySQL;
 	}
 
-	public static function as(string $column, string $as): string {
+	public static function as(string $column, string $as): string
+	{
 		return $column . self::$words['as'] . " {$as}";
 	}
 
-	public static function concat() {
+	public static function concat()
+	{
 		return str_replace("*", implode(", ", func_get_args()), self::$words['concat']);
 	}
 
-	public static function showCreateTable(): MySQL {
+	public static function showCreateTable(): MySQL
+	{
 		self::$sql = self::$words['show'] . self::$words['create'] . self::$words['table'] . " " . self::$table;
 		return self::$mySQL;
 	}
 
-	public static function show(): MySQL {
+	public static function show(): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::$fetch_mode[self::$actual_code] = \PDO::FETCH_OBJ;
 		self::$sql = self::$words['show'];
 		return self::$mySQL;
 	}
 
-	public static function from(string $from = null): MySQL {
+	public static function from(string $from = null): MySQL
+	{
 		if ($from === null) {
 			if (self::$table === "") {
 				self::$sql .= self::$words['from'] . " " . self::$view;
@@ -168,12 +192,14 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function indexes(): MySQL {
+	public static function indexes(): MySQL
+	{
 		self::$sql .= self::$words['index'] . self::$words['from'] . " " . self::$table;
 		return self::$mySQL;
 	}
 
-	public static function drop(): MySQL {
+	public static function drop(): MySQL
+	{
 		if (self::$table === "") {
 			self::$sql = self::$words['drop'] . self::$words['view'] . " " . self::$view;
 		} else {
@@ -183,30 +209,35 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function constraints(): MySQL {
+	public static function constraints(): MySQL
+	{
 		self::$sql = self::$words['select'] . " CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME" . self::$words['from'] . " information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=? AND TABLE_NAME=? AND REFERENCED_COLUMN_NAME IS NOT NULL";
 		self::addRows(explode(".", self::$table));
 		return self::$mySQL;
 	}
 
-	public static function tables(): MySQL {
+	public static function tables(): MySQL
+	{
 		self::$sql .= self::$words['tables'];
 		return self::$mySQL;
 	}
 
-	public static function columns(): MySQL {
+	public static function columns(): MySQL
+	{
 		self::$sql .= self::$words['columns'];
 		return self::$mySQL;
 	}
 
-	public static function query(string $sql): MySQL {
+	public static function query(string $sql): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::$sql .= $sql;
 		self::$message = "Execution finished";
 		return self::$mySQL;
 	}
 
-	public static function bulk(array $columns, array $rows): MySQL {
+	public static function bulk(array $columns, array $rows): MySQL
+	{
 		self::$actual_code = uniqid();
 		foreach ($rows as $key => $row) {
 			self::addRows($row);
@@ -217,14 +248,16 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function in(): MySQL {
+	public static function in(): MySQL
+	{
 		$columns = func_get_args();
 		self::addRows($columns);
 		self::$sql .= str_replace("?", self::addCharacter($columns), self::$words['in']);
 		return self::$mySQL;
 	}
 
-	public static function call(string $store_procedure, array $rows = []): MySQL {
+	public static function call(string $store_procedure, array $rows = []): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::addRows($rows);
 		self::$message = "Procedure executed successfully";
@@ -232,14 +265,16 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function delete(): MySQL {
+	public static function delete(): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::$message = "Rows deleted successfully";
 		self::$sql .= self::$words['delete'] . self::$words['from'] . " " . self::$table;
 		return self::$mySQL;
 	}
 
-	public static function update(array $rows = []): MySQL {
+	public static function update(array $rows = []): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::addRows($rows);
 		self::$message = "Rows updated successfully";
@@ -248,7 +283,8 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function insert(array $rows = []): MySQL {
+	public static function insert(array $rows = []): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::addRows($rows);
 		self::$message = "Rows inserted successfully";
@@ -257,13 +293,15 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function having(string $column, ?string $value = null): MySQL {
+	public static function having(string $column, ?string $value = null): MySQL
+	{
 		self::$sql .= self::$words['having'] . " {$column}";
 		self::addRows([$value]);
 		return self::$mySQL;
 	}
 
-	public static function select(): MySQL {
+	public static function select(): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::$fetch_mode[self::$actual_code] = \PDO::FETCH_OBJ;
 		$stringColumns = self::addColumns(func_get_args());
@@ -277,7 +315,8 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function selectDistinct(): MySQL {
+	public static function selectDistinct(): MySQL
+	{
 		self::$actual_code = uniqid();
 		self::$fetch_mode[self::$actual_code] = \PDO::FETCH_OBJ;
 		$stringColumns = self::addColumns(func_get_args());
@@ -291,24 +330,28 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function between(mixed $between, mixed $and): MySQL {
+	public static function between(mixed $between, mixed $and): MySQL
+	{
 		self::$sql .= self::$words['between'] . " ?" . self::$words['and'] . " ? ";
 		self::addRows([$between, $and]);
 		return self::$mySQL;
 	}
 
-	public static function like(string $like): MySQL {
+	public static function like(string $like): MySQL
+	{
 		self::$sql .= self::$words['like'] . " " . self::addCharacter([$like]);
 		self::addRows([$like]);
 		return self::$mySQL;
 	}
 
-	public static function groupBy(): MySQL {
+	public static function groupBy(): MySQL
+	{
 		self::$sql .= self::$words['groupBy'] . " " . self::addColumns(func_get_args());
 		return self::$mySQL;
 	}
 
-	public static function limit(int $start, ?int $limit = null): MySQL {
+	public static function limit(int $start, ?int $limit = null): MySQL
+	{
 		$items = [$start];
 
 		if (!empty($limit)) {
@@ -325,7 +368,8 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function asc(bool $is_string = false): MySQL|string {
+	public static function asc(bool $is_string = false): MySQL|string
+	{
 		if ($is_string) {
 			return self::$words['asc'];
 		}
@@ -334,7 +378,8 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function desc(bool $is_string = false): MySQL|string {
+	public static function desc(bool $is_string = false): MySQL|string
+	{
 		if ($is_string) {
 			return self::$words['desc'];
 		}
@@ -343,27 +388,32 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function orderBy(): MySQL {
+	public static function orderBy(): MySQL
+	{
 		self::$sql .= self::$words['orderBy'] . " " . self::addColumns(func_get_args());
 		return self::$mySQL;
 	}
 
-	public static function inner(): MySQL {
+	public static function inner(): MySQL
+	{
 		self::$sql .= self::$words['inner'];
 		return self::$mySQL;
 	}
 
-	public static function left(): MySQL {
+	public static function left(): MySQL
+	{
 		self::$sql .= self::$words['left'];
 		return self::$mySQL;
 	}
 
-	public static function right(): MySQL {
+	public static function right(): MySQL
+	{
 		self::$sql .= self::$words['right'];
 		return self::$mySQL;
 	}
 
-	public static function join(string $table, string $value_from, string $value_up_to, bool $option = false) {
+	public static function join(string $table, string $value_from, string $value_up_to, bool $option = false)
+	{
 		if (!$option) {
 			self::$sql .= self::$words['join'] . " " . self::$dbname . ".{$table}" . self::$words['on'] . " {$value_from}={$value_up_to}";
 		} else {
@@ -373,93 +423,138 @@ class MySQL extends \LionDatabase\Functions {
 		return self::$mySQL;
 	}
 
-	public static function where(string $value_type, mixed $value = null): MySQL {
-		self::$sql .= !empty($value) ? (self::$words['where'] . " {$value_type}") : (self::$words['where'] . " {$value_type}");
+	public static function where(Closure|string $value_type, mixed $value = null): MySQL
+	{
+		if (is_string($value_type)) {
+			self::$sql .= !empty($value) ? (self::$words['where'] . " {$value_type}") : self::$words['where'];
 
-		if (!empty($value)) {
-			self::addRows([$value]);
+			if (!empty($value)) {
+				self::addRows([$value]);
+			}
+		} else {
+			self::resolveNestedQuery($value_type, $value, self::$words['where']);
 		}
 
 		return self::$mySQL;
 	}
 
-	public static function and(string $value_type, mixed $value = null): MySQL {
-		self::$sql .= !empty($value) ? (self::$words['and'] . " {$value_type}") : (self::$words['and'] . " {$value_type}");
+	public static function and(Closure|string $valueType, mixed $value = null): MySQL
+	{
+		if (is_string($valueType)) {
+			self::$sql .= !empty($value) ? (self::$words['and'] . " {$valueType}") : self::$words['and'];
 
-		if (!empty($value)) {
-			self::addRows([$value]);
+			if (!empty($value)) {
+				self::addRows([$value]);
+			}
+		} else {
+			self::resolveNestedQuery($valueType, $value, self::$words['and']);
 		}
 
 		return self::$mySQL;
 	}
 
-	public static function or(string $value_type, mixed $value = null): MySQL {
-		self::$sql .= !empty($value) ? (self::$words['or'] . " {$value_type}") : (self::$words['or'] . " {$value_type}");
+	public static function or(Closure|string $value_type, mixed $value = null): MySQL
+	{
+		if (is_string($value_type)) {
+			self::$sql .= !empty($value) ? (self::$words['or'] . " {$value_type}") : self::$words['or'];
 
-		if (!empty($value)) {
-			self::addRows([$value]);
+			if (!empty($value)) {
+				self::addRows([$value]);
+			}
+		} else {
+			self::resolveNestedQuery($value_type, $value, self::$words['or']);
 		}
 
 		return self::$mySQL;
 	}
 
-	public static function column(string $value, string $table = ""): string {
+	protected static function resolveNestedQuery(Closure $query, mixed $value, string $word): void
+	{
+		self::$sql .= $word;
+		self::openGroup(self::$mySQL);
+
+		if (is_array($value)) {
+			self::$sql .= " " . array_key_first($value);
+			$values = array_values($value);
+			self::addRows([reset($values)]);
+		}
+
+		$query();
+		self::closeGroup(self::$mySQL);
+	}
+
+	public static function column(string $value, string $table = ""): string
+	{
 		return $table === "" ? trim($value) : trim("{$table}.{$value}");
 	}
 
-	public static function equalTo(string $column): string {
+	public static function equalTo(string $column): string
+	{
 		return trim($column . "=?");
 	}
 
-	public static function greaterThan(string $column): string {
+	public static function greaterThan(string $column): string
+	{
 		return trim($column . " > ?");
 	}
 
-	public static function lessThan(string $column): string {
+	public static function lessThan(string $column): string
+	{
 		return trim($column . " < ?");
 	}
 
-	public static function greaterThanOrEqualTo(string $column): string {
+	public static function greaterThanOrEqualTo(string $column): string
+	{
 		return trim($column . " >= ?");
 	}
 
-	public static function lessThanOrEqualTo(string $column): string {
+	public static function lessThanOrEqualTo(string $column): string
+	{
 		return trim($column . " <= ?");
 	}
 
-	public static function notEqualTo(string $column): string {
+	public static function notEqualTo(string $column): string
+	{
 		return trim($column . " <> ?");
 	}
 
-	public static function min(string $column): string {
+	public static function min(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['min']));
 	}
 
-	public static function max(string $column): string {
+	public static function max(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['max']));
 	}
 
-	public static function avg(string $column): string {
+	public static function avg(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['avg']));
 	}
 
-	public static function sum(string $column): string {
+	public static function sum(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['sum']));
 	}
 
-	public static function count(string $column): string {
+	public static function count(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['count']));
 	}
 
-	public static function day(string $column): string {
+	public static function day(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['day']));
 	}
 
-	public static function month(string $column): string {
+	public static function month(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['month']));
 	}
 
-	public static function year(string $column): string {
+	public static function year(string $column): string
+	{
 		return trim(str_replace("?", $column, self::$words['year']));
 	}
 
