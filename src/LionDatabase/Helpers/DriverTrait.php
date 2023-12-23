@@ -64,7 +64,7 @@ trait DriverTrait
         self::$isTransaction = false;
     }
 
-    protected function addNewQueryList(array $listQuery): void
+    protected static function addNewQueryList(array $listQuery): void
     {
         foreach ($listQuery as $key => $query) {
             if ($key === 0) {
