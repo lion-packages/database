@@ -9,13 +9,9 @@ trait DriverTrait
 	protected static array $connections = [];
 	protected static string $activeConnection = '';
 
-	protected static bool $isSchema = false;
-	protected static bool $isCreateSchema = false;
-	protected static bool $isCreateTable = false;
-	protected static bool $isCreateView = false;
-	protected static bool $isCreateProcedure = false;
 	protected static bool $isTransaction = false;
-
+    protected static bool $isSchema = false;
+    protected static bool $enableInsert = false;
 	protected static array $listSql = [];
 	protected static string $actualCode = '';
 	protected static string $sql = '';
@@ -24,20 +20,9 @@ trait DriverTrait
 	protected static string $procedure = '';
 	protected static string $schemaStr = '';
 	protected static string $view = '';
-	protected static string $message = '';
+	protected static string $message = 'Execution finished';
 	protected static array $dataInfo = [];
 	protected static array $fetchMode = [];
-	protected static string $engine = "INNODB";
-	protected static string $characterSet = "UTF8";
-	protected static string $collate = "UTF8_SPANISH_CI";
-	protected static array $schemaOptions = [
-		'columns' => [],
-		'indexes' => [],
-		'foreign' => [
-			'index' => [],
-			'constraint' => []
-		]
-	];
 
     protected static function clean(): void
     {
@@ -52,16 +37,9 @@ trait DriverTrait
         self::$activeConnection = self::$connections['default'];
         self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
         self::$fetchMode = [];
-        self::$engine == "INNODB";
-        self::$characterSet = "UTF8";
-        self::$collate = "UTF8_SPANISH_CI";
-        self::$schemaOptions = ['columns' => [], 'indexes' => [], 'foreign' => ['index' => [], 'constraint' => []]];
-        self::$isSchema = false;
-        self::$isCreateSchema = false;
-        self::$isCreateTable = false;
-        self::$isCreateView = false;
-        self::$isCreateProcedure = false;
         self::$isTransaction = false;
+        self::$isSchema = false;
+        self::$message = 'Execution finished';
     }
 
     protected static function addNewQueryList(array $listQuery): void

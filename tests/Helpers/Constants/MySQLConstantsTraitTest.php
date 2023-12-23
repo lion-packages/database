@@ -12,6 +12,7 @@ class MySQLConstantsTraitTest extends Test
     use MySQLConstantsTrait;
 
     const MYSQL_KEYWORDS_VALUES = [
+        'innodb' => ' INNODB',
         'charset' => ' CHARSET',
         'status' => ' STATUS',
         'replace' => ' REPLACE',
@@ -79,6 +80,7 @@ class MySQLConstantsTraitTest extends Test
         'distinct' => ' DISTINCT',
         'offset' => ' OFFSET',
         'primary-key' => ' PRIMARY KEY (?)',
+        'primary' => ' PRIMARY',
         'auto-increment' => ' AUTO_INCREMENT',
         'comment' => ' COMMENT',
         'default' => ' DEFAULT',
@@ -117,7 +119,10 @@ class MySQLConstantsTraitTest extends Test
         'key' => ' KEY',
         'foreign' => ' FOREIGN',
         'references' => ' REFERENCES',
-        'restrict' => ' RESTRICT'
+        'restrict' => ' RESTRICT',
+        'cascade' => ' CASCADE',
+        'no' => ' NO',
+        'action' => ' ACTION'
     ];
 
     public function testMySQLKeywordsExist(): void

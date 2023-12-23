@@ -46,17 +46,6 @@ class DriverTraitTest extends Test
     const EMPTY_STRING = '';
     const FALSE = false;
     const TRUE = true;
-    const SCHEMA_OPTIONS = [
-        'columns' => [],
-        'indexes' => [],
-        'foreign' => [
-            'index' => [],
-            'constraint' => []
-        ]
-    ];
-    const INNODB = 'INNODB';
-    const UTF8 = 'UTF8';
-    const UTF8_SPANISH_CI = 'UTF8_SPANISH_CI';
 
     private object $customClass;
     private string $customCode;
@@ -137,16 +126,9 @@ class DriverTraitTest extends Test
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
         $this->assertSame(self::EMPTY_ARRAY, $this->getPrivateProperty('fetchMode'));
-        $this->assertSame(self::INNODB, $this->getPrivateProperty('engine'));
-        $this->assertSame(self::UTF8, $this->getPrivateProperty('characterSet'));
-        $this->assertSame(self::UTF8_SPANISH_CI, $this->getPrivateProperty('collate'));
-        $this->assertSame(self::SCHEMA_OPTIONS, $this->getPrivateProperty('schemaOptions'));
-        $this->assertSame(self::FALSE, $this->getPrivateProperty('isSchema'));
-        $this->assertSame(self::FALSE, $this->getPrivateProperty('isCreateSchema'));
-        $this->assertSame(self::FALSE, $this->getPrivateProperty('isCreateTable'));
-        $this->assertSame(self::FALSE, $this->getPrivateProperty('isCreateView'));
-        $this->assertSame(self::FALSE, $this->getPrivateProperty('isCreateProcedure'));
         $this->assertSame(self::FALSE, $this->getPrivateProperty('isTransaction'));
+        $this->assertSame(self::FALSE, $this->getPrivateProperty('isSchema'));
+        $this->assertSame(self::FALSE, $this->getPrivateProperty('enableInsert'));
     }
 
     /**

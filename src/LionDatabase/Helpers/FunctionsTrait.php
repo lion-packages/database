@@ -169,13 +169,17 @@ trait FunctionsTrait
         self::$schemaOptions['indexes'][] = trim($strColumnIndexes);
     }
 
-    protected static function addCharacterBulk(array $rows): string
+    protected static function addCharacterBulk(array $rows, bool $addQuotes = false): string
     {
         $addValues = '';
         $size = count($rows) - 1;
 
-        foreach ($rows as $key => $row) {
-            $str = "(" . self::addCharacter($row) . ")";
+        foreach ($rows as $key => $rowChild) {
+            $row = !self::$isSchema
+                ? self::addCharacter($rowChild)
+                : self::addColumns(array_values($rowChild), true, $addQuotes);
+
+            $str = "({$row})";
             $addValues.= $key === $size ? $str : "{$str}, ";
         }
 
@@ -220,7 +224,7 @@ trait FunctionsTrait
         return $addValues;
     }
 
-    protected static function addColumns(array $columns, bool $spacing = true): string
+    protected static function addColumns(array $columns, bool $spacing = true, bool $addQuotes = false): string
     {
         $stringColumns = '';
         $newColumns = [];
@@ -237,11 +241,17 @@ trait FunctionsTrait
         if ($countColumns > 0) {
             foreach ($newColumns as $key => $column) {
                 if (!empty($column)) {
-                    $stringColumns.= $key === $size ? "{$column}" : (!$spacing ? "{$column}," : "{$column}, ");
+                    if (self::$isSchema && self::$enableInsert && $addQuotes) {
+                        $stringColumns.= $key === $size
+                            ? "'{$column}'"
+                            : (!$spacing ? "'{$column}'," : "'{$column}', ");
+                    } else {
+                        $stringColumns.= $key === $size ? "{$column}" : (!$spacing ? "{$column}," : "{$column}, ");
+                    }
                 }
             }
         } else {
-            $stringColumns = "*";
+            $stringColumns = '*';
         }
 
         return $stringColumns;

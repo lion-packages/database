@@ -7,7 +7,8 @@ namespace LionDatabase\Helpers\Constants;
 trait MySQLConstantsTrait
 {
 	private const MYSQL_KEYWORDS = [
-		'charset' => ' CHARSET',
+		'innodb' => ' INNODB',
+        'charset' => ' CHARSET',
 		'status' => ' STATUS',
 		'replace' => ' REPLACE',
 		'end' => ' END',
@@ -74,6 +75,7 @@ trait MySQLConstantsTrait
 		'distinct' => ' DISTINCT',
 		'offset' => ' OFFSET',
 		'primary-key' => ' PRIMARY KEY (?)',
+        'primary' => ' PRIMARY',
 		'auto-increment' => ' AUTO_INCREMENT',
 		'comment' => ' COMMENT',
 		'default' => ' DEFAULT',
@@ -112,6 +114,9 @@ trait MySQLConstantsTrait
 		'key' => ' KEY',
 		'foreign' => ' FOREIGN',
 		'references' => ' REFERENCES',
-		'restrict' => ' RESTRICT'
+		'restrict' => ' RESTRICT',
+        'cascade' => ' CASCADE',
+        'no' => ' NO',
+        'action' => ' ACTION'
 	];
 }
