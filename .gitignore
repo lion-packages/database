@@ -1,5 +1,4 @@
 /vendor/
-/tests/
-/class/
 .env
-index.php
+.phpunit.result.cache
+/srcOld/

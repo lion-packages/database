@@ -16,10 +16,9 @@
 </p>
 
 ## Install
-```shell
+```bash
 composer require lion/database
 ```
 
 ## License
-
-The <strong>database</strong> library is open source software licensed under the [MIT License](https://github.com/Lion-Packages/database/blob/main/LICENSE).
+The <strong>database</strong> library is open source software licensed under the [MIT License](https://github.com/lion-packages/database/blob/main/LICENSE).
