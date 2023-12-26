@@ -71,26 +71,30 @@ abstract class Connection
 	{
         if (!empty(self::$dataInfo[$code])) {
             $cont = 1;
-            $value_type = null;
+            $valueType = null;
 
             foreach (self::$dataInfo[$code] as $value) {
-                if ($value === null) {
-                    $value_type = 'NULL';
+                if (null === $value) {
+                    $valueType = 'NULL';
                 } else {
-                    $value_type = !preg_match('/^0x/', $value) ? gettype($value) : 'HEX';
+                    if (is_string($value)) {
+                        $valueType = !preg_match('/^0x/', $value) ? gettype($value) : 'HEX';
+                    } else {
+                        $valueType = gettype($value);
+                    }
                 }
 
-                if ($value_type === 'HEX') {
+                if ($valueType === 'HEX') {
                     self::$stmt->bindValue(
                         $cont,
                         hex2bin(str_replace('0x', '', $value)),
-                        self::getValueType($value_type)
+                        self::getValueType($valueType)
                     );
                 } else {
                     self::$stmt->bindValue(
                         $cont,
                         $value,
-                        self::getValueType($value_type)
+                        self::getValueType($valueType)
                     );
                 }
 
@@ -115,194 +119,5 @@ abstract class Connection
                 'split' => $newListSql
             ]
         ];
-    }
-
-    protected static function executeMySQL(): object
-    {
-        return self::mysql(function() {
-            $response = (object) ['status' => 'success', 'message' => self::$message];
-
-            if (self::$isTransaction) {
-                self::$message = 'Transaction executed successfully';
-            }
-
-            try {
-                self::$listSql = array_map(
-                    fn($value) => trim($value),
-                    array_filter(explode(';', trim(self::$sql)), fn($value) => trim($value) != '')
-                );
-
-                $data_info_keys = array_keys(self::$dataInfo);
-
-                if (count($data_info_keys) > 0) {
-                    foreach ($data_info_keys as $key => $code) {
-                        self::prepare(self::$listSql[$key]);
-                        self::bindValue($code);
-                        self::$stmt->execute();
-                        self::$stmt->closeCursor();
-                    }
-                } else {
-                    self::prepare(self::$sql);
-                    self::bindValue(self::$actualCode);
-                    self::$stmt->execute();
-                }
-
-                if (self::$isTransaction) {
-                    self::$conn->commit();
-                }
-
-                self::clean();
-                return $response;
-            } catch (PDOException $e) {
-                if (self::$isTransaction) {
-                    self::$conn->rollBack();
-                }
-
-                self::clean();
-
-                return (object) [
-                    'status' => 'database-error',
-                    'message' => $e->getMessage(),
-                    'data' => (object) [
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine()
-                    ]
-                ];
-            }
-        });
-    }
-
-    protected static function getMySQL(): array|object
-    {
-        return self::mysql(function() {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn($value) => trim($value) != '')
-            );
-
-            try {
-                $codes = array_keys(self::$fetchMode);
-
-                foreach (self::$listSql as $key => $sql) {
-                    self::prepare($sql);
-                    $code = isset($codes[$key]) ? $codes[$key] : null;
-
-                    if ($code != null && isset(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
-
-                    if ($code != null && isset(self::$fetchMode[$code])) {
-                        $get_fetch = self::$fetchMode[$codes[$key]];
-
-                        if (is_array($get_fetch)) {
-                            self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
-                        } else {
-                            self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                        }
-                    }
-
-                    self::$stmt->execute();
-                    $request = self::$stmt->fetch();
-
-                    if (!$request) {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
-                        } else {
-                            $responses = (object) ['status' => 'success', 'message' => 'No data available'];
-                        }
-                    } else {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = $request;
-                        } else {
-                            $responses = $request;
-                        }
-                    }
-                }
-
-                self::clean();
-            } catch (PDOException $e) {
-                self::clean();
-
-                $responses[] = (object) [
-                    'status' => 'database-error',
-                    'message' => $e->getMessage(),
-                    'data' => (object) [
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine()
-                    ]
-                ];
-            }
-
-            return $responses;
-        });
-    }
-
-    protected static function getAllMySQL(): array|object
-    {
-        return self::mysql(function() {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn($value) => trim($value) != '')
-            );
-
-            try {
-                $codes = array_keys(self::$fetchMode);
-
-                foreach (self::$listSql as $key => $sql) {
-                    self::prepare($sql);
-                    $code = isset($codes[$key]) ? $codes[$key] : null;
-
-                    if ($code != null && isset(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
-
-                    if ($code != null && isset(self::$fetchMode[$code])) {
-                        $get_fetch = self::$fetchMode[$codes[$key]];
-
-                        if (is_array($get_fetch)) {
-                            self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
-                        } else {
-                            self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                        }
-                    }
-
-                    self::$stmt->execute();
-                    $request = self::$stmt->fetchAll();
-
-                    if (!$request) {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
-                        } else {
-                            $responses = (object) ['status' => 'success', 'message' => 'No data available'];
-                        }
-                    } else {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = $request;
-                        } else {
-                            $responses = $request;
-                        }
-                    }
-                }
-
-                self::clean();
-            } catch (PDOException $e) {
-                self::clean();
-
-                $responses[] = (object) [
-                    'status' => 'database-error',
-                    'message' => $e->getMessage(),
-                    'data' => (object) [
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine()
-                    ]
-                ];
-            }
-
-            return $responses;
-        });
     }
 }

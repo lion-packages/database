@@ -8,6 +8,7 @@ use Closure;
 use LionDatabase\Connection;
 use LionDatabase\Interface\DatabaseInterface;
 use PDO;
+use PDOException;
 
 class MySQL extends Connection implements DatabaseInterface
 {
@@ -16,7 +17,57 @@ class MySQL extends Connection implements DatabaseInterface
      */
     public static function execute(): object
     {
-        return self::executeMySQL();
+        return parent::mysql(function() {
+            $response = (object) ['status' => 'success', 'message' => self::$message];
+
+            if (self::$isTransaction) {
+                self::$message = 'Transaction executed successfully';
+            }
+
+            try {
+                self::$listSql = array_map(
+                    fn($value) => trim($value),
+                    array_filter(explode(';', trim(self::$sql)), fn($value) => trim($value) != '')
+                );
+
+                $data_info_keys = array_keys(self::$dataInfo);
+
+                if (count($data_info_keys) > 0) {
+                    foreach ($data_info_keys as $key => $code) {
+                        self::prepare(self::$listSql[$key]);
+                        self::bindValue($code);
+                        self::$stmt->execute();
+                        self::$stmt->closeCursor();
+                    }
+                } else {
+                    self::prepare(self::$sql);
+                    self::bindValue(self::$actualCode);
+                    self::$stmt->execute();
+                }
+
+                if (self::$isTransaction) {
+                    self::$conn->commit();
+                }
+
+                self::clean();
+                return $response;
+            } catch (PDOException $e) {
+                if (self::$isTransaction) {
+                    self::$conn->rollBack();
+                }
+
+                self::clean();
+
+                return (object) [
+                    'status' => 'database-error',
+                    'message' => $e->getMessage(),
+                    'data' => (object) [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                ];
+            }
+        });
     }
 
     /**
@@ -24,7 +75,69 @@ class MySQL extends Connection implements DatabaseInterface
      */
     public static function get(): array|object
     {
-        return self::getMySQL();
+        return parent::mysql(function() {
+            $responses = [];
+
+            self::$listSql = array_map(
+                fn($value) => trim($value),
+                array_filter(explode(';', trim(self::$sql)), fn($value) => trim($value) != '')
+            );
+
+            try {
+                $codes = array_keys(self::$fetchMode);
+
+                foreach (self::$listSql as $key => $sql) {
+                    self::prepare($sql);
+                    $code = isset($codes[$key]) ? $codes[$key] : null;
+
+                    if ($code != null && isset(self::$dataInfo[$code])) {
+                        self::bindValue($code);
+                    }
+
+                    if ($code != null && isset(self::$fetchMode[$code])) {
+                        $get_fetch = self::$fetchMode[$codes[$key]];
+
+                        if (is_array($get_fetch)) {
+                            self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
+                        } else {
+                            self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
+                        }
+                    }
+
+                    self::$stmt->execute();
+                    $request = self::$stmt->fetch();
+
+                    if (!$request) {
+                        if (count(self::$fetchMode) > 1) {
+                            $responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+                        } else {
+                            $responses = (object) ['status' => 'success', 'message' => 'No data available'];
+                        }
+                    } else {
+                        if (count(self::$fetchMode) > 1) {
+                            $responses[] = $request;
+                        } else {
+                            $responses = $request;
+                        }
+                    }
+                }
+
+                self::clean();
+            } catch (PDOException $e) {
+                self::clean();
+
+                $responses[] = (object) [
+                    'status' => 'database-error',
+                    'message' => $e->getMessage(),
+                    'data' => (object) [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                ];
+            }
+
+            return $responses;
+        });
     }
 
     /**
@@ -32,7 +145,69 @@ class MySQL extends Connection implements DatabaseInterface
      */
     public static function getAll(): array|object
     {
-        return self::getAllMySQL();
+        return parent::mysql(function() {
+            $responses = [];
+
+            self::$listSql = array_map(
+                fn($value) => trim($value),
+                array_filter(explode(';', trim(self::$sql)), fn($value) => trim($value) != '')
+            );
+
+            try {
+                $codes = array_keys(self::$fetchMode);
+
+                foreach (self::$listSql as $key => $sql) {
+                    self::prepare($sql);
+                    $code = isset($codes[$key]) ? $codes[$key] : null;
+
+                    if ($code != null && isset(self::$dataInfo[$code])) {
+                        self::bindValue($code);
+                    }
+
+                    if ($code != null && isset(self::$fetchMode[$code])) {
+                        $get_fetch = self::$fetchMode[$codes[$key]];
+
+                        if (is_array($get_fetch)) {
+                            self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
+                        } else {
+                            self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
+                        }
+                    }
+
+                    self::$stmt->execute();
+                    $request = self::$stmt->fetchAll();
+
+                    if (!$request) {
+                        if (count(self::$fetchMode) > 1) {
+                            $responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+                        } else {
+                            $responses = (object) ['status' => 'success', 'message' => 'No data available'];
+                        }
+                    } else {
+                        if (count(self::$fetchMode) > 1) {
+                            $responses[] = $request;
+                        } else {
+                            $responses = $request;
+                        }
+                    }
+                }
+
+                self::clean();
+            } catch (PDOException $e) {
+                self::clean();
+
+                $responses[] = (object) [
+                    'status' => 'database-error',
+                    'message' => $e->getMessage(),
+                    'data' => (object) [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                ];
+            }
+
+            return $responses;
+        });
     }
 
     /**
