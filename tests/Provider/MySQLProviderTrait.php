@@ -262,14 +262,14 @@ trait MySQLProviderTrait
                     'users_name' => $faker->name(),
                     'users_last_name' => $faker->lastName()
                 ],
-                'return' => 'UPDATE lion_database.users SET users_name=?, users_last_name=?'
+                'return' => 'UPDATE lion_database.users SET users_name = ?, users_last_name = ?'
             ],
             [
                 'table' => 'roles',
                 'params' => [
                     'roles_name' => $faker->jobTitle()
                 ],
-                'return' => 'UPDATE lion_database.roles SET roles_name=?'
+                'return' => 'UPDATE lion_database.roles SET roles_name = ?'
             ],
             [
                 'table' => 'tasks',
@@ -278,7 +278,7 @@ trait MySQLProviderTrait
                     'tasks_description' => $faker->companySuffix(),
                     'tasks_created_at' => $faker->date('Y-m-d H:i:s')
                 ],
-                'return' => 'UPDATE lion_database.tasks SET tasks_title=?, tasks_description=?, tasks_created_at=?'
+                'return' => 'UPDATE lion_database.tasks SET tasks_title = ?, tasks_description = ?, tasks_created_at = ?'
             ]
         ];
     }
