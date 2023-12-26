@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace LionDatabase;
 
-class Driver
+use LionDatabase\Drivers\MySQL;
+
+abstract class Driver
 {
 	public static function run(array $connections): object
 	{
@@ -13,14 +15,18 @@ class Driver
 		}
 
 		$connection = $connections['connections'][$connections['default']];
+        $type = trim(strtolower($connection['type']));
 
-		if ('mysql' === strtolower($connection['type'])) {
-			// \LionDatabase\Drivers\MySQL\MySQL::init($connections);
-			// \LionDatabase\Drivers\MySQL\Schema::init();
-		} else {
-			return (object) ['status' => 'database-error', 'message' => 'the driver does not exist'];
-		}
+        switch ($type) {
+            case 'mysql':
+            MySQL::run($connections);
+            break;
 
-		return (object) ['status' => 'success', 'message' => 'enabled connections'];
-	}
+            default:
+            return (object) ['status' => 'database-error', 'message' => 'the driver does not exist'];
+            break;
+        }
+
+        return (object) ['status' => 'success', 'message' => 'enabled connections'];
+    }
 }
