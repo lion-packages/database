@@ -263,6 +263,13 @@ class MySQL extends Connection implements DatabaseInterface
         return new static;
     }
 
+    public static function truncate(): MySQL
+    {
+        self::addQueryList([self::getKey('mysql', 'truncate')]);
+
+        return new static;
+    }
+
     public static function autoIncrement(): MySQL
     {
         self::addQueryList([self::getKey('mysql', 'auto-increment')]);
