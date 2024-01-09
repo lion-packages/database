@@ -1044,11 +1044,13 @@ class MySQL extends Connection implements DatabaseInterface
         return new static;
     }
 
-    public static function where(Closure|bool $valueType = true): MySQL
+    public static function where(Closure|string|bool $valueType = true): MySQL
     {
         if (is_callable($valueType)) {
             self::addQueryList([self::getKey('mysql', 'where')]);
             $valueType();
+        } elseif (is_string($valueType)) {
+            self::addQueryList([self::getKey('mysql', 'where'), " {$valueType}"]);
         } else {
             if ($valueType) {
                 self::addQueryList([self::getKey('mysql', 'where')]);
@@ -1058,11 +1060,13 @@ class MySQL extends Connection implements DatabaseInterface
         return new static;
     }
 
-    public static function and(Closure|bool $valueType = true): MySQL
+    public static function and(Closure|string|bool $valueType = true): MySQL
     {
         if (is_callable($valueType)) {
             self::addQueryList([self::getKey('mysql', 'and')]);
             $valueType();
+        } elseif (is_string($valueType)) {
+            self::addQueryList([self::getKey('mysql', 'and'), " {$valueType}"]);
         } else {
             if ($valueType) {
                 self::addQueryList([self::getKey('mysql', 'and')]);
@@ -1072,11 +1076,13 @@ class MySQL extends Connection implements DatabaseInterface
         return new static;
     }
 
-    public static function or(Closure|bool $valueType = true): MySQL
+    public static function or(Closure|string|bool $valueType = true): MySQL
     {
         if (is_callable($valueType)) {
             self::addQueryList([self::getKey('mysql', 'or')]);
             $valueType();
+        } elseif (is_string($valueType)) {
+            self::addQueryList([self::getKey('mysql', 'or'), " {$valueType}"]);
         } else {
             if ($valueType) {
                 self::addQueryList([self::getKey('mysql', 'or')]);

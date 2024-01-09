@@ -921,9 +921,15 @@ class MySQLTest extends Test
 
     public function testWhere(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->where(fn() => $this->mysql->equalTo('idusers', 1)));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->where()->equalTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('WHERE idusers = ?', $this->getQuery());
+    }
+
+    public function testWhereIsString(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->where('idusers'));
+        $this->assertSame('WHERE idusers', $this->getQuery());
     }
 
     public function testWhereWithColumn(): void
@@ -957,9 +963,15 @@ class MySQLTest extends Test
 
     public function testAnd(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->and(fn() => $this->mysql->equalTo('idusers', 1)));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->and()->equalTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('AND idusers = ?', $this->getQuery());
+    }
+
+    public function testAndIsString(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->and('idusers'));
+        $this->assertSame('AND idusers', $this->getQuery());
     }
 
     public function testAndWithColumn(): void
@@ -997,9 +1009,15 @@ class MySQLTest extends Test
 
     public function testOr(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->or(fn() => $this->mysql->equalTo('idusers', 1)));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->or()->equalTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('OR idusers = ?', $this->getQuery());
+    }
+
+    public function testOrIsString(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->or('idusers'));
+        $this->assertSame('OR idusers', $this->getQuery());
     }
 
     public function testOrWithColumn(): void
