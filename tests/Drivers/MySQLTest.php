@@ -1191,16 +1191,22 @@ class MySQLTest extends Test
         $this->assertSame('YEAR(2023-12-22)', $year);
     }
 
-    public function testInt(): void
+    /**
+     * @dataProvider intProvider
+     * */
+    public function testInt(string $column, ?int $length, string $query): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->int('idusers', 11));
-        $this->assertSame('idusers INT(11)', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->int($column, $length));
+        $this->assertSame($query, $this->getQuery());
     }
 
-    public function testBigInt(): void
+    /**
+     * @dataProvider bigIntProvider
+     * */
+    public function testBigInt(string $column, ?int $length, string $query): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->bigInt('idusers', 11));
-        $this->assertSame('idusers BIGINT(11)', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->bigInt($column, $length));
+        $this->assertSame($query, $this->getQuery());
     }
 
     public function testDecimal(): void

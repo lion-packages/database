@@ -77,9 +77,10 @@ trait FunctionsTrait
         }
 
         $countColumns = count($newColumns);
-        $size = $countColumns - 1;
 
         if ($countColumns > 0) {
+            $size = $countColumns - 1;
+
             foreach ($newColumns as $key => $column) {
                 if (!empty($column)) {
                     if (self::$isSchema && self::$enableInsert && $addQuotes) {

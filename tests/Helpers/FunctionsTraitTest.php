@@ -18,36 +18,6 @@ class FunctionsTraitTest extends Test
     {
         $this->customClass = new class {
             use FunctionsTrait;
-
-            public static function testAddCharacterBulk(array $rows, bool $addQuotes = false): string
-            {
-                return self::addCharacterBulk($rows, $addQuotes);
-            }
-
-            public static function testAddCharacterEqualTo(array $rows): string
-            {
-                return self::addCharacterEqualTo($rows);
-            }
-
-            public static function testAddCharacterAssoc(array $rows): string
-            {
-                return self::addCharacterAssoc($rows);
-            }
-
-            public static function testAddCharacter(array $rows): string
-            {
-                return self::addCharacter($rows);
-            }
-
-            public static function testAddColumns(array $columns, bool $spacing, bool $addQuotes): string
-            {
-                return self::addColumns($columns, $spacing, $addQuotes);
-            }
-
-            public static function testAddEnumColumns(array $columns, bool $spacing): string
-            {
-                return self::addEnumColumns($columns, $spacing);
-            }
         };
 
         $this->initReflection($this->customClass);
@@ -66,7 +36,7 @@ class FunctionsTraitTest extends Test
     {
         $this->setPrivateProperty('isSchema', $isSchema);
         $this->setPrivateProperty('enableInsert', $enableInsert);
-        $str = $this->customClass->testAddCharacterBulk(self::BULK_ROWS, $addQuotes);
+        $str = $this->getPrivateMethod('addCharacterBulk', [self::BULK_ROWS, $addQuotes]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
@@ -77,7 +47,7 @@ class FunctionsTraitTest extends Test
      * */
     public function testAddCharacterEqualTo(array $columns, string $return): void
     {
-        $str = $this->customClass->testAddCharacterEqualTo($columns);
+        $str = $this->getPrivateMethod('addCharacterEqualTo', [$columns]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
@@ -88,7 +58,7 @@ class FunctionsTraitTest extends Test
      * */
     public function testAddCharacterAssoc(array $rows, string $return): void
     {
-        $str = $this->customClass->testAddCharacterAssoc($rows);
+        $str = $this->getPrivateMethod('addCharacterAssoc', [$rows]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
@@ -99,7 +69,7 @@ class FunctionsTraitTest extends Test
      * */
     public function testAddCharacter(array $rows, string $return): void
     {
-        $str = $this->customClass->testAddCharacter($rows);
+        $str = $this->getPrivateMethod('addCharacter', [$rows]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
@@ -115,11 +85,10 @@ class FunctionsTraitTest extends Test
         bool $spacing,
         bool $addQuotes,
         string $return
-    ): void
-    {
+    ): void {
         $this->setPrivateProperty('isSchema', $isSchema);
         $this->setPrivateProperty('enableInsert', $enableInsert);
-        $str = $this->customClass->testAddColumns($columns, $spacing, $addQuotes);
+        $str = $this->getPrivateMethod('addColumns', [$columns, $spacing, $addQuotes]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
@@ -130,7 +99,7 @@ class FunctionsTraitTest extends Test
      * */
     public function testAddEnumColumns(array $columns, bool $spacing, string $return): void
     {
-        $str = $this->customClass->testAddEnumColumns($columns, $spacing);
+        $str = $this->getPrivateMethod('addEnumColumns', [$columns, $spacing]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);

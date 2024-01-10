@@ -55,9 +55,6 @@ class DatabaseConfigInterfaceTest extends Test
         $this->setPrivateProperty('connections', []);
         $this->setPrivateProperty('activeConnection', '');
         $this->setPrivateProperty('dbname', '');
-        $this->setPrivateProperty('isTransaction', false);
-        $this->setPrivateProperty('isSchema', false);
-        $this->setPrivateProperty('enableInsert', false);
     }
 
     public function testRun(): void
@@ -77,32 +74,5 @@ class DatabaseConfigInterfaceTest extends Test
         $this->assertInstanceOf($this->customClass::class, $run);
         $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('activeConnection'));
         $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('dbname'));
-    }
-
-    public function testTransaction(): void
-    {
-        $run = $this->customClass->transaction(true);
-
-        $this->assertInstanceOf(DatabaseConfigInterface::class, $run);
-        $this->assertInstanceOf($this->customClass::class, $run);
-        $this->assertTrue($this->getPrivateProperty('isTransaction'));
-    }
-
-    public function testIsSchema(): void
-    {
-        $run = $this->customClass->isSchema(true);
-
-        $this->assertInstanceOf(DatabaseConfigInterface::class, $run);
-        $this->assertInstanceOf($this->customClass::class, $run);
-        $this->assertTrue($this->getPrivateProperty('isSchema'));
-    }
-
-    public function testEnableInsert(): void
-    {
-        $run = $this->customClass->enableInsert(true);
-
-        $this->assertInstanceOf(DatabaseConfigInterface::class, $run);
-        $this->assertInstanceOf($this->customClass::class, $run);
-        $this->assertTrue($this->getPrivateProperty('enableInsert'));
     }
 }

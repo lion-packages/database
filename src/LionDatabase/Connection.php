@@ -20,14 +20,11 @@ abstract class Connection
 	protected static function mysql(Closure $callback): array|object
 	{
 		$connection = self::$connections['connections'][self::$activeConnection];
-		$dbname = $connection['dbname'];
-		$host = $connection['host'];
-		$port = $connection['port'];
 		$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ];
 
 		try {
 			self::$conn = new PDO(
-				"mysql:host={$host};port={$port};dbname={$dbname}",
+				"mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
 				$connection['user'],
 				$connection['password'],
 				(isset($connection['options']) ? $connection['options'] : $options)
@@ -39,14 +36,13 @@ abstract class Connection
 
 			return $callback();
 		} catch (PDOException $e) {
-			return (object) [
-				'status' => 'database-error',
-				'message' => $e->getMessage(),
-				'data' => (object) [
-					'file' => $e->getFile(),
-					'line' => $e->getLine()
-				]
-			];
+            if (self::$isTransaction) {
+                self::$conn->rollBack();
+            }
+
+            self::clean();
+
+			return (object) ['status' => 'database-error', 'message' => $e->getMessage()];
 		}
 	}
 
@@ -78,7 +74,7 @@ abstract class Connection
                     $valueType = 'NULL';
                 } else {
                     if (is_string($value)) {
-                        $valueType = !preg_match('/^0x/', $value) ? gettype($value) : 'HEX';
+                        $valueType = !((bool) preg_match('/^0x/', $value)) ? gettype($value) : 'HEX';
                     } else {
                         $valueType = gettype($value);
                     }

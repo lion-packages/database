@@ -46,7 +46,6 @@ class DriverTest extends Test
     protected function setUp(): void
     {
         $this->mysql = new MySQL();
-
         $this->initReflection($this->mysql);
     }
 

@@ -7,8 +7,15 @@ namespace Tests\Provider;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use Lion\Database\Interface\SchemaDriverInterface;
+use Lion\Database\Interface\TransactionInterface;
 
-class CustomClassProvider implements DatabaseConfigInterface, ReadDatabaseDataInterface, RunDatabaseProcessesInterface
+class CustomClassProvider implements
+    DatabaseConfigInterface,
+    TransactionInterface,
+    SchemaDriverInterface,
+    RunDatabaseProcessesInterface,
+    ReadDatabaseDataInterface
 {
     protected static array $connections = [];
     protected static string $activeConnection = '';

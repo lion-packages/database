@@ -16,21 +16,4 @@ interface DatabaseConfigInterface
      * specified connection
      * */
     public static function connection(string $connectionName): object;
-
-    /**
-     * Activate the configuration to execute a transaction type
-     * process in the service
-     * */
-    public static function transaction(bool $isTransaction = true): object;
-
-    /**
-     * Activate the configuration to run a process at the Schema
-     * level in the service
-     * */
-    public static function isSchema(): object;
-
-    /**
-     * Enable the setting for nesting insert statements
-     * */
-    public static function enableInsert(bool $enable = false): object;
 }
