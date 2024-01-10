@@ -467,6 +467,12 @@ class MySQLTest extends Test
         $this->assertSame('IF EXISTS `lion_database`', $this->getQuery());
     }
 
+    public function testIfNotExist(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->ifNotExists(self::DATABASE_NAME));
+        $this->assertSame('IF NOT EXISTS `lion_database`', $this->getQuery());
+    }
+
     public function testUse(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->use(self::DATABASE_NAME));

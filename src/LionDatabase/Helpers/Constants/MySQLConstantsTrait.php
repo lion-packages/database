@@ -7,6 +7,7 @@ namespace Lion\Database\Helpers\Constants;
 trait MySQLConstantsTrait
 {
 	private const MYSQL_KEYWORDS = [
+        'not' => ' NOT',
         'truncate' => ' TRUNCATE',
 		'innodb' => ' INNODB',
         'charset' => ' CHARSET',

@@ -505,6 +505,18 @@ class MySQL extends Connection implements
         return new static;
     }
 
+    public static function ifNotExists(string $notExist): MySQL
+    {
+        self::addQueryList([
+            self::getKey('mysql', 'if'),
+            self::getKey('mysql', 'not'),
+            self::getKey('mysql', 'exists'),
+            " `{$notExist}`"
+        ]);
+
+        return new static;
+    }
+
     public static function use(string $use): MySQL
     {
         self::addQueryList([self::getKey('mysql', 'use'), " `{$use}`"]);
