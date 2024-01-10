@@ -266,6 +266,12 @@ class MySQLTest extends Test
         $this->assertSame($enable, $this->getPrivateProperty('enableInsert'));
     }
 
+    public function testDatabase(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->database());
+        $this->assertSame('DATABASE', $this->getQuery());
+    }
+
     public function testTruncate(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->truncate());

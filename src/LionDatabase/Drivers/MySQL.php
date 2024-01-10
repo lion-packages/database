@@ -268,6 +268,13 @@ class MySQL extends Connection implements
         });
     }
 
+    public static function database(): MySQL
+    {
+        self::addQueryList([self::getKey('mysql', 'database')]);
+
+        return new static;
+    }
+
     public static function truncate(): MySQL
     {
         self::addQueryList([self::getKey('mysql', 'truncate')]);
