@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
-use LionDatabase\Helpers\FunctionsTrait;
-use LionTest\Test;
+use Lion\Database\Helpers\FunctionsTrait;
+use Lion\Test\Test;
 use Tests\Provider\FunctionsTraitProviderTrait;
 
 class FunctionsTraitTest extends Test

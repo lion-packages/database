@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase\Helpers;
+namespace Lion\Database\Helpers;
 
-use LionDatabase\Helpers\Constants\MySQLConstantsTrait;
+use Lion\Database\Helpers\Constants\MySQLConstantsTrait;
 
 trait KeywordsTrait
 {

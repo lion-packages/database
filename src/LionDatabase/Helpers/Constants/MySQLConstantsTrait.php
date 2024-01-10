@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase\Helpers\Constants;
+namespace Lion\Database\Helpers\Constants;
 
 trait MySQLConstantsTrait
 {

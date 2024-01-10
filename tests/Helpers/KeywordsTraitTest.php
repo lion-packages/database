@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
-use LionDatabase\Helpers\KeywordsTrait;
-use LionTest\Test;
+use Lion\Database\Helpers\KeywordsTrait;
+use Lion\Test\Test;
 use Tests\Provider\KeywordsTraitProviderTrait;
 
 class KeywordsTraitTest extends Test

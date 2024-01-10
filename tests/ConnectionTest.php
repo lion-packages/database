@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Closure;
-use LionDatabase\Connection;
-use LionTest\Test;
+use Lion\Database\Connection;
+use Lion\Test\Test;
 use PDO;
 use PDOException;
 use PDOStatement;

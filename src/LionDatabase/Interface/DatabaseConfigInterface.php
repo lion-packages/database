@@ -2,25 +2,10 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase\Interface;
+namespace Lion\Database\Interface;
 
-interface DatabaseInterface
+interface DatabaseConfigInterface
 {
-    /**
-     * Execute the current query
-     * */
-    public static function execute(): object;
-
-    /**
-     * Run and get an object from a row
-     * */
-    public static function get(): array|object;
-
-    /**
-     * Run and get an array of objects
-     * */
-    public static function getAll(): array|object;
-
     /**
      * initialize the connection data to use the service
      * */

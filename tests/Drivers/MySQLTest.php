@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Drivers;
 
-use LionDatabase\Drivers\MySQL;
-use LionTest\Test;
+use Lion\Database\Drivers\MySQL;
+use Lion\Test\Test;
 use PDO;
 use Tests\Provider\MySQLProviderTrait;
 

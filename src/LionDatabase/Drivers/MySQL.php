@@ -2,16 +2,74 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase\Drivers;
+namespace Lion\Database\Drivers;
 
 use Closure;
-use LionDatabase\Connection;
-use LionDatabase\Interface\DatabaseInterface;
+use Lion\Database\Connection;
+use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\ReadDatabaseDataInterface;
+use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use PDO;
 use PDOException;
 
-class MySQL extends Connection implements DatabaseInterface
+class MySQL extends Connection implements
+    DatabaseConfigInterface,
+    ReadDatabaseDataInterface,
+    RunDatabaseProcessesInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public static function run(array $connections): MySQL
+    {
+        self::$connections = $connections;
+        self::$activeConnection = self::$connections['default'];
+        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
+
+        return new static;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function connection(string $connectionName): MySQL
+    {
+        self::$activeConnection = $connectionName;
+        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
+
+        return new static;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function transaction(bool $isTransaction = true): MySQL
+    {
+        self::$isTransaction = $isTransaction;
+
+        return new static;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function isSchema(): MySQL
+    {
+        self::$isSchema = true;
+
+        return new static;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function enableInsert(bool $enable = false): MySQL
+    {
+        self::$enableInsert = $enable;
+
+        return new static;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -208,59 +266,6 @@ class MySQL extends Connection implements DatabaseInterface
 
             return $responses;
         });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function run(array $connections): MySQL
-    {
-        self::$connections = $connections;
-        self::$activeConnection = self::$connections['default'];
-        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-
-        return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function connection(string $connectionName): MySQL
-    {
-        self::$activeConnection = $connectionName;
-        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
-
-        return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function transaction(bool $isTransaction = true): MySQL
-    {
-        self::$isTransaction = $isTransaction;
-
-        return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function isSchema(): MySQL
-    {
-        self::$isSchema = true;
-
-        return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function enableInsert(bool $enable = false): MySQL
-    {
-        self::$enableInsert = $enable;
-
-        return new static;
     }
 
     public static function truncate(): MySQL

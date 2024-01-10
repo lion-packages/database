@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase;
+namespace Lion\Database;
 
-use LionDatabase\Drivers\MySQL;
+use Lion\Database\Drivers\MySQL;
+use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
 
 abstract class Driver
 {
@@ -19,7 +20,7 @@ abstract class Driver
 
         switch ($type) {
             case 'mysql':
-            MySQL::run($connections);
+            SchemaMySQL::setMySQLDriver(MySQL::run($connections))->run($connections);
             break;
 
             default:

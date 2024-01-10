@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase;
+namespace Lion\Database;
 
 use Closure;
-use LionDatabase\Helpers\FunctionsTrait;
+use Lion\Database\Helpers\FunctionsTrait;
 use PDO;
 use PDOException;
 use PDOStatement;

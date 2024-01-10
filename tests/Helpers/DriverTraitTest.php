@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
-use LionDatabase\Helpers\DriverTrait;
-use LionTest\Test;
+use Lion\Database\Helpers\DriverTrait;
+use Lion\Test\Test;
 use PDO;
 use Tests\Provider\DriverTraitProviderTrait;
 
