@@ -16,7 +16,7 @@ class MySQLTest extends Test
     use MySQLSchemaProviderTrait;
 
     const DATABASE_TYPE = 'mysql';
-    const DATABASE_HOST = 'db';
+    const DATABASE_HOST = 'mysql';
     const DATABASE_PORT = 3306;
     const DATABASE_NAME = 'lion_database';
     const DATABASE_USER = 'root';
