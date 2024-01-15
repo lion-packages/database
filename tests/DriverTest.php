@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use LionDatabase\Driver;
-use LionDatabase\Drivers\MySQL;
-use LionTest\Test;
+use Lion\Database\Driver;
+use Lion\Database\Drivers\MySQL;
+use Lion\Test\Test;
 
 class DriverTest extends Test
 {
@@ -46,7 +46,6 @@ class DriverTest extends Test
     protected function setUp(): void
     {
         $this->mysql = new MySQL();
-
         $this->initReflection($this->mysql);
     }
 

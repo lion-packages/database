@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Closure;
-use LionDatabase\Connection;
-use LionTest\Test;
+use Lion\Database\Connection;
+use Lion\Test\Test;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -106,9 +105,6 @@ class ConnectionTest extends Test
         $this->assertIsObject($response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
-        $this->assertObjectHasProperty('data', $response);
-        $this->assertObjectHasProperty('file', $response->data);
-        $this->assertObjectHasProperty('line', $response->data);
         $this->assertSame('database-error', $response->status);
         $this->assertSame('Connection failed', $response->message);
     }

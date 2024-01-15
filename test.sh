@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# echo -e "\n\t\t\033[0;31m >> ------------------------------------------------------------------ \n\033[0m";
-
 echo -e "\n\033[0;36m\t>>  Set Time Zone \033[0m"
 export TZ=America/Bogota
 echo -e "\033[0;36m\t>>  America/Bogota \033[0m"
@@ -17,10 +15,6 @@ echo -e "\033[0;36m\t>>  Dump Autoload \033[0m"
 composer dump-autoload
 echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
 
-echo -e "\033[0;36m\t>>  Drivers \033[0m"
-php vendor/bin/phpunit --testsuite Drivers
-echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
-
 echo -e "\033[0;36m\t>>  Helpers \033[0m"
 php vendor/bin/phpunit --testsuite Helpers
 echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
@@ -31,6 +25,18 @@ echo -e "\n\033[0;31m>> --------------------------------------------------------
 
 echo -e "\033[0;36m\t>>  Connection|Driver \033[0m"
 php vendor/bin/phpunit tests/ConnectionTest.php tests/DriverTest.php
+echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
+
+# echo -e "\033[0;36m\t>>  Drivers|Schema \033[0m"
+# php vendor/bin/phpunit --testsuite Drivers
+# echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
+
+echo -e "\033[0;36m\t>>  Drivers \033[0m"
+php vendor/bin/phpunit tests/Drivers/MySQLTest.php
+echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
+
+echo -e "\033[0;36m\t>>  Schema \033[0m"
+php vendor/bin/phpunit tests/Drivers/Schema/MySQLTest.php
 echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
 
 end_time=$(date +"%Y-%m-%d %H:%M:%S")

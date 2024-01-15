@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Drivers;
 
-use LionDatabase\Drivers\MySQL;
-use LionTest\Test;
+use Lion\Database\Drivers\MySQL;
+use Lion\Test\Test;
 use PDO;
 use Tests\Provider\MySQLProviderTrait;
 
@@ -266,6 +266,18 @@ class MySQLTest extends Test
         $this->assertSame($enable, $this->getPrivateProperty('enableInsert'));
     }
 
+    public function testDatabase(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->database());
+        $this->assertSame('DATABASE', $this->getQuery());
+    }
+
+    public function testTruncate(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->truncate());
+        $this->assertSame('TRUNCATE', $this->getQuery());
+    }
+
     public function testAutoIncrement(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->autoIncrement());
@@ -453,6 +465,12 @@ class MySQLTest extends Test
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->ifExists(self::DATABASE_NAME));
         $this->assertSame('IF EXISTS `lion_database`', $this->getQuery());
+    }
+
+    public function testIfNotExist(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->ifNotExists(self::DATABASE_NAME));
+        $this->assertSame('IF NOT EXISTS `lion_database`', $this->getQuery());
     }
 
     public function testUse(): void
@@ -915,9 +933,15 @@ class MySQLTest extends Test
 
     public function testWhere(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->where(fn() => $this->mysql->equalTo('idusers', 1)));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->where()->equalTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('WHERE idusers = ?', $this->getQuery());
+    }
+
+    public function testWhereIsString(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->where('idusers'));
+        $this->assertSame('WHERE idusers', $this->getQuery());
     }
 
     public function testWhereWithColumn(): void
@@ -951,9 +975,15 @@ class MySQLTest extends Test
 
     public function testAnd(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->and(fn() => $this->mysql->equalTo('idusers', 1)));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->and()->equalTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('AND idusers = ?', $this->getQuery());
+    }
+
+    public function testAndIsString(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->and('idusers'));
+        $this->assertSame('AND idusers', $this->getQuery());
     }
 
     public function testAndWithColumn(): void
@@ -991,9 +1021,15 @@ class MySQLTest extends Test
 
     public function testOr(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->or(fn() => $this->mysql->equalTo('idusers', 1)));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->or()->equalTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('OR idusers = ?', $this->getQuery());
+    }
+
+    public function testOrIsString(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->or('idusers'));
+        $this->assertSame('OR idusers', $this->getQuery());
     }
 
     public function testOrWithColumn(): void
@@ -1155,16 +1191,22 @@ class MySQLTest extends Test
         $this->assertSame('YEAR(2023-12-22)', $year);
     }
 
-    public function testInt(): void
+    /**
+     * @dataProvider intProvider
+     * */
+    public function testInt(string $column, ?int $length, string $query): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->int('idusers', 11));
-        $this->assertSame('idusers INT(11)', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->int($column, $length));
+        $this->assertSame($query, $this->getQuery());
     }
 
-    public function testBigInt(): void
+    /**
+     * @dataProvider bigIntProvider
+     * */
+    public function testBigInt(string $column, ?int $length, string $query): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->bigInt('idusers', 11));
-        $this->assertSame('idusers BIGINT(11)', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->bigInt($column, $length));
+        $this->assertSame($query, $this->getQuery());
     }
 
     public function testDecimal(): void

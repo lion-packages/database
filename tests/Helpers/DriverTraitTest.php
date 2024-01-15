@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
-use LionDatabase\Helpers\DriverTrait;
-use LionTest\Test;
+use Lion\Database\Helpers\DriverTrait;
+use Lion\Test\Test;
 use PDO;
 use Tests\Provider\DriverTraitProviderTrait;
 
@@ -54,36 +54,6 @@ class DriverTraitTest extends Test
     {
         $this->customClass = new class {
             use DriverTrait;
-
-            public static function testClean(): void
-            {
-                self::clean();
-            }
-
-            public static function testAddNewQueryList(array $queryList): void
-            {
-                self::addNewQueryList($queryList);
-            }
-
-            public static function testAddQueryList(array $queryList): void
-            {
-                self::addQueryList($queryList);
-            }
-
-            public static function testOpenGroup(): void
-            {
-                self::openGroup();
-            }
-
-            public static function testCloseGroup(): void
-            {
-                self::closeGroup();
-            }
-
-            public static function testCleanSettings(array $columns): array
-            {
-                return self::cleanSettings($columns);
-            }
         };
 
         $this->initReflection($this->customClass);
@@ -93,7 +63,7 @@ class DriverTraitTest extends Test
 
     protected function tearDown(): void
     {
-        $this->customClass::testClean();
+        $this->getPrivateMethod('clean');
     }
 
     private function setActualCode(): void
@@ -113,15 +83,13 @@ class DriverTraitTest extends Test
         $this->addDefault(self::DATABASE_NAME);
         $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
         $this->customClass::addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
-        $this->customClass::testClean();
+        $this->getPrivateMethod('clean');
 
         $this->assertSame(self::EMPTY_ARRAY, $this->getPrivateProperty('listSql'));
         $this->assertSame(self::EMPTY_STRING, $this->getPrivateProperty('actualCode'));
         $this->assertSame(self::EMPTY_STRING, $this->getPrivateProperty('sql'));
         $this->assertSame(self::EMPTY_STRING, $this->getPrivateProperty('table'));
         $this->assertSame(self::EMPTY_STRING, $this->getPrivateProperty('view'));
-        $this->assertSame(self::EMPTY_STRING, $this->getPrivateProperty('procedure'));
-        $this->assertSame(self::EMPTY_STRING, $this->getPrivateProperty('schemaStr'));
         $this->assertSame(self::EMPTY_ARRAY, $this->getPrivateProperty('dataInfo'));
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
@@ -136,7 +104,7 @@ class DriverTraitTest extends Test
      * */
     public function testNewAddQueryList(array $queryList, string $return): void
     {
-        $this->customClass::testAddQueryList($queryList);
+        $this->getPrivateMethod('addNewQueryList', [$queryList]);
 
         $this->assertSame($return, $this->getPrivateProperty('sql'));
     }
@@ -146,7 +114,7 @@ class DriverTraitTest extends Test
      * */
     public function testAddQueryList(array $queryList, string $return): void
     {
-        $this->customClass::testAddQueryList($queryList);
+        $this->getPrivateMethod('addQueryList', [$queryList]);
 
         $this->assertSame($return, $this->getPrivateProperty('sql'));
     }
@@ -186,14 +154,14 @@ class DriverTraitTest extends Test
 
     public function testOpenGroup(): void
     {
-        $this->customClass::testOpenGroup();
+        $this->getPrivateMethod('openGroup');
 
         $this->assertSame(' (', $this->getPrivateProperty('sql'));
     }
 
     public function testCloseGroup(): void
     {
-        $this->customClass::testCloseGroup();
+        $this->getPrivateMethod('closeGroup');
 
         $this->assertSame(' )', $this->getPrivateProperty('sql'));
     }
@@ -235,6 +203,6 @@ class DriverTraitTest extends Test
 
     public function testCleanSettings(): void
     {
-        $this->assertSame(self::ROWS, $this->customClass::testCleanSettings(self::ROWS_CLEAN_SETTINGS));
+        $this->assertSame(self::ROWS, $this->getPrivateMethod('cleanSettings', [self::ROWS_CLEAN_SETTINGS]));
     }
 }

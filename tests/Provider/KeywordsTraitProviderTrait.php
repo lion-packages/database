@@ -4,38 +4,40 @@ declare(strict_types=1);
 
 namespace Tests\Provider;
 
+use Lion\Database\Driver;
+
 trait KeywordsTraitProviderTrait
 {
     public static function getKeyProvider(): array
     {
         return [
             [
-                'type' => 'mysql',
+                'type' => Driver::MYSQL,
                 'key' => 'charset',
                 'return' => ' CHARSET'
             ],
             [
-                'type' => 'mysql',
+                'type' => Driver::MYSQL,
                 'key' => 'status',
                 'return' => ' STATUS'
             ],
             [
-                'type' => 'mysql',
+                'type' => Driver::MYSQL,
                 'key' => 'month',
                 'return' => ' MONTH(?)'
             ],
             [
-                'type' => 'mysql',
+                'type' => Driver::MYSQL,
                 'key' => 'order-by',
                 'return' => ' ORDER BY'
             ],
             [
-                'type' => 'mysql',
+                'type' => Driver::MYSQL,
                 'key' => 'primary-key',
                 'return' => ' PRIMARY KEY (?)'
             ],
             [
-                'type' => 'mysql',
+                'type' => Driver::MYSQL,
                 'key' => 'testing',
                 'return' => null
             ]

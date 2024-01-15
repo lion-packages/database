@@ -1,17 +1,15 @@
-<?php
+<?php 
 
 declare(strict_types=1);
 
-namespace Tests\Helpers\Constants;
+namespace Lion\Database\Helpers\Constants;
 
-use LionDatabase\Helpers\Constants\MySQLConstantsTrait;
-use LionTest\Test;
-
-class MySQLConstantsTraitTest extends Test
+class MySQLConstants
 {
-    use MySQLConstantsTrait;
-
-    const MYSQL_KEYWORDS_VALUES = [
+	const KEYWORDS = [
+        'delimiter' => ' DELIMITER',
+        'not' => ' NOT',
+        'truncate' => ' TRUNCATE',
         'innodb' => ' INNODB',
         'charset' => ' CHARSET',
         'status' => ' STATUS',
@@ -124,9 +122,4 @@ class MySQLConstantsTraitTest extends Test
         'no' => ' NO',
         'action' => ' ACTION'
     ];
-
-    public function testMySQLKeywordsExist(): void
-    {
-        $this->assertSame(self::MYSQL_KEYWORDS_VALUES, self::MYSQL_KEYWORDS);
-    }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase\Helpers;
+namespace Lion\Database\Helpers;
 
 trait FunctionsTrait
 {
@@ -77,9 +77,10 @@ trait FunctionsTrait
         }
 
         $countColumns = count($newColumns);
-        $size = $countColumns - 1;
 
         if ($countColumns > 0) {
+            $size = $countColumns - 1;
+
             foreach ($newColumns as $key => $column) {
                 if (!empty($column)) {
                     if (self::$isSchema && self::$enableInsert && $addQuotes) {

@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace LionDatabase;
+namespace Lion\Database;
 
-use LionDatabase\Drivers\MySQL;
+use Lion\Database\Drivers\MySQL;
+use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
 
 abstract class Driver
 {
+    const MYSQL = 'MYSQL';
+
 	public static function run(array $connections): object
 	{
 		if (empty($connections['default'])) {
@@ -19,12 +22,13 @@ abstract class Driver
 
         switch ($type) {
             case 'mysql':
-            MySQL::run($connections);
-            break;
+                MySQL::run($connections);
+                SchemaMySQL::run($connections);
+                break;
 
             default:
-            return (object) ['status' => 'database-error', 'message' => 'the driver does not exist'];
-            break;
+                return (object) ['status' => 'database-error', 'message' => 'the driver does not exist'];
+                break;
         }
 
         return (object) ['status' => 'success', 'message' => 'enabled connections'];

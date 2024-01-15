@@ -619,4 +619,36 @@ trait MySQLProviderTrait
             ]
         ];
     }
+
+    public static function intProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'length' => null,
+                'query' => 'idusers INT'
+            ],
+            [
+                'column' => 'idusers',
+                'length' => 11,
+                'query' => 'idusers INT(11)'
+            ]
+        ];
+    }
+
+    public static function bigIntProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'length' => null,
+                'query' => 'idusers BIGINT'
+            ],
+            [
+                'column' => 'idusers',
+                'length' => 11,
+                'query' => 'idusers BIGINT(11)'
+            ]
+        ];
+    }
 }
