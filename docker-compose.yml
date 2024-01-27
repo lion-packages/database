@@ -12,6 +12,8 @@ services:
         depends_on:
             - mysql
             - phpmyadmin
+            - postgres
+            - pgadmin
         volumes:
             - ./:/var/www/html
         networks:
@@ -44,7 +46,33 @@ services:
             MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
         networks:
             - lion
+    postgres:
+        image: postgres
+        container_name: database-postgres
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - postgres_data:/var/lib/postgresql
+        networks:
+            - lion
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: database-pgadmin4
+        ports:
+            - "5050:80"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${DB_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
+        depends_on:
+            - postgres
+        networks:
+            - lion
 volumes:
     mysql_data:
+    postgres_data:
 networks:
     lion:
