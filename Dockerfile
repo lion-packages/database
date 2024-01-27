@@ -4,11 +4,11 @@ RUN useradd -m lion && echo 'lion:lion' | chpasswd && usermod -aG sudo lion && u
 
 RUN apt-get update -y \
     && apt-get install -y nano default-mysql-client curl wget unzip cron sendmail libpng-dev libzip-dev \
-    && apt-get install -y zlib1g-dev libonig-dev supervisor libevent-dev libssl-dev \
+    && apt-get install -y zlib1g-dev libonig-dev supervisor libevent-dev libssl-dev libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pecl install ev \
-    && docker-php-ext-install mbstring gd pdo_mysql mysqli zip \
+    && docker-php-ext-install mbstring gd pdo_mysql mysqli zip pdo_pgsql pgsql \
     && docker-php-ext-enable gd zip
 
 RUN a2enmod rewrite \
