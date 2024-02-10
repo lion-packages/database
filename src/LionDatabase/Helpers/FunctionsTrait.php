@@ -31,9 +31,15 @@ trait FunctionsTrait
         $addValues = '';
         $index = 0;
         $size = count($columns) - 1;
+        $columns = self::$isSchema && self::$enableInsert ? $columns : array_keys($columns);
 
-        foreach (array_keys($columns) as $key) {
-            $addValues.= $index === $size ? "{$key} = ?" : "{$key} = ?, ";
+        foreach ($columns as $column => $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                $addValues.= $index === $size ? "{$column} = {$value}" : "{$column} = {$value}, ";
+            } else {
+                $addValues.= $index === $size ? "{$value} = ?" : "{$value} = ?, ";
+            }
+
             $index++;
         }
 
