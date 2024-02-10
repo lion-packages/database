@@ -869,12 +869,12 @@ class MySQL extends Connection implements
             ' (',
             (
                 !self::$isSchema
-                ? self::addCharacterAssoc($rows)
-                : self::addColumns(
-                    array_values($rows),
-                    true,
-                    (self::$isSchema && self::$enableInsert && self::$isProcedure ? false : true)
-                )
+                    ? self::addCharacterAssoc($rows)
+                    : self::addColumns(
+                        array_values($rows),
+                        true,
+                        (self::$isSchema && self::$enableInsert && self::$isProcedure ? false : true)
+                    )
             ),
             ')'
         ]);
@@ -1127,48 +1127,72 @@ class MySQL extends Connection implements
 
     public static function equalTo(string $column, mixed $value): MySQL
     {
-        self::addRows([$value]);
-        self::addQueryList([' ', trim($column . ' = ?')]);
+        if (self::$isSchema && self::$enableInsert) {
+            self::addQueryList([' ', trim($column), ' = ', trim($value)]);
+        } else {
+            self::addRows([$value]);
+            self::addQueryList([' ', trim($column . ' = ?')]);
+        }
 
         return new static;
     }
 
     public static function notEqualTo(string $column, mixed $value): MySQL
     {
-        self::addRows([$value]);
-        self::addQueryList([' ', trim($column . ' <> ?')]);
+        if (self::$isSchema && self::$enableInsert) {
+            self::addQueryList([' ', trim($column), ' <> ', trim($value)]);
+        } else {
+            self::addRows([$value]);
+            self::addQueryList([' ', trim($column . ' <> ?')]);
+        }
 
         return new static;
     }
 
     public static function greaterThan(string $column, mixed $value): MySQL
     {
-        self::addRows([$value]);
-        self::addQueryList([' ', trim($column . ' > ?')]);
+        if (self::$isSchema && self::$enableInsert) {
+            self::addQueryList([' ', trim($column), ' > ', trim($value)]);
+        } else {
+            self::addRows([$value]);
+            self::addQueryList([' ', trim($column . ' > ?')]);
+        }
 
         return new static;
     }
 
     public static function lessThan(string $column, mixed $value): MySQL
     {
-        self::addRows([$value]);
-        self::addQueryList([' ', trim($column . ' < ?')]);
+        if (self::$isSchema && self::$enableInsert) {
+            self::addQueryList([' ', trim($column), ' < ', trim($value)]);
+        } else {
+            self::addRows([$value]);
+            self::addQueryList([' ', trim($column . ' < ?')]);
+        }
 
         return new static;
     }
 
     public static function greaterThanOrEqualTo(string $column, mixed $value): MySQL
     {
-        self::addRows([$value]);
-        self::addQueryList([' ', trim($column . ' >= ?')]);
+        if (self::$isSchema && self::$enableInsert) {
+            self::addQueryList([' ', trim($column), ' >= ', trim($value)]);
+        } else {
+            self::addRows([$value]);
+            self::addQueryList([' ', trim($column . ' >= ?')]);
+        }
 
         return new static;
     }
 
     public static function lessThanOrEqualTo(string $column, mixed $value): MySQL
     {
-        self::addRows([$value]);
-        self::addQueryList([' ', trim($column . ' <= ?')]);
+        if (self::$isSchema && self::$enableInsert) {
+            self::addQueryList([' ', trim($column), ' <= ', trim($value)]);
+        } else {
+            self::addRows([$value]);
+            self::addQueryList([' ', trim($column . ' <= ?')]);
+        }
 
         return new static;
     }

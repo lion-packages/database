@@ -42,14 +42,18 @@ trait FunctionsTraitProviderTrait
                 'columns' => [
                     'idroles' => 1
                 ],
-                'return' => 'idroles = ?'
+                'return' => 'idroles = ?',
+                'isSchema' => false,
+                'enableInsert' => false
             ],
             [
                 'columns' => [
                     'idroles' => 1,
                     'roles_name' => 'Administrator'
                 ],
-                'return' => 'idroles = ?, roles_name = ?'
+                'return' => 'idroles = ?, roles_name = ?',
+                'isSchema' => false,
+                'enableInsert' => false
             ],
             [
                 'columns' => [
@@ -57,7 +61,36 @@ trait FunctionsTraitProviderTrait
                     'roles_name' => 'Administrator',
                     'roles_description' => 'role description'
                 ],
-                'return' => 'idroles = ?, roles_name = ?, roles_description = ?'
+                'return' => 'idroles = ?, roles_name = ?, roles_description = ?',
+                'isSchema' => false,
+                'enableInsert' => false
+            ],
+            [
+                'columns' => [
+                    'idroles' => '_idroles'
+                ],
+                'return' => 'idroles = _idroles',
+                'isSchema' => true,
+                'enableInsert' => true
+            ],
+            [
+                'columns' => [
+                    'idroles' => '_idroles',
+                    'roles_name' => '_roles_name'
+                ],
+                'return' => 'idroles = _idroles, roles_name = _roles_name',
+                'isSchema' => true,
+                'enableInsert' => true
+            ],
+            [
+                'columns' => [
+                    'idroles' => '_idroles',
+                    'roles_name' => '_roles_name',
+                    'roles_description' => '_roles_description'
+                ],
+                'return' => 'idroles = _idroles, roles_name = _roles_name, roles_description = _roles_description',
+                'isSchema' => true,
+                'enableInsert' => true
             ]
         ];
     }

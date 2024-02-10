@@ -1092,11 +1092,39 @@ class MySQLTest extends Test
         $this->assertSame('idusers = ?', $this->getQuery());
     }
 
+    /**
+     * @dataProvider equalToSchemaProvider
+     * */
+    public function testEqualToSchema(string $column, string $value, string $return): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertTrue($this->getPrivateProperty('isSchema'));
+        $this->assertTrue($this->getPrivateProperty('enableInsert'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->equalTo($column, $value));
+        $this->assertSame($return, $this->getQuery());
+    }
+
     public function testNotEqualTo(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('idusers <> ?', $this->getQuery());
+    }
+
+    /**
+     * @dataProvider notEqualToSchemaProvider
+     * */
+    public function testNotEqualToSchema(string $column, string $value, string $return): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertTrue($this->getPrivateProperty('isSchema'));
+        $this->assertTrue($this->getPrivateProperty('enableInsert'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo($column, $value));
+        $this->assertSame($return, $this->getQuery());
     }
 
     public function testGreaterThan(): void
@@ -1106,11 +1134,39 @@ class MySQLTest extends Test
         $this->assertSame('idusers > ?', $this->getQuery());
     }
 
+    /**
+     * @dataProvider greaterThanSchemaProvider
+     * */
+    public function testGreaterThanSchema(string $column, string $value, string $return): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertTrue($this->getPrivateProperty('isSchema'));
+        $this->assertTrue($this->getPrivateProperty('enableInsert'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->greaterThan($column, $value));
+        $this->assertSame($return, $this->getQuery());
+    }
+
     public function testLessThan(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->lessThan('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('idusers < ?', $this->getQuery());
+    }
+
+    /**
+     * @dataProvider lessThanSchemaProvider
+     * */
+    public function testLessThanSchema(string $column, string $value, string $return): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertTrue($this->getPrivateProperty('isSchema'));
+        $this->assertTrue($this->getPrivateProperty('enableInsert'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->lessThan($column, $value));
+        $this->assertSame($return, $this->getQuery());
     }
 
     public function testGreaterThanOrEqualTo(): void
@@ -1120,11 +1176,39 @@ class MySQLTest extends Test
         $this->assertSame('idusers >= ?', $this->getQuery());
     }
 
+    /**
+     * @dataProvider greaterThanOrEqualToSchemaProvider
+     * */
+    public function testGreaterThanOrEqualToSchema(string $column, string $value, string $return): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertTrue($this->getPrivateProperty('isSchema'));
+        $this->assertTrue($this->getPrivateProperty('enableInsert'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->greaterThanOrEqualTo($column, $value));
+        $this->assertSame($return, $this->getQuery());
+    }
+
     public function testLessThanOrEqualTo(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->lessThanOrEqualTo('idusers', 1));
         $this->assertAddRows([1]);
         $this->assertSame('idusers <= ?', $this->getQuery());
+    }
+
+    /**
+     * @dataProvider lessThanOrEqualToSchemaProvider
+     * */
+    public function testLessThanOrEqualToSchema(string $column, string $value, string $return): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertTrue($this->getPrivateProperty('isSchema'));
+        $this->assertTrue($this->getPrivateProperty('enableInsert'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->lessThanOrEqualTo($column, $value));
+        $this->assertSame($return, $this->getQuery());
     }
 
     public function testMin(): void

@@ -260,6 +260,23 @@ class MySQLTest extends Test
                 ->execute()
         );
 
+        $this->assertResponse(
+            $this->mysql
+                ->connection(self::DATABASE_NAME)
+                ->createStoreProcedure("update_{$storeProcedure}", function () {
+                    $this->mysql
+                        ->in()->int('_num')
+                        ->in()->int('_idroles');
+                }, function (DriversMySQL $driversMysql) use ($table) {
+                    $driversMysql
+                        ->table($table)
+                        ->update(['num' => '_num'])
+                        ->where()
+                        ->equalTo('idroles', '_idroles');
+                })
+                ->execute()
+        );
+
         $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
 
         $this->assertResponse(
@@ -268,7 +285,16 @@ class MySQLTest extends Test
         );
 
         $this->assertResponse(
+            $driversMysql->call("update_{$storeProcedure}", [1, 1])->execute(),
+            'Procedure executed successfully'
+        );
+
+        $this->assertResponse(
             $this->mysql->connection(self::DATABASE_NAME)->dropStoreProcedure($storeProcedure)->execute()
+        );
+
+        $this->assertResponse(
+            $this->mysql->connection(self::DATABASE_NAME)->dropStoreProcedure("update_{$storeProcedure}")->execute()
         );
 
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());

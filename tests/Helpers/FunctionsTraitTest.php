@@ -45,8 +45,14 @@ class FunctionsTraitTest extends Test
     /**
      * @dataProvider addCharacterEqualToProvider
      * */
-    public function testAddCharacterEqualTo(array $columns, string $return): void
+    public function testAddCharacterEqualTo(array $columns, string $return, bool $isSchema, bool $enableInsert): void
     {
+        $this->setPrivateProperty('isSchema', $isSchema);
+        $this->setPrivateProperty('enableInsert', $enableInsert);
+
+        $this->assertSame($isSchema, $this->getPrivateProperty('isSchema'));
+        $this->assertSame($enableInsert, $this->getPrivateProperty('enableInsert'));
+
         $str = $this->getPrivateMethod('addCharacterEqualTo', [$columns]);
 
         $this->assertIsString($str);

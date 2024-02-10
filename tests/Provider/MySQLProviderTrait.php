@@ -516,6 +516,102 @@ trait MySQLProviderTrait
         ];
     }
 
+    public static function equalToSchemaProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'value' => '_idusers',
+                'return' => 'idusers = _idusers'
+            ],
+            [
+                'column' => 'idroles',
+                'value' => '_idroles',
+                'return' => 'idroles = _idroles'
+            ]
+        ];
+    }
+
+    public static function notEqualToSchemaProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'value' => '_idusers',
+                'return' => 'idusers <> _idusers'
+            ],
+            [
+                'column' => 'idroles',
+                'value' => '_idroles',
+                'return' => 'idroles <> _idroles'
+            ]
+        ];
+    }
+
+    public static function greaterThanSchemaProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'value' => '_idusers',
+                'return' => 'idusers > _idusers'
+            ],
+            [
+                'column' => 'idroles',
+                'value' => '_idroles',
+                'return' => 'idroles > _idroles'
+            ]
+        ];
+    }
+
+    public static function lessThanSchemaProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'value' => '_idusers',
+                'return' => 'idusers < _idusers'
+            ],
+            [
+                'column' => 'idroles',
+                'value' => '_idroles',
+                'return' => 'idroles < _idroles'
+            ]
+        ];
+    }
+
+    public static function greaterThanOrEqualToSchemaProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'value' => '_idusers',
+                'return' => 'idusers >= _idusers'
+            ],
+            [
+                'column' => 'idroles',
+                'value' => '_idroles',
+                'return' => 'idroles >= _idroles'
+            ]
+        ];
+    }
+
+    public static function lessThanOrEqualToSchemaProvider(): array
+    {
+        return [
+            [
+                'column' => 'idusers',
+                'value' => '_idusers',
+                'return' => 'idusers <= _idusers'
+            ],
+            [
+                'column' => 'idroles',
+                'value' => '_idroles',
+                'return' => 'idroles <= _idroles'
+            ]
+        ];
+    }
+
     public static function inProvider(): array
     {
         return [
