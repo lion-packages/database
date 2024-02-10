@@ -22,6 +22,7 @@ class MySQL extends Connection implements
     RunDatabaseProcessesInterface,
     ReadDatabaseDataInterface
 {
+    const CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
     const UTF8MB4 = 'UTF8MB4';
     const UTF8MB4_SPANISH_CI = 'UTF8MB4_SPANISH_CI';
 
