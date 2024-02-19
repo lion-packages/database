@@ -196,6 +196,47 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->connection(self::DATABASE_NAME)->dropTable($table)->execute());
     }
 
+    public function testDropTables(): void
+    {
+        $this->assertResponse(
+            $this->mysql
+                ->connection(self::DATABASE_NAME)
+                ->createTable('roles_lion', function () {
+                    $this->mysql
+                        ->int('idroles')->notNull()->autoIncrement()->primaryKey()
+                        ->int('description')->notNull()->comment('comment desc');
+                })
+                ->execute()
+        );
+
+        $this->assertResponse(
+            $this->mysql
+                ->connection(self::DATABASE_NAME)
+                ->createTable('users_lion', function () {
+                    $this->mysql
+                        ->int('id')->notNull()->autoIncrement()->primaryKey()
+                        ->int('idroles')->notNull()->foreign('roles_lion', 'idroles');
+                })
+                ->execute()
+        );
+
+        $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
+
+        foreach ($driversMysql->show()->tables()->getAll() as $table) {
+            $this->assertContains($table->{'Tables_in_lion_database'}, ['users_lion', 'roles_lion']);
+        }
+
+        $this->assertResponse($this->mysql->dropTables()->execute());
+
+        $readTables = $driversMysql->show()->tables()->getAll();
+
+        $this->assertIsObject($readTables);
+        $this->assertObjectHasProperty('status', $readTables);
+        $this->assertObjectHasProperty('message', $readTables);
+        $this->assertSame('success', $readTables->status);
+        $this->assertSame('No data available', $readTables->message);
+    }
+
     /**
      * @dataProvider truncateTable
      * */
@@ -332,12 +373,23 @@ class MySQLTest extends Test
     /**
      * @dataProvider createViewProvider
      * */
-    public function testCreateView(string $tableParent, string $tableChild, string $view): void
+    public function testCreateView(string $parentTable, string $childTable, string $view): void
     {
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createTable($tableChild, function () {
+                ->createTable($parentTable, function() {
+                    $this->mysql
+                        ->int('id')->notNull()->autoIncrement()->primaryKey()
+                        ->varchar('description', 25)->null()->comment('roles description');
+                })
+                ->execute()
+        );
+
+        $this->assertResponse(
+            $this->mysql
+                ->connection(self::DATABASE_NAME)
+                ->createTable($childTable, function() use ($parentTable) {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
                         ->int('num')->notNull()->comment('comment num')
@@ -349,27 +401,20 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createTable($tableParent, function () {
-                    $this->mysql
-                        ->int('id')->notNull()->autoIncrement()->primaryKey()
-                        ->varchar('description', 25)->null()->comment('roles description');
-                })
-                ->execute()
-        );
-
-        $this->assertResponse(
-            $this->mysql
-                ->connection(self::DATABASE_NAME)
-                ->createView($view, function (DriversMySQL $driversMysql) use ($tableParent, $tableChild) {
+                ->createView($view, function(DriversMySQL $driversMysql) use ($parentTable, $childTable) {
                     $driversMysql
-                        ->table($tableChild)
+                        ->table($childTable)
                         ->select(
-                            $driversMysql->getColumn('id', $tableChild),
-                            $driversMysql->getColumn('num', $tableChild),
-                            $driversMysql->getColumn('idroles', $tableChild),
-                            $driversMysql->getColumn('description', $tableParent)
+                            $driversMysql->getColumn('id', $childTable),
+                            $driversMysql->getColumn('num', $childTable),
+                            $driversMysql->getColumn('idroles', $childTable),
+                            $driversMysql->getColumn('description', $parentTable)
                         )
-                        ->inner()->join('roles', 'idroles', 'idroles');
+                        ->inner()->join(
+                            $parentTable,
+                            $driversMysql->getColumn('idroles', $childTable),
+                            $driversMysql->getColumn('id', $parentTable)
+                        );
                 })
                 ->execute()
         );
@@ -377,20 +422,20 @@ class MySQLTest extends Test
         $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
 
         $this->assertResponse(
-            $driversMysql->table($tableParent)->insert(['description' => 'roles_description'])->execute(),
+            $driversMysql->table($parentTable)->insert(['description' => 'roles_description'])->execute(),
             'Rows inserted successfully'
         );
 
         $this->assertResponse(
-            $driversMysql->table($tableChild)->insert(['num' => 1, 'idroles' => 1])->execute(),
+            $driversMysql->table($childTable)->insert(['num' => 1, 'idroles' => 1])->execute(),
             'Rows inserted successfully'
         );
 
-        $this->assertCount(1, $driversMysql->table($tableParent)->select()->getAll());
-        $this->assertCount(1, $driversMysql->table($tableChild)->select()->getAll());
+        $this->assertCount(1, $driversMysql->table($parentTable)->select()->getAll());
+        $this->assertCount(1, $driversMysql->table($childTable)->select()->getAll());
         $this->assertCount(1, $driversMysql->view($view)->select()->getAll());
-        $this->assertResponse($this->mysql->dropTable($tableParent)->execute());
-        $this->assertResponse($this->mysql->dropTable($tableChild)->execute());
+        $this->assertResponse($this->mysql->dropTable($parentTable)->execute());
+        $this->assertResponse($this->mysql->dropTable($childTable)->execute());
         $this->assertResponse($this->mysql->dropView($view)->execute());
     }
 

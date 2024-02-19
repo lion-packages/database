@@ -216,23 +216,23 @@ trait MySQLSchemaProviderTrait
     {
         return [
             [
-                'tableParent' => 'roles',
-                'tableChild' => 'users',
+                'parentTable' => 'roles',
+                'childTable' => 'users',
                 'view' => 'read_users'
             ],
             [
-                'tableParent' => 'roles',
-                'tableChild' => 'tasks',
+                'parentTable' => 'roles',
+                'childTable' => 'tasks',
                 'view' => 'read_tasks'
             ],
             [
-                'tableParent' => 'tasks',
-                'tableChild' => 'users',
+                'parentTable' => 'tasks',
+                'childTable' => 'users',
                 'view' => 'read_users'
             ],
             [
-                'tableParent' => 'roles',
-                'tableChild' => 'students',
+                'parentTable' => 'roles',
+                'childTable' => 'students',
                 'view' => 'read_students'
             ]
         ];
