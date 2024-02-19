@@ -196,6 +196,47 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->connection(self::DATABASE_NAME)->dropTable($table)->execute());
     }
 
+    public function testDropTables(): void
+    {
+        $this->assertResponse(
+            $this->mysql
+                ->connection(self::DATABASE_NAME)
+                ->createTable('roles_lion', function () {
+                    $this->mysql
+                        ->int('idroles')->notNull()->autoIncrement()->primaryKey()
+                        ->int('description')->notNull()->comment('comment desc');
+                })
+                ->execute()
+        );
+
+        $this->assertResponse(
+            $this->mysql
+                ->connection(self::DATABASE_NAME)
+                ->createTable('users_lion', function () {
+                    $this->mysql
+                        ->int('id')->notNull()->autoIncrement()->primaryKey()
+                        ->int('idroles')->notNull()->foreign('roles_lion', 'idroles');
+                })
+                ->execute()
+        );
+
+        $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
+
+        foreach ($driversMysql->show()->tables()->getAll() as $table) {
+            $this->assertContains($table->{'Tables_in_lion_database'}, ['users_lion', 'roles_lion']);
+        }
+
+        $this->assertResponse($this->mysql->dropTables()->execute());
+
+        $readTables = $driversMysql->show()->tables()->getAll();
+
+        $this->assertIsObject($readTables);
+        $this->assertObjectHasProperty('status', $readTables);
+        $this->assertObjectHasProperty('message', $readTables);
+        $this->assertSame('success', $readTables->status);
+        $this->assertSame('No data available', $readTables->message);
+    }
+
     /**
      * @dataProvider truncateTable
      * */
@@ -352,7 +393,7 @@ class MySQLTest extends Test
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
                         ->int('num')->notNull()->comment('comment num')
-                        ->int('idroles')->foreign($parentTable, 'id')->null();
+                        ->int('idroles')->null();
                 })
                 ->execute()
         );

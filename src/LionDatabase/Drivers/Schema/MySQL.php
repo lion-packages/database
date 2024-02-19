@@ -120,6 +120,25 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
         return new static;
     }
 
+    public static function dropTables(): MySQL
+    {
+        self::addNewQueryList([
+            self::getKey(Driver::MYSQL, 'use'),
+            " `" . self::$dbname . "`;",
+            'SET FOREIGN_KEY_CHECKS = 0;',
+            'SET @tables_db = NULL;',
+            'SELECT GROUP_CONCAT(table_name) INTO @tables_db FROM information_schema.tables',
+            ' WHERE table_schema = (SELECT DATABASE());',
+            "SET @search_tbl = CONCAT('DROP TABLE IF EXISTS ', @tables_db);",
+            'PREPARE stmt FROM @search_tbl;',
+            'EXECUTE stmt;',
+            'DEALLOCATE PREPARE stmt;',
+            'SET FOREIGN_KEY_CHECKS = 1;'
+        ]);
+
+        return new static;
+    }
+
     public static function truncateTable(string $table): MySQL
     {
         self::addNewQueryList([
