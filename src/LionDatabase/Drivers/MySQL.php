@@ -129,7 +129,7 @@ class MySQL extends Connection implements
      */
     public static function get(): array|object
     {
-        return parent::mysql(function () {
+        return parent::mysql(function() {
             $responses = [];
 
             self::$listSql = array_map(
@@ -179,7 +179,7 @@ class MySQL extends Connection implements
                 self::clean();
             } catch (PDOException $e) {
                 self::clean();
-                $responses[] = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
+                $responses = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
             }
 
             return $responses;
@@ -191,7 +191,7 @@ class MySQL extends Connection implements
      */
     public static function getAll(): array|object
     {
-        return parent::mysql(function () {
+        return parent::mysql(function() {
             $responses = [];
 
             self::$listSql = array_map(
@@ -241,7 +241,7 @@ class MySQL extends Connection implements
                 self::clean();
             } catch (PDOException $e) {
                 self::clean();
-                $responses[] = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
+                $responses = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
             }
 
             return $responses;
