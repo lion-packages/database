@@ -150,20 +150,24 @@ trait MySQLSchemaProviderTrait
         ];
     }
 
-    public static function truncateTable(): array
+    public static function truncateTableProvider(): array
     {
         return [
             [
-                'table' => 'users'
+                'table' => 'users',
+                'enableForeignKeyChecks' => false
             ],
             [
-                'table' => 'roles'
+                'table' => 'roles',
+                'enableForeignKeyChecks' => false
             ],
             [
-                'table' => 'tasks'
+                'table' => 'tasks',
+                'enableForeignKeyChecks' => true
             ],
             [
-                'table' => 'students'
+                'table' => 'students',
+                'enableForeignKeyChecks' => true
             ]
         ];
     }
