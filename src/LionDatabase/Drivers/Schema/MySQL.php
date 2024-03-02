@@ -139,13 +139,32 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
         return new static;
     }
 
-    public static function truncateTable(string $table): MySQL
+    /**
+     * Empty a database table
+     *
+     * @param  string $table [Table name]
+     * @param  bool|boolean $enableForeignKeyChecks [defines whether to verify
+     * foreign keys]
+     *
+     * @return MySQL
+     */
+    public static function truncateTable(string $table, bool $enableForeignKeyChecks = false): MySQL
     {
-        self::addNewQueryList([
-            self::getKey(Driver::MYSQL, 'truncate'),
-            self::getKey(Driver::MYSQL, 'table'),
-            ' ' . self::$dbname . ".{$table};",
-        ]);
+        if (!$enableForeignKeyChecks) {
+            self::addNewQueryList([
+                'SET foreign_key_checks = 0;',
+                self::getKey(Driver::MYSQL, 'truncate'),
+                self::getKey(Driver::MYSQL, 'table'),
+                ' ' . self::$dbname . ".{$table};",
+                'SET foreign_key_checks = 1;'
+            ]);
+        } else {
+            self::addNewQueryList([
+                self::getKey(Driver::MYSQL, 'truncate'),
+                self::getKey(Driver::MYSQL, 'table'),
+                ' ' . self::$dbname . ".{$table};",
+            ]);
+        }
 
         return new static;
     }

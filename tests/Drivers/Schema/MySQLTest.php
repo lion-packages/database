@@ -238,9 +238,9 @@ class MySQLTest extends Test
     }
 
     /**
-     * @dataProvider truncateTable
+     * @dataProvider truncateTableProvider
      * */
-    public function testTruncateTable(string $table): void
+    public function testTruncateTable(string $table, bool $enableForeignKeyChecks): void
     {
         $this->assertResponse(
             $this->mysql
@@ -261,7 +261,7 @@ class MySQLTest extends Test
         );
 
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
-        $this->assertResponse($this->mysql->truncateTable($table)->execute());
+        $this->assertResponse($this->mysql->truncateTable($table, $enableForeignKeyChecks)->execute());
         $this->assertResponse($driversMysql->table($table)->select()->getAll(), 'No data available');
         $this->assertResponse($this->mysql->dropTable($table)->execute());
     }
