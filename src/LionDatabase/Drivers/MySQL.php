@@ -15,6 +15,22 @@ use Lion\Database\Interface\TransactionInterface;
 use PDO;
 use PDOException;
 
+/**
+ * Provides an interface to build SQL queries dynamically in PHP applications
+ * that interact with MySQL databases
+ *
+ * Key Features:
+ *
+ * * Intuitive methods: Simple methods to build SQL queries programmatically
+ * * SQL Injection Prevention: Helps prevent SQL injection attacks by sanitizing
+ * data entered in queries
+ * * Flexibility: Allows the construction of dynamic queries adapted to
+ * different application scenarios
+ * * Optimization for MySQL: Designed specifically to work with MySQL,
+ * guaranteeing compatibility and optimization with this DBMS
+ *
+ * @package Lion\Database\Drivers
+ */
 class MySQL extends Connection implements
     DatabaseConfigInterface,
     TransactionInterface,
@@ -22,8 +38,51 @@ class MySQL extends Connection implements
     RunDatabaseProcessesInterface,
     ReadDatabaseDataInterface
 {
+    /**
+     * [An auto-updated column is automatically updated to the current timestamp
+     * when the value of any other column in the row is changed from its current
+     * value. An auto-updated column remains unchanged if all other columns are
+     * set to their current values. To prevent an auto-updated column from
+     * updating when other columns change, explicitly set it to its current
+     * value. To update an auto-updated column even when other columns do not
+     * change, explicitly set it to the value it should have (for example, set
+     * it to CURRENT_TIMESTAMP)]
+     *
+     * @const CURRENT_TIMESTAMP
+     */
     const CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
+
+    /**
+     * [The utf8mb4 Character Set (4-Byte UTF-8 Unicode Encoding)]
+     *
+     * The utf8mb4 character set has these characteristics:
+     *
+     * * Supports BMP and supplementary characters
+     * * Requires a maximum of four bytes per multibyte character
+     *
+     * utf8mb4 contrasts with the utf8mb3 character set, which supports only BMP
+     * characters and uses a maximum of three bytes per character:
+     *
+     * * For a BMP character, utf8mb4 and utf8mb3 have identical storage
+     * characteristics: same code values, same encoding, same length
+     * * For a supplementary character, utf8mb4 requires four bytes to store it,
+     * whereas utf8mb3 cannot store the character at all. When converting
+     * utf8mb3 columns to utf8mb4, you need not worry about converting
+     * supplementary characters because there are none
+     *
+     * utf8mb4 is a superset of utf8mb3, so for an operation such as the
+     * following concatenation, the result has character set utf8mb4 and the
+     * collation of utf8mb4_col
+     *
+     * @const UTF8MB4
+     */
     const UTF8MB4 = 'UTF8MB4';
+
+    /**
+     * [Collation UTF8MB4_SPANISH_CI]
+     *
+     * @const UTF8MB4_SPANISH_CI
+     */
     const UTF8MB4_SPANISH_CI = 'UTF8MB4_SPANISH_CI';
 
     /**
@@ -84,7 +143,7 @@ class MySQL extends Connection implements
      */
     public static function execute(): object
     {
-        return parent::mysql(function() {
+        return parent::mysql(function () {
             if (self::$isTransaction) {
                 self::$message = 'Transaction executed successfully';
             }
@@ -100,8 +159,11 @@ class MySQL extends Connection implements
 
                 foreach ($dataInfoKeys as $key => $code) {
                     self::prepare(self::$listSql[$key]);
+
                     self::bindValue($code);
+
                     self::$stmt->execute();
+
                     self::$stmt->closeCursor();
                 }
             } else {
@@ -129,7 +191,7 @@ class MySQL extends Connection implements
      */
     public static function get(): array|object
     {
-        return parent::mysql(function() {
+        return parent::mysql(function () {
             $responses = [];
 
             self::$listSql = array_map(
@@ -142,6 +204,7 @@ class MySQL extends Connection implements
 
                 foreach (self::$listSql as $key => $sql) {
                     self::prepare($sql);
+
                     $code = isset($codes[$key]) ? $codes[$key] : null;
 
                     if ($code != null && isset(self::$dataInfo[$code])) {
@@ -159,6 +222,7 @@ class MySQL extends Connection implements
                     }
 
                     self::$stmt->execute();
+
                     $request = self::$stmt->fetch();
 
                     if (!$request) {
@@ -179,6 +243,7 @@ class MySQL extends Connection implements
                 self::clean();
             } catch (PDOException $e) {
                 self::clean();
+
                 $responses = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
             }
 
@@ -191,7 +256,7 @@ class MySQL extends Connection implements
      */
     public static function getAll(): array|object
     {
-        return parent::mysql(function() {
+        return parent::mysql(function () {
             $responses = [];
 
             self::$listSql = array_map(
@@ -204,6 +269,7 @@ class MySQL extends Connection implements
 
                 foreach (self::$listSql as $key => $sql) {
                     self::prepare($sql);
+
                     $code = isset($codes[$key]) ? $codes[$key] : null;
 
                     if ($code != null && isset(self::$dataInfo[$code])) {
@@ -221,6 +287,7 @@ class MySQL extends Connection implements
                     }
 
                     self::$stmt->execute();
+
                     $request = self::$stmt->fetchAll();
 
                     if (!$request) {
@@ -241,6 +308,7 @@ class MySQL extends Connection implements
                 self::clean();
             } catch (PDOException $e) {
                 self::clean();
+
                 $responses = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
             }
 
@@ -870,12 +938,12 @@ class MySQL extends Connection implements
             ' (',
             (
                 !self::$isSchema
-                    ? self::addCharacterAssoc($rows)
-                    : self::addColumns(
-                        array_values($rows),
-                        true,
-                        (self::$isSchema && self::$enableInsert && self::$isProcedure ? false : true)
-                    )
+                ? self::addCharacterAssoc($rows)
+                : self::addColumns(
+                    array_values($rows),
+                    true,
+                    (self::$isSchema && self::$enableInsert && self::$isProcedure ? false : true)
+                )
             ),
             ')'
         ]);

@@ -1,12 +1,22 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
 namespace Lion\Database\Helpers\Constants;
 
+/**
+ * Defines the MySQL word dictionary
+ *
+ * @package Lion\Database\Helpers\Constants
+ */
 class MySQLConstants
 {
-	const KEYWORDS = [
+    /**
+     * [MySQL word list]
+     *
+     * @const KEYWORDS
+     */
+    const KEYWORDS = [
         'delimiter' => ' DELIMITER',
         'not' => ' NOT',
         'truncate' => ' TRUNCATE',

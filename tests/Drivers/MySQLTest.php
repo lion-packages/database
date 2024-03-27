@@ -108,7 +108,7 @@ class MySQLTest extends Test
             ->use(self::DATABASE_NAME)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
-            ->groupQuery(function() {
+            ->groupQuery(function () {
                 $this->mysql
                     ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
                     ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
@@ -134,7 +134,7 @@ class MySQLTest extends Test
             ->use(self::DATABASE_NAME)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
-            ->groupQuery(function() {
+            ->groupQuery(function () {
                 $this->mysql
                     ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
                     ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
@@ -162,7 +162,7 @@ class MySQLTest extends Test
             ->use(self::DATABASE_NAME)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
-            ->groupQuery(function() {
+            ->groupQuery(function () {
                 $this->mysql
                     ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
                     ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
@@ -195,7 +195,7 @@ class MySQLTest extends Test
             ->use(self::DATABASE_NAME)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
-            ->groupQuery(function() {
+            ->groupQuery(function () {
                 $this->mysql
                     ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
                     ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
@@ -526,7 +526,7 @@ class MySQLTest extends Test
 
     public function testGroupQuery(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->groupQuery(fn() => $this->mysql->full()));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->groupQuery(fn () => $this->mysql->full()));
         $this->assertSame('( FULL )', $this->getQuery());
     }
 
@@ -739,7 +739,6 @@ class MySQLTest extends Test
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->in($params));
         $this->assertSame($return, $this->getQuery());
-
     }
 
     public function testCall(): void
@@ -946,17 +945,17 @@ class MySQLTest extends Test
 
     public function testWhereWithColumn(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->where(fn() => $this->mysql->column('idusers')));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->where(fn () => $this->mysql->column('idusers')));
         $this->assertSame('WHERE idusers', $this->getQuery());
     }
 
     public function testWhereWithCallback(): void
     {
-        $query = $this->mysql->where(function() {
+        $query = $this->mysql->where(function () {
             $this->mysql
                 ->equalTo('idusers', 1)
-                ->and(function() {
-                    $this->mysql->groupQuery(function() {
+                ->and(function () {
+                    $this->mysql->groupQuery(function () {
                         $this->mysql->notEqualTo('idusers', 2);
                     });
                 });
@@ -988,20 +987,20 @@ class MySQLTest extends Test
 
     public function testAndWithColumn(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->and(fn() => $this->mysql->column('idusers')));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->and(fn () => $this->mysql->column('idusers')));
         $this->assertSame('AND idusers', $this->getQuery());
     }
 
     public function testAndWithCallback(): void
     {
-        $query = $this->mysql->where(function() {
+        $query = $this->mysql->where(function () {
             $this->mysql
                 ->notEqualTo('idusers', 1)
-                ->and(function() {
-                    $this->mysql->groupQuery(function() {
+                ->and(function () {
+                    $this->mysql->groupQuery(function () {
                         $this->mysql
                             ->notEqualTo('idusers', 2)
-                            ->and(function() {
+                            ->and(function () {
                                 $this->mysql->notEqualTo('idusers', 3);
                             });
                     });
@@ -1034,20 +1033,20 @@ class MySQLTest extends Test
 
     public function testOrWithColumn(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->or(fn() => $this->mysql->column('idusers')));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->or(fn () => $this->mysql->column('idusers')));
         $this->assertSame('OR idusers', $this->getQuery());
     }
 
     public function testOrWithCallback(): void
     {
-        $query = $this->mysql->where(function() {
+        $query = $this->mysql->where(function () {
             $this->mysql
                 ->notEqualTo('idusers', 1)
-                ->and(function() {
-                    $this->mysql->groupQuery(function() {
+                ->and(function () {
+                    $this->mysql->groupQuery(function () {
                         $this->mysql
                             ->notEqualTo('idusers', 2)
-                            ->or(function() {
+                            ->or(function () {
                                 $this->mysql->notEqualTo('idusers', 3);
                             });
                     });

@@ -46,13 +46,16 @@ class DriverTest extends Test
     protected function setUp(): void
     {
         $this->mysql = new MySQL();
+
         $this->initReflection($this->mysql);
     }
 
     protected function tearDown(): void
     {
         $this->setPrivateProperty('connections', []);
+
         $this->setPrivateProperty('activeConnection', '');
+
         $this->setPrivateProperty('dbname', '');
     }
 
