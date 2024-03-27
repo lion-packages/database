@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Drivers\Schema;
 
+use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL as DriversMySQL;
 use Lion\Database\Drivers\Schema\MySQL;
 use Lion\Database\Interface\DatabaseConfigInterface;
@@ -47,6 +48,14 @@ class MySQLTest extends Test
 
     protected function setUp(): void
     {
+        Driver::run([
+            'default' => self::DATABASE_NAME,
+            'connections' => [
+                self::DATABASE_NAME => self::CONNECTION_DATA,
+                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND
+            ]
+        ]);
+
         $this->mysql = new MySQL();
 
         $this->initReflection($this->mysql);
