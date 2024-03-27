@@ -11,8 +11,39 @@ use Lion\Database\Drivers\MySQL as DriverMySQL;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 
+/**
+ * Provides methods to perform direct operations on the MySQL database structure
+ *
+ * Key Features:
+ *
+ * * Schema management: Allows you to create, modify and delete database schemas
+ * * Table creation: Facilitates the creation of new tables in the database,
+ * specifying columns, data types and restrictions
+ * * Table modification: Allows you to modify the structure of existing tables,
+ * adding, modifying or eliminating columns and restrictions
+ * * Table Deletion: Provides methods to safely delete tables from the database
+ * * Indexing: Facilitates the creation and deletion of indexes on tables to
+ * improve query performance
+ * * Management of primary and foreign keys: Allows you to define and modify
+ * primary and foreign keys in the tables
+ *
+ * This class provides a convenient interface to interact directly with the
+ * MySQL database structure, making it easier to manage and manipulate it from
+ * the application
+ *
+ * @property bool $in [Enable the configuration of the properties to implement
+ * the IN statement]
+ *
+ * @package Lion\Database\Drivers\Schema
+ */
 class MySQL extends Connection implements DatabaseConfigInterface, RunDatabaseProcessesInterface
 {
+    /**
+     * [Enable the configuration of the properties to implement the IN
+     * statement]
+     *
+     * @var bool $in
+     */
     private static bool $in = false;
 
     /**
@@ -21,7 +52,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
     public static function run(array $connections): MySQL
     {
         self::$connections = $connections;
+
         self::$activeConnection = self::$connections['default'];
+
         self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
 
         return new static;
@@ -33,6 +66,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
     public static function connection(string $connectionName): MySQL
     {
         self::$activeConnection = $connectionName;
+
         self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
 
         return new static;
@@ -45,7 +79,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
     {
         return parent::mysql(function () {
             self::prepare(self::$sql);
+
             self::$stmt->execute();
+
             self::clean();
 
             return (object) ['status' => 'success', 'message' => self::$message];
@@ -102,6 +138,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
         ]);
 
         $tableBody();
+
         self::buildTable();
 
         return new static;
@@ -142,9 +179,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
     /**
      * Empty a database table
      *
-     * @param  string $table [Table name]
-     * @param  bool|boolean $enableForeignKeyChecks [defines whether to verify
-     * foreign keys]
+     * @param string $table [Table name]
+     * @param bool $enableForeignKeyChecks [defines whether to verify foreign
+     * keys]
      *
      * @return MySQL
      */

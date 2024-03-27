@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Lion\Database\Helpers;
 
+/**
+ * Integrate functions to concatenate transformed data to the SQL statement
+ *
+ * @package Lion\Database\Helpers
+ */
 trait FunctionsTrait
 {
     use DriverTrait;
@@ -20,7 +25,7 @@ trait FunctionsTrait
                 : self::addColumns(array_values($rowChild), true, $addQuotes);
 
             $str = "({$row})";
-            $addValues.= $key === $size ? $str : "{$str}, ";
+            $addValues .= $key === $size ? $str : "{$str}, ";
         }
 
         return $addValues;
@@ -35,9 +40,9 @@ trait FunctionsTrait
 
         foreach ($columns as $column => $value) {
             if (self::$isSchema && self::$enableInsert) {
-                $addValues.= $index === $size ? "{$column} = {$value}" : "{$column} = {$value}, ";
+                $addValues .= $index === $size ? "{$column} = {$value}" : "{$column} = {$value}, ";
             } else {
-                $addValues.= $index === $size ? "{$value} = ?" : "{$value} = ?, ";
+                $addValues .= $index === $size ? "{$value} = ?" : "{$value} = ?, ";
             }
 
             $index++;
@@ -52,7 +57,7 @@ trait FunctionsTrait
         $size = count($rows) - 1;
 
         for ($i = 0; $i < count($rows); $i++) {
-            $addValues.= $i === $size ? '?' : '?, ';
+            $addValues .= $i === $size ? '?' : '?, ';
         }
 
         return $addValues;
@@ -65,7 +70,7 @@ trait FunctionsTrait
         $size = count($keys) - 1;
 
         foreach ($keys as $key) {
-            $addValues.= $key === $size ? '?' : '?, ';
+            $addValues .= $key === $size ? '?' : '?, ';
         }
 
         return $addValues;
@@ -90,11 +95,11 @@ trait FunctionsTrait
             foreach ($newColumns as $key => $column) {
                 if (!empty($column)) {
                     if (self::$isSchema && self::$enableInsert && $addQuotes) {
-                        $stringColumns.= $key === $size
+                        $stringColumns .= $key === $size
                             ? "'{$column}'"
                             : (!$spacing ? "'{$column}'," : "'{$column}', ");
                     } else {
-                        $stringColumns.= $key === $size ? "{$column}" : (!$spacing ? "{$column}," : "{$column}, ");
+                        $stringColumns .= $key === $size ? "{$column}" : (!$spacing ? "{$column}," : "{$column}, ");
                     }
                 }
             }
@@ -115,7 +120,7 @@ trait FunctionsTrait
         if ($countColumns > 0) {
             foreach ($newColumns as $key => $column) {
                 if (!empty($column)) {
-                    $stringColumns.= $key === $size ? "'{$column}'" : (!$spacing ? "'{$column}'," : "'{$column}', ");
+                    $stringColumns .= $key === $size ? "'{$column}'" : (!$spacing ? "'{$column}'," : "'{$column}', ");
                 }
             }
         } else {

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -7,17 +7,27 @@ namespace Lion\Database;
 use Lion\Database\Drivers\MySQL;
 use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
 
+/**
+ * Initialize base configuration for database connection
+ *
+ * @package Lion\Database
+ */
 abstract class Driver
 {
+    /**
+     * Defines the MySQL driver
+     *
+     * @const MYSQL
+     */
     const MYSQL = 'MYSQL';
 
-	public static function run(array $connections): object
-	{
-		if (empty($connections['default'])) {
-			return (object) ['status' => 'database-error', 'message' => 'the default driver is required'];
-		}
+    public static function run(array $connections): object
+    {
+        if (empty($connections['default'])) {
+            return (object) ['status' => 'database-error', 'message' => 'the default driver is required'];
+        }
 
-		$connection = $connections['connections'][$connections['default']];
+        $connection = $connections['connections'][$connections['default']];
         $type = trim(strtolower($connection['type']));
 
         switch ($type) {

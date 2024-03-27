@@ -10,49 +10,70 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
+/**
+ * Class that manages the connection to databases on different drivers
+ *
+ * @property PDO $conn [PDO driver object to make connections to databases]
+ * @property PDOStatement|bool $stmt [PDO declaration object to perform database
+ * processes]
+ *
+ * @package Lion\Database
+ */
 abstract class Connection
 {
     use FunctionsTrait;
 
-	protected static PDO $conn;
-	protected static PDOStatement|bool $stmt;
+    /**
+     * [PDO driver object to make connections to databases]
+     *
+     * @var PDO $conn
+     */
+    protected static PDO $conn;
 
-	protected static function mysql(Closure $callback): array|object
-	{
-		$connection = self::$connections['connections'][self::$activeConnection];
-		$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ];
+    /**
+     * [PDO declaration object to perform database processes]
+     *
+     * @var PDO $conn
+     */
+    protected static PDOStatement|bool $stmt;
 
-		try {
-			self::$conn = new PDO(
-				"mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
-				$connection['user'],
-				$connection['password'],
-				(isset($connection['options']) ? $connection['options'] : $options)
-			);
+    protected static function mysql(Closure $callback): array|object
+    {
+        $connection = self::$connections['connections'][self::$activeConnection];
 
-			if (self::$isTransaction) {
-				self::$conn->beginTransaction();
-			}
+        $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ];
 
-			return $callback();
-		} catch (PDOException $e) {
+        try {
+            self::$conn = new PDO(
+                "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+                $connection['user'],
+                $connection['password'],
+                (isset($connection['options']) ? $connection['options'] : $options)
+            );
+
+            if (self::$isTransaction) {
+                self::$conn->beginTransaction();
+            }
+
+            return $callback();
+        } catch (PDOException $e) {
             if (self::$isTransaction) {
                 self::$conn->rollBack();
             }
 
             self::clean();
 
-			return (object) ['status' => 'database-error', 'message' => $e->getMessage()];
-		}
-	}
+            return (object) ['status' => 'database-error', 'message' => $e->getMessage()];
+        }
+    }
 
-	protected static function prepare(string $sql): void
-	{
+    protected static function prepare(string $sql): void
+    {
         self::$stmt = self::$conn->prepare(trim($sql));
-	}
+    }
 
-	private static function getValueType(mixed $type): int
-	{
+    private static function getValueType(mixed $type): int
+    {
         $pdoType = [
             'integer' => PDO::PARAM_INT,
             'boolean' => PDO::PARAM_BOOL,
@@ -61,12 +82,13 @@ abstract class Connection
         ];
 
         return $pdoType[$type] ?? PDO::PARAM_STR;
-	}
+    }
 
-	protected static function bindValue(string $code): void
-	{
+    protected static function bindValue(string $code): void
+    {
         if (!empty(self::$dataInfo[$code])) {
             $cont = 1;
+
             $valueType = null;
 
             foreach (self::$dataInfo[$code] as $value) {
@@ -97,14 +119,18 @@ abstract class Connection
                 $cont++;
             }
         }
-	}
+    }
 
     public static function getQueryString(): object
     {
         $query = trim(self::$sql);
+
         $split = explode(';', trim(self::$sql));
-        $newListSql = array_map(fn($value) => trim($value), array_filter($split, fn($value) => trim($value) != ''));
+
+        $newListSql = array_map(fn ($value) => trim($value), array_filter($split, fn ($value) => trim($value) != ''));
+
         self::$sql = '';
+
         self::$listSql = [];
 
         return (object) [
