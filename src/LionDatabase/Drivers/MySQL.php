@@ -91,7 +91,9 @@ class MySQL extends Connection implements
     public static function run(array $connections): MySQL
     {
         self::$connections = $connections;
+
         self::$activeConnection = self::$connections['default'];
+
         self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
 
         return new static;
@@ -103,6 +105,7 @@ class MySQL extends Connection implements
     public static function connection(string $connectionName): MySQL
     {
         self::$activeConnection = $connectionName;
+
         self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
 
         return new static;
@@ -149,6 +152,7 @@ class MySQL extends Connection implements
             }
 
             $response = (object) ['status' => 'success', 'message' => self::$message];
+
             $dataInfoKeys = array_keys(self::$dataInfo);
 
             if (count($dataInfoKeys) > 0) {
@@ -227,9 +231,9 @@ class MySQL extends Connection implements
 
                     if (!$request) {
                         if (count(self::$fetchMode) > 1) {
-                            $responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+                            $responses[] = (object) ['status' => 'success', 'message' => 'no data available'];
                         } else {
-                            $responses = (object) ['status' => 'success', 'message' => 'No data available'];
+                            $responses = (object) ['status' => 'success', 'message' => 'no data available'];
                         }
                     } else {
                         if (count(self::$fetchMode) > 1) {
@@ -292,9 +296,9 @@ class MySQL extends Connection implements
 
                     if (!$request) {
                         if (count(self::$fetchMode) > 1) {
-                            $responses[] = (object) ['status' => 'success', 'message' => 'No data available'];
+                            $responses[] = (object) ['status' => 'success', 'message' => 'no data available'];
                         } else {
-                            $responses = (object) ['status' => 'success', 'message' => 'No data available'];
+                            $responses = (object) ['status' => 'success', 'message' => 'no data available'];
                         }
                     } else {
                         if (count(self::$fetchMode) > 1) {
@@ -367,14 +371,20 @@ class MySQL extends Connection implements
 
     public static function onDelete(): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'on'), self::getKey(Driver::MYSQL, 'delete')]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'on'),
+            self::getKey(Driver::MYSQL, 'delete')
+        ]);
 
         return new static;
     }
 
     public static function onUpdate(): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'on'), self::getKey(Driver::MYSQL, 'update')]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'on'),
+            self::getKey(Driver::MYSQL, 'update')
+        ]);
 
         return new static;
     }
@@ -426,7 +436,11 @@ class MySQL extends Connection implements
         if ('' === $value) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'comment')]);
         } else {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'comment'), ' ', "'{$value}'"]);
+            self::addQueryList([
+                self::getKey(Driver::MYSQL, 'comment'),
+                ' ',
+                "'{$value}'"
+            ]);
         }
 
         return new static;
@@ -441,7 +455,11 @@ class MySQL extends Connection implements
 
     public static function primaryKey(string $value): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'primary'), self::getKey(Driver::MYSQL, 'key'), " ({$value})"]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'primary'),
+            self::getKey(Driver::MYSQL, 'key'),
+            " ({$value})"
+        ]);
 
         return new static;
     }
@@ -465,7 +483,11 @@ class MySQL extends Connection implements
         if ('' === $value) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'engine')]);
         } else {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'engine'), ' = ', $value]);
+            self::addQueryList([
+                self::getKey(Driver::MYSQL, 'engine'),
+                ' = ',
+                $value
+            ]);
         }
 
         return new static;
@@ -497,7 +519,11 @@ class MySQL extends Connection implements
         if ('' === $value) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'collate')]);
         } else {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'collate'), ' = ', $value]);
+            self::addQueryList([
+                self::getKey(Driver::MYSQL, 'collate'),
+                ' = ',
+                $value
+            ]);
         }
 
         return new static;
@@ -508,7 +534,11 @@ class MySQL extends Connection implements
         if ('' === $value) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'set')]);
         } else {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'set'), ' = ', $value]);
+            self::addQueryList([
+                self::getKey(Driver::MYSQL, 'set'),
+                ' = ',
+                $value
+            ]);
         }
 
         return new static;
@@ -552,7 +582,11 @@ class MySQL extends Connection implements
 
     public static function ifExists(string $exist): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'if'), self::getKey(Driver::MYSQL, 'exists'), " `{$exist}`"]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'if'),
+            self::getKey(Driver::MYSQL, 'exists'),
+            " `{$exist}`"
+        ]);
 
         return new static;
     }
@@ -571,7 +605,10 @@ class MySQL extends Connection implements
 
     public static function use(string $use): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'use'), " `{$use}`"]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'use'),
+            " `{$use}`"
+        ]);
 
         return new static;
     }
@@ -611,7 +648,7 @@ class MySQL extends Connection implements
         return new static;
     }
 
-    public static function closeQuery(string $close = ";"): MySQL
+    public static function closeQuery(string $close = ';'): MySQL
     {
         self::addQueryList([$close]);
 
@@ -628,7 +665,9 @@ class MySQL extends Connection implements
     public static function groupQuery(Closure $callback): MySQL
     {
         self::openGroup();
+
         $callback();
+
         self::closeGroup();
 
         return new static;
@@ -636,7 +675,11 @@ class MySQL extends Connection implements
 
     public static function recursive(string $name): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'recursive'), " {$name}", self::getKey(Driver::MYSQL, 'as')]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'recursive'),
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'as')
+        ]);
 
         return new static;
     }
@@ -695,14 +738,21 @@ class MySQL extends Connection implements
     public static function offset(int $increase = 0): MySQL
     {
         self::addRows([$increase]);
-        self::addQueryList([self::getKey(Driver::MYSQL, 'offset'), ' ?']);
+
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'offset'),
+            ' ?'
+        ]);
 
         return new static;
     }
 
     public static function unionAll(): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'union'), self::getKey(Driver::MYSQL, 'all')]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'union'),
+            self::getKey(Driver::MYSQL, 'all')
+        ]);
 
         return new static;
     }
@@ -739,10 +789,11 @@ class MySQL extends Connection implements
     public static function show(): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
+
         self::$sql = self::getKey(Driver::MYSQL, 'show');
 
         return new static;
@@ -809,7 +860,7 @@ class MySQL extends Connection implements
     public static function query(string $sql): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::addQueryList([$sql]);
@@ -820,7 +871,7 @@ class MySQL extends Connection implements
     public static function bulk(array $columns, array $rows): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$message = 'Rows inserted successfully';
@@ -849,7 +900,10 @@ class MySQL extends Connection implements
     {
         if (is_array($values)) {
             self::addRows($values);
-            self::addQueryList([str_replace('?', self::addCharacter($values), self::getKey(Driver::MYSQL, 'in'))]);
+
+            self::addQueryList([
+                str_replace('?', self::addCharacter($values), self::getKey(Driver::MYSQL, 'in'))
+            ]);
         } else {
             self::addQueryList([str_replace("(?)", '', self::getKey(Driver::MYSQL, 'in'))]);
         }
@@ -860,10 +914,11 @@ class MySQL extends Connection implements
     public static function call(string $storeProcedure, array $rows = []): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$message = 'Procedure executed successfully';
+
         self::addRows($rows);
 
         self::addQueryList([
@@ -881,7 +936,7 @@ class MySQL extends Connection implements
     public static function delete(): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$message = 'Rows deleted successfully';
@@ -899,10 +954,11 @@ class MySQL extends Connection implements
     public static function update(array $rows = []): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$message = 'Rows updated successfully';
+
         self::addRows($rows);
 
         self::addQueryList([
@@ -920,10 +976,11 @@ class MySQL extends Connection implements
     public static function insert(array $rows = []): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$message = 'Rows inserted successfully';
+
         self::addRows($rows);
 
         self::addQueryList([
@@ -954,7 +1011,11 @@ class MySQL extends Connection implements
     public static function having(string $column, mixed $value): MySQL
     {
         self::addRows([$value]);
-        self::addQueryList([self::getKey(Driver::MYSQL, 'having'), " {$column}"]);
+
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'having'),
+            " {$column}"
+        ]);
 
         return new static;
     }
@@ -962,10 +1023,11 @@ class MySQL extends Connection implements
     public static function select(): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
+
         $stringColumns = self::addColumns(func_get_args());
 
         if ('' === self::$table) {
@@ -992,10 +1054,11 @@ class MySQL extends Connection implements
     public static function selectDistinct(): MySQL
     {
         if ('' === self::$actualCode) {
-            self::$actualCode = uniqid();
+            self::$actualCode = uniqid('code-');
         }
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
+
         $stringColumns = self::addColumns(func_get_args());
 
         if (empty(self::$table)) {
@@ -1025,7 +1088,12 @@ class MySQL extends Connection implements
     {
         self::addRows([$between, $and]);
 
-        self::addQueryList([self::getKey(Driver::MYSQL, 'between'), ' ?', self::getKey(Driver::MYSQL, 'and'), ' ? ']);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'between'),
+            ' ?',
+            self::getKey(Driver::MYSQL, 'and'),
+            ' ? '
+        ]);
 
         return new static;
     }
@@ -1034,14 +1102,22 @@ class MySQL extends Connection implements
     {
         self::addRows([$like]);
 
-        self::addQueryList([self::getKey(Driver::MYSQL, 'like'), ' ', self::addCharacter([$like])]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'like'),
+            ' ',
+            self::addCharacter([$like])
+        ]);
 
         return new static;
     }
 
     public static function groupBy(): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'group-by'), ' ', self::addColumns(func_get_args())]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'group-by'),
+            ' ',
+            self::addColumns(func_get_args())
+        ]);
 
         return new static;
     }
@@ -1049,14 +1125,20 @@ class MySQL extends Connection implements
     public static function limit(int $start, ?int $limit = null): MySQL
     {
         $items = [$start];
+
         self::addRows([$start]);
 
         if (null != $limit) {
             $items[] = $limit;
+
             self::addRows([$limit]);
         }
 
-        self::addQueryList([self::getKey(Driver::MYSQL, 'limit'), ' ', self::addCharacter($items)]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'limit'),
+            ' ',
+            self::addCharacter($items)
+        ]);
 
         return new static;
     }
@@ -1085,7 +1167,11 @@ class MySQL extends Connection implements
 
     public static function orderBy(): MySQL
     {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'order-by'), ' ', self::addColumns(func_get_args())]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'order-by'),
+            ' ',
+            self::addColumns(func_get_args())
+        ]);
 
         return new static;
     }
@@ -1138,6 +1224,7 @@ class MySQL extends Connection implements
     {
         if (is_callable($valueType)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
+
             $valueType();
         } elseif (is_string($valueType)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'where'), " {$valueType}"]);
@@ -1154,6 +1241,7 @@ class MySQL extends Connection implements
     {
         if (is_callable($valueType)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
+
             $valueType();
         } elseif (is_string($valueType)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'and'), " {$valueType}"]);
@@ -1170,6 +1258,7 @@ class MySQL extends Connection implements
     {
         if (is_callable($valueType)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'or')]);
+
             $valueType();
         } elseif (is_string($valueType)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'or'), " {$valueType}"]);
@@ -1200,6 +1289,7 @@ class MySQL extends Connection implements
             self::addQueryList([' ', trim($column), ' = ', trim($value)]);
         } else {
             self::addRows([$value]);
+
             self::addQueryList([' ', trim($column . ' = ?')]);
         }
 
@@ -1212,6 +1302,7 @@ class MySQL extends Connection implements
             self::addQueryList([' ', trim($column), ' <> ', trim($value)]);
         } else {
             self::addRows([$value]);
+
             self::addQueryList([' ', trim($column . ' <> ?')]);
         }
 
@@ -1224,6 +1315,7 @@ class MySQL extends Connection implements
             self::addQueryList([' ', trim($column), ' > ', trim($value)]);
         } else {
             self::addRows([$value]);
+
             self::addQueryList([' ', trim($column . ' > ?')]);
         }
 
@@ -1236,6 +1328,7 @@ class MySQL extends Connection implements
             self::addQueryList([' ', trim($column), ' < ', trim($value)]);
         } else {
             self::addRows([$value]);
+
             self::addQueryList([' ', trim($column . ' < ?')]);
         }
 
@@ -1248,6 +1341,7 @@ class MySQL extends Connection implements
             self::addQueryList([' ', trim($column), ' >= ', trim($value)]);
         } else {
             self::addRows([$value]);
+
             self::addQueryList([' ', trim($column . ' >= ?')]);
         }
 
@@ -1260,6 +1354,7 @@ class MySQL extends Connection implements
             self::addQueryList([' ', trim($column), ' <= ', trim($value)]);
         } else {
             self::addRows([$value]);
+
             self::addQueryList([' ', trim($column . ' <= ?')]);
         }
 
@@ -1309,9 +1404,15 @@ class MySQL extends Connection implements
     public static function int(string $name, ?int $length = null): MySQL
     {
         if (null === $length) {
-            self::addQueryList([" {$name}", str_replace('(?)', '', self::getKey(Driver::MYSQL, 'int'))]);
+            self::addQueryList([
+                " {$name}",
+                str_replace('(?)', '', self::getKey(Driver::MYSQL, 'int'))
+            ]);
         } else {
-            self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'int'))]);
+            self::addQueryList([
+                " {$name}",
+                str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'int'))
+            ]);
         }
 
         return new static;
@@ -1320,9 +1421,15 @@ class MySQL extends Connection implements
     public static function bigInt(string $name, ?int $length = null): MySQL
     {
         if (null === $length) {
-            self::addQueryList([" {$name}", str_replace('(?)', '', self::getKey(Driver::MYSQL, 'bigint'))]);
+            self::addQueryList([
+                " {$name}",
+                str_replace('(?)', '', self::getKey(Driver::MYSQL, 'bigint'))
+            ]);
         } else {
-            self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'bigint'))]);
+            self::addQueryList([
+                " {$name}",
+                str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'bigint'))
+            ]);
         }
 
         return new static;
@@ -1330,126 +1437,180 @@ class MySQL extends Connection implements
 
     public static function decimal(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'decimal')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'decimal')
+        ]);
 
         return new static;
     }
 
     public static function double(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'double')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'double')
+        ]);
 
         return new static;
     }
 
     public static function float(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'float')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'float')
+        ]);
 
         return new static;
     }
 
     public static function mediumInt(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'mediumint'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'mediumint'))
+        ]);
 
         return new static;
     }
 
     public static function real(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'real')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'real')
+        ]);
 
         return new static;
     }
 
     public static function smallInt(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'smallint'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'smallint'))
+        ]);
 
         return new static;
     }
 
     public static function tinyInt(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'tinyint'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'tinyint'))
+        ]);
 
         return new static;
     }
 
     public static function blob(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'blob')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'blob')
+        ]);
 
         return new static;
     }
 
     public static function varBinary(string $name, string|int $length = 'MAX'): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varbinary'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varbinary'))
+        ]);
 
         return new static;
     }
 
     public static function char(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'char'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'char'))
+        ]);
 
         return new static;
     }
 
     public static function json(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'json')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'json')
+        ]);
 
         return new static;
     }
 
     public static function nchar(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nchar'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nchar'))
+        ]);
 
         return new static;
     }
 
     public static function nvarchar(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nvarchar'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nvarchar'))
+        ]);
 
         return new static;
     }
 
     public static function varchar(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varchar'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varchar'))
+        ]);
 
         return new static;
     }
 
     public static function longText(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'longtext')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'longtext')
+        ]);
 
         return new static;
     }
 
     public static function mediumText(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'mediumtext')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'mediumtext')
+        ]);
 
         return new static;
     }
 
     public static function text(string $name, int $length): MySQL
     {
-        self::addQueryList([" {$name}", str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'text'))]);
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'text'))
+        ]);
 
         return new static;
     }
 
     public static function tinyText(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'tinytext')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'tinytext')
+        ]);
 
         return new static;
     }
@@ -1457,35 +1618,51 @@ class MySQL extends Connection implements
     public static function enum(string $name, array $options): MySQL
     {
         $split = array_map(fn ($op) => "'{$op}'", $options);
-        self::addQueryList([" {$name}", str_replace('?', implode(', ', $split), self::getKey(Driver::MYSQL, 'enum'))]);
+
+        self::addQueryList([
+            " {$name}",
+            str_replace('?', implode(', ', $split), self::getKey(Driver::MYSQL, 'enum'))
+        ]);
 
         return new static;
     }
 
     public static function date(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'date')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'date')
+        ]);
 
         return new static;
     }
 
     public static function time(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'time')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'time')
+        ]);
 
         return new static;
     }
 
     public static function timeStamp(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'timestamp')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'timestamp')
+        ]);
 
         return new static;
     }
 
     public static function dateTime(string $name): MySQL
     {
-        self::addQueryList([" {$name}", self::getKey(Driver::MYSQL, 'datetime')]);
+        self::addQueryList([
+            " {$name}",
+            self::getKey(Driver::MYSQL, 'datetime')
+        ]);
 
         return new static;
     }
