@@ -243,7 +243,7 @@ class MySQLTest extends Test
         $this->assertObjectHasProperty('status', $readTables);
         $this->assertObjectHasProperty('message', $readTables);
         $this->assertSame('success', $readTables->status);
-        $this->assertSame('No data available', $readTables->message);
+        $this->assertSame('no data available', $readTables->message);
     }
 
     /**
@@ -271,7 +271,7 @@ class MySQLTest extends Test
 
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
         $this->assertResponse($this->mysql->truncateTable($table, $enableForeignKeyChecks)->execute());
-        $this->assertResponse($driversMysql->table($table)->select()->getAll(), 'No data available');
+        $this->assertResponse($driversMysql->table($table)->select()->getAll(), 'no data available');
         $this->assertResponse($this->mysql->dropTable($table)->execute());
     }
 
@@ -387,7 +387,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createTable($parentTable, function() {
+                ->createTable($parentTable, function () {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
                         ->varchar('description', 25)->null()->comment('roles description');
@@ -398,7 +398,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createTable($childTable, function() use ($parentTable) {
+                ->createTable($childTable, function () use ($parentTable) {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
                         ->int('num')->notNull()->comment('comment num')
@@ -410,7 +410,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createView($view, function(DriversMySQL $driversMysql) use ($parentTable, $childTable) {
+                ->createView($view, function (DriversMySQL $driversMysql) use ($parentTable, $childTable) {
                     $driversMysql
                         ->table($childTable)
                         ->select(

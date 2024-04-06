@@ -3,6 +3,10 @@
     "description": "Package in charge of the generation and execution of processes with databases",
     "type": "library",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/lion-packages/database/issues",
+        "source": "https://github.com/lion-packages/database"
+    },
     "autoload": {
         "psr-4": {
             "Lion\\Database\\": "src/LionDatabase/"
@@ -20,5 +24,13 @@
         "phpunit/phpunit": "^10.4",
         "fakerphp/faker": "^1.23",
         "lion/test": "^1.4"
-    }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
