@@ -17,7 +17,7 @@ interface TransactionInterface
      *
      * @param bool $isTransaction [Defines whether the process is a transaction]
      *
-     * @return object
+     * @return TransactionInterface
      */
-    public static function transaction(bool $isTransaction = true): object;
+    public static function transaction(bool $isTransaction = true): TransactionInterface;
 }
