@@ -27,7 +27,7 @@ class CustomClassProvider implements
     /**
      * {@inheritdoc}
      */
-    public static function run(array $connections): object
+    public static function run(array $connections): DatabaseConfigInterface
     {
         self::$connections = $connections;
 
@@ -37,7 +37,7 @@ class CustomClassProvider implements
     /**
      * {@inheritdoc}
      */
-    public static function connection(string $connectionName): object
+    public static function connection(string $connectionName): DatabaseConfigInterface
     {
         self::$activeConnection = $connectionName;
         self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
@@ -48,7 +48,7 @@ class CustomClassProvider implements
     /**
      * {@inheritdoc}
      */
-    public static function transaction(bool $isTransaction = true): object
+    public static function transaction(bool $isTransaction = true): TransactionInterface
     {
         self::$isTransaction = $isTransaction;
 
@@ -58,7 +58,7 @@ class CustomClassProvider implements
     /**
      * {@inheritdoc}
      */
-    public static function isSchema(): object
+    public static function isSchema(): SchemaDriverInterface
     {
         self::$isSchema = true;
 
@@ -68,7 +68,7 @@ class CustomClassProvider implements
     /**
      * {@inheritdoc}
      */
-    public static function enableInsert(bool $enable = false): object
+    public static function enableInsert(bool $enable = false): SchemaDriverInterface
     {
         self::$enableInsert = $enable;
 

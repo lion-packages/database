@@ -16,9 +16,9 @@ interface DatabaseConfigInterface
      *
      * @param array $connections [List of available databases]
      *
-     * @return object
+     * @return DatabaseConfigInterface
      */
-    public static function run(array $connections): object;
+    public static function run(array $connections): DatabaseConfigInterface;
 
     /**
      * Changes the data of the current connection with those of the specified
@@ -26,7 +26,7 @@ interface DatabaseConfigInterface
      *
      * @param string $connectionName [Connection name]
      *
-     * @return object
+     * @return DatabaseConfigInterface
      */
-    public static function connection(string $connectionName): object;
+    public static function connection(string $connectionName): DatabaseConfigInterface;
 }
