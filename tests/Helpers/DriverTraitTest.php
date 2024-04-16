@@ -52,12 +52,15 @@ class DriverTraitTest extends Test
 
     protected function setUp(): void
     {
-        $this->customClass = new class {
+        $this->customClass = new class
+        {
             use DriverTrait;
         };
 
         $this->initReflection($this->customClass);
+
         $this->customCode = uniqid();
+
         $this->setActualCode();
     }
 
@@ -81,8 +84,11 @@ class DriverTraitTest extends Test
     public function testClean(): void
     {
         $this->addDefault(self::DATABASE_NAME);
+
         $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
+
         $this->customClass::addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+
         $this->getPrivateMethod('clean');
 
         $this->assertSame(self::EMPTY_ARRAY, $this->getPrivateProperty('listSql'));
@@ -204,5 +210,14 @@ class DriverTraitTest extends Test
     public function testCleanSettings(): void
     {
         $this->assertSame(self::ROWS, $this->getPrivateMethod('cleanSettings', [self::ROWS_CLEAN_SETTINGS]));
+    }
+
+    public function testBuildTable(): void
+    {
+        $this->setPrivateProperty('table', 'users');
+
+        $return = $this->getPrivateMethod('buildTable');
+
+        $this->assertInstanceOf($this->customClass::class, $return);
     }
 }

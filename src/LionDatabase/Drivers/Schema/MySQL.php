@@ -84,7 +84,10 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
 
             self::clean();
 
-            return (object) ['status' => 'success', 'message' => self::$message];
+            return (object) [
+                'status' => 'success',
+                'message' => self::$message
+            ];
         });
     }
 
@@ -234,9 +237,16 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
 
         self::addQueryList([self::getKey(Driver::MYSQL, 'begin')]);
 
-        $storeProcedureBegin((new DriverMySQL())->run(self::$connections)->isSchema()->enableInsert(true));
+        $storeProcedureBegin((new DriverMySQL())
+            ->run(self::$connections)
+            ->isSchema()
+            ->enableInsert(true));
 
-        self::addQueryList([';', self::getKey(Driver::MYSQL, 'end'), ';']);
+        self::addQueryList([
+            ';',
+            self::getKey(Driver::MYSQL, 'end'),
+            ';'
+        ]);
 
         return new static;
     }
