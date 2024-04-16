@@ -8,6 +8,7 @@ use Closure;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL as DriverMySQL;
+use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 
@@ -136,8 +137,8 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
             self::getKey(Driver::MYSQL, 'engine') . ' = INNODB',
             self::getKey(Driver::MYSQL, 'default'),
             self::getKey(Driver::MYSQL, 'character'),
-            self::getKey(Driver::MYSQL, 'set') . ' = ' . DriverMySQL::UTF8MB4,
-            self::getKey(Driver::MYSQL, 'collate') . ' = ' . DriverMySQL::UTF8MB4_SPANISH_CI . '; --REPLACE-INDEXES--'
+            self::getKey(Driver::MYSQL, 'set') . ' = ' . MySQLConstants::UTF8MB4,
+            self::getKey(Driver::MYSQL, 'collate') . ' = ' . MySQLConstants::UTF8MB4_SPANISH_CI . '; --REPLACE-INDEXES--'
         ]);
 
         $tableBody();
