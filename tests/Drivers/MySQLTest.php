@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Drivers;
 
 use Lion\Database\Drivers\MySQL;
+use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Test\Test;
 use PDO;
 use Tests\Provider\MySQLProviderTrait;
@@ -50,20 +51,30 @@ class MySQLTest extends Test
         $this->mysql = new MySQL();
 
         $this->actualCode = uniqid();
+
         $this->initReflection($this->mysql);
+
         $this->setActualCode();
     }
 
     protected function tearDown(): void
     {
         $this->setPrivateProperty('sql', '');
+
         $this->setPrivateProperty('table', '');
+
         $this->setPrivateProperty('view', '');
+
         $this->setPrivateProperty('dataInfo', []);
+
         $this->setPrivateProperty('isSchema', false);
+
         $this->setPrivateProperty('enableInsert', false);
+
         $this->setPrivateProperty('actualCode', '');
+
         $this->setPrivateProperty('fetchMode', []);
+
         $this->setPrivateProperty('message', 'Execution finished');
 
         $this->mysql->drop()->table()->addQuery('roles')->execute();
@@ -115,8 +126,8 @@ class MySQLTest extends Test
                     ->primaryKey('idroles');
             })
             ->engine('INNODB')
-            ->default()->character()->set(MySQL::UTF8MB4)
-            ->collate(MySQL::UTF8MB4_SPANISH_CI)
+            ->default()->character()->set(MySQLConstants::UTF8MB4)
+            ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
             ->closeQuery()
             ->execute();
 
@@ -141,8 +152,8 @@ class MySQLTest extends Test
                     ->primaryKey('idroles');
             })
             ->engine('INNODB')
-            ->default()->character()->set(MySQL::UTF8MB4)
-            ->collate(MySQL::UTF8MB4_SPANISH_CI)
+            ->default()->character()->set(MySQLConstants::UTF8MB4)
+            ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
             ->closeQuery()
             ->execute();
 
@@ -169,8 +180,8 @@ class MySQLTest extends Test
                     ->primaryKey('idroles');
             })
             ->engine('INNODB')
-            ->default()->character()->set(MySQL::UTF8MB4)
-            ->collate(MySQL::UTF8MB4_SPANISH_CI)
+            ->default()->character()->set(MySQLConstants::UTF8MB4)
+            ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
             ->closeQuery()
             ->execute();
 
@@ -202,8 +213,8 @@ class MySQLTest extends Test
                     ->primaryKey('idroles');
             })
             ->engine('INNODB')
-            ->default()->character()->set(MySQL::UTF8MB4)
-            ->collate(MySQL::UTF8MB4_SPANISH_CI)
+            ->default()->character()->set(MySQLConstants::UTF8MB4)
+            ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
             ->closeQuery()
             ->execute();
 

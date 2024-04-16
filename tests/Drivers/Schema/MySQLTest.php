@@ -64,19 +64,33 @@ class MySQLTest extends Test
     protected function tearDown(): void
     {
         $this->setPrivateProperty('connections', self::CONNECTIONS);
+
         $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+
         $this->setPrivateProperty('dbname', self::DATABASE_NAME);
+
         $this->setPrivateProperty('sql', '');
+
         $this->setPrivateProperty('table', '');
+
         $this->setPrivateProperty('view', '');
+
         $this->setPrivateProperty('dataInfo', []);
+
         $this->setPrivateProperty('isSchema', false);
+
         $this->setPrivateProperty('enableInsert', false);
+
         $this->setPrivateProperty('actualCode', '');
+
         $this->setPrivateProperty('fetchMode', []);
+
         $this->setPrivateProperty('message', 'Execution finished');
+
         $this->setPrivateProperty('actualColumn', '');
+
         $this->setPrivateProperty('columns', []);
+
         $this->setPrivateProperty('in', false);
     }
 

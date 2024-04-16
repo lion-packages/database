@@ -8,6 +8,7 @@ use Closure;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL as DriverMySQL;
+use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 
@@ -84,7 +85,10 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
 
             self::clean();
 
-            return (object) ['status' => 'success', 'message' => self::$message];
+            return (object) [
+                'status' => 'success',
+                'message' => self::$message
+            ];
         });
     }
 
@@ -133,8 +137,8 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
             self::getKey(Driver::MYSQL, 'engine') . ' = INNODB',
             self::getKey(Driver::MYSQL, 'default'),
             self::getKey(Driver::MYSQL, 'character'),
-            self::getKey(Driver::MYSQL, 'set') . ' = ' . DriverMySQL::UTF8MB4,
-            self::getKey(Driver::MYSQL, 'collate') . ' = ' . DriverMySQL::UTF8MB4_SPANISH_CI . '; --REPLACE-INDEXES--'
+            self::getKey(Driver::MYSQL, 'set') . ' = ' . MySQLConstants::UTF8MB4,
+            self::getKey(Driver::MYSQL, 'collate') . ' = ' . MySQLConstants::UTF8MB4_SPANISH_CI . '; --REPLACE-INDEXES--'
         ]);
 
         $tableBody();
@@ -234,9 +238,16 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
 
         self::addQueryList([self::getKey(Driver::MYSQL, 'begin')]);
 
-        $storeProcedureBegin((new DriverMySQL())->run(self::$connections)->isSchema()->enableInsert(true));
+        $storeProcedureBegin((new DriverMySQL())
+            ->run(self::$connections)
+            ->isSchema()
+            ->enableInsert(true));
 
-        self::addQueryList([';', self::getKey(Driver::MYSQL, 'end'), ';']);
+        self::addQueryList([
+            ';',
+            self::getKey(Driver::MYSQL, 'end'),
+            ';'
+        ]);
 
         return new static;
     }

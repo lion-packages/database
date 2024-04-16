@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lion\Database\Helpers;
 
 use Lion\Database\Driver;
+use Lion\Database\Helpers\Constants\MySQLConstants;
 
 /**
  * Defines the configuration methods to run Driver processes
@@ -36,6 +37,15 @@ use Lion\Database\Driver;
  */
 trait DriverTrait
 {
+    /**
+     * [List of words ignored from being added as string values]
+     *
+     * @const IGNORED_ELEMENTS
+     */
+    private const IGNORED_ELEMENTS = [
+        MySQLConstants::CURRENT_TIMESTAMP
+    ];
+
     /**
      * [List of database connections]
      *
@@ -254,6 +264,7 @@ trait DriverTrait
 
         foreach ($columns as $column) {
             $column = null === $column ? '' : $column;
+
             $column = is_string($column) ? trim($column) : $column;
 
             if (!empty($column)) {
@@ -266,76 +277,86 @@ trait DriverTrait
 
     protected static function buildTable(): object
     {
-        $strColumns = '';
-        $strAlter = '';
-        $strIndexes = '';
-        $strForeigns = '';
+        if (!empty(self::$columns[self::$table])) {
+            $strColumns = '';
 
-        foreach (self::$columns[self::$table] as $config) {
-            if (!empty($config['in']) && $config['in']) {
-                $strColumns .= str_replace('(?)', '', self::getKey(Driver::MYSQL, 'in')) . ' ';
-            }
+            $strAlter = '';
 
-            $strColumns .= $config['column'];
+            $strIndexes = '';
 
-            if (!$config['null'] && !$config['in']) {
-                $strColumns .= self::getKey(Driver::MYSQL, 'not-null');
-            } elseif ($config['null'] && !$config['in']) {
-                $strColumns .= self::getKey(Driver::MYSQL, 'null');
-            }
+            $strForeigns = '';
 
-            if ($config['auto-increment']) {
-                $strColumns .= self::getKey(Driver::MYSQL, 'auto-increment');
-            }
+            foreach (self::$columns[self::$table] as $config) {
+                if (!empty($config['in']) && $config['in']) {
+                    $strColumns .= str_replace('(?)', '', self::getKey(Driver::MYSQL, 'in')) . ' ';
+                }
 
-            if ($config['default']) {
-                $strColumns .= self::getKey(Driver::MYSQL, 'default') . " '{$config['default-value']}'";
-            }
+                $strColumns .= $config['column'];
 
-            if ($config['comment']) {
-                $strColumns .= self::getKey(Driver::MYSQL, 'comment') . " '{$config['comment-description']}'";
-            }
+                if (!$config['null'] && !$config['in']) {
+                    $strColumns .= self::getKey(Driver::MYSQL, 'not-null');
+                } elseif ($config['null'] && !$config['in']) {
+                    $strColumns .= self::getKey(Driver::MYSQL, 'null');
+                }
 
-            $strColumns .= ',';
+                if ($config['auto-increment']) {
+                    $strColumns .= self::getKey(Driver::MYSQL, 'auto-increment');
+                }
 
-            if (!empty($config['indexes'])) {
-                $sizeIndexes = count($config['indexes']);
+                if ($config['default']) {
+                    if (in_array($config['default-value'], self::IGNORED_ELEMENTS, true)) {
+                        $strColumns .= self::getKey(Driver::MYSQL, 'default') . " {$config['default-value']}";
+                    } else {
+                        $strColumns .= self::getKey(Driver::MYSQL, 'default') . " '{$config['default-value']}'";
+                    }
+                }
 
-                for ($i = 0; $i < $sizeIndexes; $i++) {
-                    $strAlter .= trim("{$config['indexes'][$i]},");
+                if ($config['comment']) {
+                    $strColumns .= self::getKey(Driver::MYSQL, 'comment') . " '{$config['comment-description']}'";
+                }
+
+                $strColumns .= ',';
+
+                if (!empty($config['indexes'])) {
+                    $sizeIndexes = count($config['indexes']);
+
+                    for ($i = 0; $i < $sizeIndexes; $i++) {
+                        $strAlter .= trim("{$config['indexes'][$i]},");
+                    }
+                }
+
+                if (!empty($config['foreign'])) {
+                    $strIndexes .= "{$config['foreign']['index']},";
+
+                    $strForeigns .= "{$config['foreign']['constraint']},";
                 }
             }
 
-            if (!empty($config['foreign'])) {
-                $strIndexes .= "{$config['foreign']['index']},";
-                $strForeigns .= "{$config['foreign']['constraint']},";
-            }
+            $strParams = implode(
+                ', ',
+                array_filter(explode(',', trim($strColumns . $strAlter)), fn ($value) => !empty($value))
+            );
+
+            $strParamsIndex = implode(
+                ', ',
+                array_filter(explode(',', trim($strIndexes)), fn ($value) => !empty($value))
+            );
+
+            $strParamsConstraints = implode(
+                ', ',
+                array_filter(explode(',', trim($strForeigns)), fn ($value) => !empty($value))
+            );
+
+            $alter = 'ALTER TABLE ' . self::$dbname . '.' . self::$table;
+
+            self::$sql = str_replace('--REPLACE-PARAMS--', $strParams, self::$sql);
+
+            self::$sql = str_replace(
+                '--REPLACE-INDEXES--',
+                ('' === $strParamsIndex ? '' : "{$alter} {$strParamsIndex}; {$alter} {$strParamsConstraints};"),
+                self::$sql
+            );
         }
-
-        $strParams = implode(
-            ', ',
-            array_filter(explode(',', trim($strColumns . $strAlter)), fn ($value) => !empty($value))
-        );
-
-        $strParamsIndex = implode(
-            ', ',
-            array_filter(explode(',', trim($strIndexes)), fn ($value) => !empty($value))
-        );
-
-        $strParamsConstraints = implode(
-            ', ',
-            array_filter(explode(',', trim($strForeigns)), fn ($value) => !empty($value))
-        );
-
-        $alter = 'ALTER TABLE ' . self::$dbname . '.' . self::$table;
-
-        self::$sql = str_replace('--REPLACE-PARAMS--', $strParams, self::$sql);
-
-        self::$sql = str_replace(
-            '--REPLACE-INDEXES--',
-            ('' === $strParamsIndex ? '' : "{$alter} {$strParamsIndex}; {$alter} {$strParamsConstraints};"),
-            self::$sql
-        );
 
         return new static;
     }

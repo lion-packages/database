@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Helpers;
 
 use Lion\Database\Helpers\DriverTrait;
+use Lion\Database\Helpers\KeywordsTrait;
 use Lion\Test\Test;
 use PDO;
 use Tests\Provider\DriverTraitProviderTrait;
@@ -52,12 +53,16 @@ class DriverTraitTest extends Test
 
     protected function setUp(): void
     {
-        $this->customClass = new class {
+        $this->customClass = new class
+        {
             use DriverTrait;
+            use KeywordsTrait;
         };
 
         $this->initReflection($this->customClass);
+
         $this->customCode = uniqid();
+
         $this->setActualCode();
     }
 
@@ -81,8 +86,11 @@ class DriverTraitTest extends Test
     public function testClean(): void
     {
         $this->addDefault(self::DATABASE_NAME);
+
         $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
+
         $this->customClass::addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+
         $this->getPrivateMethod('clean');
 
         $this->assertSame(self::EMPTY_ARRAY, $this->getPrivateProperty('listSql'));
@@ -204,5 +212,22 @@ class DriverTraitTest extends Test
     public function testCleanSettings(): void
     {
         $this->assertSame(self::ROWS, $this->getPrivateMethod('cleanSettings', [self::ROWS_CLEAN_SETTINGS]));
+    }
+
+    /**
+     * @dataProvider buildTable
+     */
+    public function testBuildTable(string $table, string $actualColumn, array $row, string $return): void
+    {
+        $this->setPrivateProperty('table', $table);
+
+        $this->setPrivateProperty('actualColumn', $actualColumn);
+
+        $this->setPrivateProperty('columns', $row);
+
+        $this->setPrivateProperty('sql', '(--REPLACE-PARAMS--); --REPLACE-INDEXES--');
+
+        $this->assertInstanceOf($this->customClass::class, $this->getPrivateMethod('buildTable'));
+        $this->assertSame($return, $this->getPrivateProperty('sql'));
     }
 }
