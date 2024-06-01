@@ -11,6 +11,7 @@ use Lion\Database\Drivers\MySQL as DriverMySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use stdClass;
 
 /**
  * Provides methods to perform direct operations on the MySQL database structure
@@ -76,9 +77,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
     /**
      * {@inheritdoc}
      */
-    public static function execute(): object
+    public static function execute(): stdClass
     {
-        return parent::mysql(function (): object {
+        return parent::mysql(function (): stdClass {
             self::prepare(self::$sql);
 
             self::$stmt->execute();

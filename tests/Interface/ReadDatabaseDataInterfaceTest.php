@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tests\Interface;
 
 use Lion\Test\Test;
+use stdClass;
 use Tests\Provider\CustomClassProvider;
 
 class ReadDatabaseDataInterfaceTest extends Test
 {
-    private object $customClass;
+    private CustomClassProvider $customClass;
 
     protected function setUp(): void
     {
@@ -22,8 +23,7 @@ class ReadDatabaseDataInterfaceTest extends Test
     {
         $response = $this->customClass->get();
 
-        $this->assertIsArray($response);
-        $this->assertSame([], $response);
+        $this->assertInstanceOf(stdClass::class, $response);
     }
 
     public function testGetAll(): void
@@ -31,6 +31,6 @@ class ReadDatabaseDataInterfaceTest extends Test
         $response = $this->customClass->getAll();
 
         $this->assertIsArray($response);
-        $this->assertSame([], $response);
+        $this->assertContainsOnly(stdClass::class, $response);
     }
 }

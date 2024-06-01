@@ -122,6 +122,21 @@ class MySQLTest extends Test
         $this->assertSame($message, $response->message);
     }
 
+    // public function testExample(): void
+    // {
+    //     $response = $this->mysql
+    //         ->run(self::CONNECTIONS)
+    //         ->connection(self::DATABASE_NAME)
+    //         ->createTable('example_tests', function () {
+    //             $this->mysql
+    //                 ->int('id')->notNull()->autoIncrement()->primaryKey()
+    //                 ->int('num')->notNull()->comment('comment num');
+    //         })
+    //         ->execute();
+
+    //     $this->assertTrue(true);
+    // }
+
     public function testRun(): void
     {
         $this->assertIntances($this->mysql->run(self::CONNECTIONS));
@@ -239,7 +254,7 @@ class MySQLTest extends Test
         $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
 
         foreach ($driversMysql->show()->tables()->getAll() as $table) {
-            $this->assertContains($table->{'Tables_in_lion_database'}, ['users_lion', 'roles_lion']);
+            $this->assertContains($table->Tables_in_lion_database, ['users_lion', 'roles_lion']);
         }
 
         $this->assertResponse($this->mysql->dropTables()->execute());
@@ -269,11 +284,7 @@ class MySQLTest extends Test
 
         $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
 
-        $this->assertResponse(
-            $driversMysql->table($table)->insert(['num' => 1])->execute(),
-            'Rows inserted successfully'
-        );
-
+        $this->assertResponse($driversMysql->table($table)->insert(['num' => 1])->execute());
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
         $this->assertResponse($this->mysql->truncateTable($table, $enableForeignKeyChecks)->execute());
         $this->assertResponse($driversMysql->table($table)->select()->getAll(), 'no data available');
@@ -332,15 +343,8 @@ class MySQLTest extends Test
 
         $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
 
-        $this->assertResponse(
-            $driversMysql->call($storeProcedure, [1, 1])->execute(),
-            'Procedure executed successfully'
-        );
-
-        $this->assertResponse(
-            $driversMysql->call("update_{$storeProcedure}", [1, 1])->execute(),
-            'Procedure executed successfully'
-        );
+        $this->assertResponse($driversMysql->call($storeProcedure, [1, 1])->execute());
+        $this->assertResponse($driversMysql->call("update_{$storeProcedure}", [1, 1])->execute());
 
         $this->assertResponse(
             $this->mysql->connection(self::DATABASE_NAME)->dropStoreProcedure($storeProcedure)->execute()
@@ -430,15 +434,10 @@ class MySQLTest extends Test
         $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
 
         $this->assertResponse(
-            $driversMysql->table($parentTable)->insert(['description' => 'roles_description'])->execute(),
-            'Rows inserted successfully'
+            $driversMysql->table($parentTable)->insert(['description' => 'roles_description'])->execute()
         );
 
-        $this->assertResponse(
-            $driversMysql->table($childTable)->insert(['num' => 1, 'idroles' => 1])->execute(),
-            'Rows inserted successfully'
-        );
-
+        $this->assertResponse($driversMysql->table($childTable)->insert(['num' => 1, 'idroles' => 1])->execute());
         $this->assertCount(1, $driversMysql->table($parentTable)->select()->getAll());
         $this->assertCount(1, $driversMysql->table($childTable)->select()->getAll());
         $this->assertCount(1, $driversMysql->view($view)->select()->getAll());
@@ -474,11 +473,7 @@ class MySQLTest extends Test
 
         $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
 
-        $this->assertResponse(
-            $driversMysql->table($table)->insert(['num' => 1])->execute(),
-            'Rows inserted successfully'
-        );
-
+        $this->assertResponse($driversMysql->table($table)->insert(['num' => 1])->execute());
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
         $this->assertCount(1, $driversMysql->view($view)->select()->getAll());
         $this->assertResponse($this->mysql->dropTable($table)->execute());

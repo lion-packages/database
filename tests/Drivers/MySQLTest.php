@@ -9,6 +9,7 @@ use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Test\Test;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
+use stdClass;
 use Tests\Provider\MySQLProviderTrait;
 
 class MySQLTest extends Test
@@ -164,7 +165,7 @@ class MySQLTest extends Test
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
         $this->assertSame('success', $response->status);
-        $this->assertSame('Rows inserted successfully', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     public function testGet(): void
@@ -196,6 +197,7 @@ class MySQLTest extends Test
             ->get();
 
         $this->assertIsObject($validateRowResponse);
+        $this->assertInstanceOf(stdClass::class, $validateRowResponse);
         $this->assertObjectHasProperty('roles_name', $validateRowResponse);
         $this->assertSame(self::ADMINISTRATOR, $validateRowResponse->roles_name);
     }

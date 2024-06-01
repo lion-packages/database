@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Provider;
 
+use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
+use stdClass;
 
 class CustomClassProvider implements
     DatabaseConfigInterface,
@@ -78,27 +80,30 @@ class CustomClassProvider implements
     /**
      * {@inheritdoc}
      */
-    public static function execute(): object
+    public static function execute(): stdClass
     {
         return (object) [
+            'code' => 200,
             'status' => 'success',
-            'message' => 'Execution finished'
+            'message' => 'Execution finished',
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function get(): array|object
+    public static function get(): stdClass|array|DatabaseCapsuleInterface
     {
-        return [];
+        return (object) [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getAll(): array|object
+    public static function getAll(): stdClass|array
     {
-        return [];
+        return [
+            (object) []
+        ];
     }
 }

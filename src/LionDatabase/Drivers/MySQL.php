@@ -7,12 +7,14 @@ namespace Lion\Database\Drivers;
 use Closure;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
+use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use PDO;
+use stdClass;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
@@ -96,18 +98,12 @@ class MySQL extends Connection implements
     /**
      * {@inheritdoc}
      */
-    public static function execute(): object
+    public static function execute(): stdClass
     {
-        return parent::mysql(function (): object {
+        return parent::mysql(function (): stdClass {
             if (self::$isTransaction) {
                 self::$message = 'Transaction executed successfully';
             }
-
-            $response = (object) [
-                'code' => 200,
-                'status' => 'success',
-                'message' => self::$message,
-            ];
 
             $dataInfoKeys = array_keys(self::$dataInfo);
 
@@ -142,16 +138,20 @@ class MySQL extends Connection implements
 
             self::clean();
 
-            return $response;
+            return (object) [
+                'code' => 200,
+                'status' => 'success',
+                'message' => self::$message,
+            ];
         });
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function get(): array|object
+    public static function get(): stdClass|array|DatabaseCapsuleInterface
     {
-        return parent::mysql(function (): array|object {
+        return parent::mysql(function (): stdClass|array|DatabaseCapsuleInterface {
             $responses = [];
 
             self::$listSql = array_map(
@@ -216,9 +216,9 @@ class MySQL extends Connection implements
     /**
      * {@inheritdoc}
      */
-    public static function getAll(): array|object
+    public static function getAll(): stdClass|array
     {
-        return parent::mysql(function (): array|object {
+        return parent::mysql(function (): stdClass|array {
             $responses = [];
 
             self::$listSql = array_map(

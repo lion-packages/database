@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Lion\Database\Interface;
 
+use Lion\Database\Interface\DatabaseCapsuleInterface;
+use stdClass;
+
 /**
  * Defines that the driver can make queries to databases
  *
@@ -14,14 +17,14 @@ interface ReadDatabaseDataInterface
     /**
      * Run and get an object from a row
      *
-     * @return array|object
+     * @return stdClass|array<int|string, mixed>|DatabaseCapsuleInterface
      */
-    public static function get(): array|object;
+    public static function get(): stdClass|array|DatabaseCapsuleInterface;
 
     /**
      * Run and get an array of objects
      *
-     * @return array|object
+     * @return stdClass|array<stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>
      */
-    public static function getAll(): array|object;
+    public static function getAll(): stdClass|array;
 }
