@@ -6,6 +6,7 @@ namespace Tests\Helpers;
 
 use Lion\Database\Helpers\KeywordsTrait;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Provider\KeywordsTraitProviderTrait;
 
 class KeywordsTraitTest extends Test
@@ -16,14 +17,13 @@ class KeywordsTraitTest extends Test
 
     protected function setUp(): void
     {
-        $this->customClass = new class {
+        $this->customClass = new class
+        {
             use KeywordsTrait;
         };
     }
 
-    /**
-     * @dataProvider getKeyProvider
-     * */
+    #[DataProvider('getKeyProvider')]
     public function testGetKey(string $type, string $key, ?string $return): void
     {
         $this->assertSame($return, $this->customClass::getKey($type, $key));

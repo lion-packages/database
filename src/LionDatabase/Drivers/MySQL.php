@@ -13,7 +13,6 @@ use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use PDO;
-use PDOException;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
@@ -99,12 +98,16 @@ class MySQL extends Connection implements
      */
     public static function execute(): object
     {
-        return parent::mysql(function () {
+        return parent::mysql(function (): object {
             if (self::$isTransaction) {
                 self::$message = 'Transaction executed successfully';
             }
 
-            $response = (object) ['status' => 'success', 'message' => self::$message];
+            $response = (object) [
+                'code' => 200,
+                'status' => 'success',
+                'message' => self::$message,
+            ];
 
             $dataInfoKeys = array_keys(self::$dataInfo);
 
@@ -148,7 +151,7 @@ class MySQL extends Connection implements
      */
     public static function get(): array|object
     {
-        return parent::mysql(function () {
+        return parent::mysql(function (): array|object {
             $responses = [];
 
             self::$listSql = array_map(
@@ -156,53 +159,55 @@ class MySQL extends Connection implements
                 array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
             );
 
-            try {
-                $codes = array_keys(self::$fetchMode);
+            $codes = array_keys(self::$fetchMode);
 
-                foreach (self::$listSql as $key => $sql) {
-                    self::prepare($sql);
+            foreach (self::$listSql as $key => $sql) {
+                self::prepare($sql);
 
-                    $code = isset($codes[$key]) ? $codes[$key] : null;
+                $code = isset($codes[$key]) ? $codes[$key] : null;
 
-                    if ($code != null && isset(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
+                if ($code != null && isset(self::$dataInfo[$code])) {
+                    self::bindValue($code);
+                }
 
-                    if ($code != null && isset(self::$fetchMode[$code])) {
-                        $get_fetch = self::$fetchMode[$codes[$key]];
+                if ($code != null && isset(self::$fetchMode[$code])) {
+                    $get_fetch = self::$fetchMode[$codes[$key]];
 
-                        if (is_array($get_fetch)) {
-                            self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
-                        } else {
-                            self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                        }
-                    }
-
-                    self::$stmt->execute();
-
-                    $request = self::$stmt->fetch();
-
-                    if (!$request) {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = (object) ['status' => 'success', 'message' => 'no data available'];
-                        } else {
-                            $responses = (object) ['status' => 'success', 'message' => 'no data available'];
-                        }
+                    if (is_array($get_fetch)) {
+                        self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
                     } else {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = $request;
-                        } else {
-                            $responses = $request;
-                        }
+                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
                     }
                 }
 
-                self::clean();
-            } catch (PDOException $e) {
-                self::clean();
+                self::$stmt->execute();
 
-                $responses = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
+                $request = self::$stmt->fetch();
+
+                if (!$request) {
+                    if (count(self::$fetchMode) > 1) {
+                        $responses[] = (object) [
+                            'code' => 200,
+                            'status' => 'success',
+                            'message' => 'no data available',
+                        ];
+                    } else {
+                        $responses = (object) [
+                            'code' => 200,
+                            'status' => 'success',
+                            'message' => 'no data available',
+                        ];
+                    }
+                } else {
+                    if (count(self::$fetchMode) > 1) {
+                        $responses[] = $request;
+                    } else {
+                        $responses = $request;
+                    }
+                }
             }
+
+            self::clean();
 
             return $responses;
         });
@@ -213,7 +218,7 @@ class MySQL extends Connection implements
      */
     public static function getAll(): array|object
     {
-        return parent::mysql(function () {
+        return parent::mysql(function (): array|object {
             $responses = [];
 
             self::$listSql = array_map(
@@ -221,53 +226,55 @@ class MySQL extends Connection implements
                 array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
             );
 
-            try {
-                $codes = array_keys(self::$fetchMode);
+            $codes = array_keys(self::$fetchMode);
 
-                foreach (self::$listSql as $key => $sql) {
-                    self::prepare($sql);
+            foreach (self::$listSql as $key => $sql) {
+                self::prepare($sql);
 
-                    $code = isset($codes[$key]) ? $codes[$key] : null;
+                $code = isset($codes[$key]) ? $codes[$key] : null;
 
-                    if ($code != null && isset(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
+                if ($code != null && isset(self::$dataInfo[$code])) {
+                    self::bindValue($code);
+                }
 
-                    if ($code != null && isset(self::$fetchMode[$code])) {
-                        $get_fetch = self::$fetchMode[$codes[$key]];
+                if ($code != null && isset(self::$fetchMode[$code])) {
+                    $get_fetch = self::$fetchMode[$codes[$key]];
 
-                        if (is_array($get_fetch)) {
-                            self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
-                        } else {
-                            self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                        }
-                    }
-
-                    self::$stmt->execute();
-
-                    $request = self::$stmt->fetchAll();
-
-                    if (!$request) {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = (object) ['status' => 'success', 'message' => 'no data available'];
-                        } else {
-                            $responses = (object) ['status' => 'success', 'message' => 'no data available'];
-                        }
+                    if (is_array($get_fetch)) {
+                        self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
                     } else {
-                        if (count(self::$fetchMode) > 1) {
-                            $responses[] = $request;
-                        } else {
-                            $responses = $request;
-                        }
+                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
                     }
                 }
 
-                self::clean();
-            } catch (PDOException $e) {
-                self::clean();
+                self::$stmt->execute();
 
-                $responses = (object) ['status' => 'database-error', 'message' => $e->getMessage()];
+                $request = self::$stmt->fetchAll();
+
+                if (!$request) {
+                    if (count(self::$fetchMode) > 1) {
+                        $responses[] = (object) [
+                            'code' => 200,
+                            'status' => 'success',
+                            'message' => 'no data available',
+                        ];
+                    } else {
+                        $responses = (object) [
+                            'code' => 200,
+                            'status' => 'success',
+                            'message' => 'no data available',
+                        ];
+                    }
+                } else {
+                    if (count(self::$fetchMode) > 1) {
+                        $responses[] = $request;
+                    } else {
+                        $responses = $request;
+                    }
+                }
             }
+
+            self::clean();
 
             return $responses;
         });

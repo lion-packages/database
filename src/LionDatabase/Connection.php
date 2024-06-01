@@ -41,7 +41,10 @@ abstract class Connection
     {
         $connection = self::$connections['connections'][self::$activeConnection];
 
-        $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ];
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        ];
 
         try {
             self::$conn = new PDO(
@@ -63,7 +66,11 @@ abstract class Connection
 
             self::clean();
 
-            return (object) ['status' => 'database-error', 'message' => $e->getMessage()];
+            return (object) [
+                'code' => $e->getCode(),
+                'status' => 'database-error',
+                'message' => $e->getMessage(),
+            ];
         }
     }
 
@@ -134,12 +141,13 @@ abstract class Connection
         self::$listSql = [];
 
         return (object) [
+            'code' => 200,
             'status' => 'success',
             'message' => 'SQL query generated successfully',
             'data' => (object) [
                 'query' => $query,
-                'split' => $newListSql
-            ]
+                'split' => $newListSql,
+            ],
         ];
     }
 }

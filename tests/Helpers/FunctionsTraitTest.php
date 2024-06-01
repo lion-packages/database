@@ -6,6 +6,7 @@ namespace Tests\Helpers;
 
 use Lion\Database\Helpers\FunctionsTrait;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Provider\FunctionsTraitProviderTrait;
 
 class FunctionsTraitTest extends Test
@@ -16,7 +17,8 @@ class FunctionsTraitTest extends Test
 
     protected function setUp(): void
     {
-        $this->customClass = new class {
+        $this->customClass = new class
+        {
             use FunctionsTrait;
         };
 
@@ -26,28 +28,28 @@ class FunctionsTraitTest extends Test
     protected function tearDown(): void
     {
         $this->setPrivateProperty('isSchema', false);
+
         $this->setPrivateProperty('enableInsert', false);
     }
 
-    /**
-     * @dataProvider addCharacterBulkProvider
-     * */
+    #[DataProvider('addCharacterBulkProvider')]
     public function testAddCharacterBulk(bool $isSchema, bool $enableInsert, bool $addQuotes, string $return): void
     {
         $this->setPrivateProperty('isSchema', $isSchema);
+
         $this->setPrivateProperty('enableInsert', $enableInsert);
+
         $str = $this->getPrivateMethod('addCharacterBulk', [self::BULK_ROWS, $addQuotes]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
     }
 
-    /**
-     * @dataProvider addCharacterEqualToProvider
-     * */
+    #[DataProvider('addCharacterEqualToProvider')]
     public function testAddCharacterEqualTo(array $columns, string $return, bool $isSchema, bool $enableInsert): void
     {
         $this->setPrivateProperty('isSchema', $isSchema);
+
         $this->setPrivateProperty('enableInsert', $enableInsert);
 
         $this->assertSame($isSchema, $this->getPrivateProperty('isSchema'));
@@ -59,31 +61,25 @@ class FunctionsTraitTest extends Test
         $this->assertSame($return, $str);
     }
 
-    /**
-     * @dataProvider addCharacterAssocProvider
-     * */
-    public function testAddCharacterAssoc(array $rows, string $return): void
+    #[DataProvider('addCharacterAssocProvider')]
+    public function testAddCharacterAssoc(array $columns, string $return): void
     {
-        $str = $this->getPrivateMethod('addCharacterAssoc', [$rows]);
+        $str = $this->getPrivateMethod('addCharacterAssoc', [$columns]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
     }
 
-    /**
-     * @dataProvider addCharacterProvider
-     * */
-    public function testAddCharacter(array $rows, string $return): void
+    #[DataProvider('addCharacterProvider')]
+    public function testAddCharacter(array $columns, string $return): void
     {
-        $str = $this->getPrivateMethod('addCharacter', [$rows]);
+        $str = $this->getPrivateMethod('addCharacter', [$columns]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
     }
 
-    /**
-     * @dataProvider addColumnsProvider
-     * */
+    #[DataProvider('addColumnsProvider')]
     public function testAddColumns(
         bool $isSchema,
         bool $enableInsert,
@@ -93,16 +89,16 @@ class FunctionsTraitTest extends Test
         string $return
     ): void {
         $this->setPrivateProperty('isSchema', $isSchema);
+
         $this->setPrivateProperty('enableInsert', $enableInsert);
+
         $str = $this->getPrivateMethod('addColumns', [$columns, $spacing, $addQuotes]);
 
         $this->assertIsString($str);
         $this->assertSame($return, $str);
     }
 
-    /**
-     * @dataProvider addEnumColumnsProvider
-     * */
+    #[DataProvider('addEnumColumnsProvider')]
     public function testAddEnumColumns(array $columns, bool $spacing, string $return): void
     {
         $str = $this->getPrivateMethod('addEnumColumns', [$columns, $spacing]);
