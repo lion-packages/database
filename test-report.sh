@@ -15,28 +15,8 @@ echo -e "\033[0;36m\t>>  Dump Autoload \033[0m"
 composer dump-autoload
 echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
 
-echo -e "\033[0;36m\t>>  Helpers \033[0m"
-php vendor/bin/phpunit --testsuite Helpers
-echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
-
-echo -e "\033[0;36m\t>>  Interface \033[0m"
-php vendor/bin/phpunit --testsuite Interface
-echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
-
-echo -e "\033[0;36m\t>>  Connection|Driver \033[0m"
-php vendor/bin/phpunit --testsuite "Connection|Driver"
-echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
-
-# echo -e "\033[0;36m\t>>  Drivers|Schema \033[0m"
-# php vendor/bin/phpunit --testsuite Drivers
-# echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
-
-echo -e "\033[0;36m\t>>  Drivers \033[0m"
-php vendor/bin/phpunit tests/Drivers/MySQLTest.php
-echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
-
-echo -e "\033[0;36m\t>>  Schema \033[0m"
-php vendor/bin/phpunit tests/Drivers/Schema/MySQLTest.php
+echo -e "\033[0;36m\t>>  Suite All-Test \033[0m"
+php vendor/bin/phpunit --testsuite All-Test --coverage-clover tests/build/logs/clover.xml --coverage-html tests/build/coverage
 echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
 
 end_time=$(date +"%Y-%m-%d %H:%M:%S")

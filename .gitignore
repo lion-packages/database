@@ -1,3 +1,6 @@
 /vendor/
-.env
+/tests/build/coverage/*
+!/tests/build/coverage/.gitignore
+/tests/build/logs/*
+!/tests/build/logs/.gitignore
 .phpunit.result.cache
