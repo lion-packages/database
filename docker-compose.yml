@@ -4,10 +4,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        env_file:
-            - .env
         ports:
-            - "8000:8000"
+            - "8001:8001"
         depends_on:
             - mysql
             - phpmyadmin
@@ -17,61 +15,67 @@ services:
             - ./:/var/www/html
         networks:
             - lion
+
     mysql:
         image: mysql
         container_name: database-mysql
-        command: --default-authentication-plugin=mysql_native_password
         ports:
             - "3306:3306"
         environment:
-            MYSQL_DATABASE: ${DB_NAME}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: lion_database
+            MYSQL_PASSWORD: lion
+            MYSQL_ROOT_PASSWORD: lion
         volumes:
             - mysql_data:/var/lib/mysql
         networks:
             - lion
+
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         container_name: database-phpmyadmin
         links:
             - mysql:mysql
         ports:
-            - 8080:80
+            - 80:80
         environment:
-            PMA_HOST: ${DB_HOST}
-            MYSQL_USER: ${DB_USER}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            PMA_HOST: mysql
+            MYSQL_USER: root
+            MYSQL_PASSWORD: lion
+            MYSQL_ROOT_PASSWORD: lion
         networks:
             - lion
+
     postgres:
         image: postgres
         container_name: database-postgres
         ports:
             - "5432:5432"
         environment:
-            POSTGRES_DB: ${DB_NAME}
-            POSTGRES_USER: ${DB_USER}
-            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: lion_database
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: password
         volumes:
             - postgres_data:/var/lib/postgresql
         networks:
             - lion
+
     pgadmin:
         image: dpage/pgadmin4
         container_name: database-pgadmin4
         ports:
             - "5050:80"
         environment:
-            PGADMIN_DEFAULT_EMAIL: ${DB_EMAIL}
-            PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
+            PGADMIN_DEFAULT_EMAIL: root@dev.com
+            PGADMIN_DEFAULT_PASSWORD: lion
         depends_on:
             - postgres
         networks:
             - lion
+
 volumes:
     mysql_data:
     postgres_data:
+
 networks:
     lion:
+        driver: bridge

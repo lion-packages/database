@@ -9,6 +9,7 @@ use Lion\Test\Test;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Provider\ConnectionProviderTrait;
 
 class ConnectionTest extends Test
@@ -51,29 +52,41 @@ class ConnectionTest extends Test
 
     protected function setUp(): void
     {
-        $this->customClass = new class extends Connection {};
+        $this->customClass = new class extends Connection
+        {
+        };
 
         $this->initReflection($this->customClass);
+
         $this->setPrivateProperty('connections', self::CONNECTIONS);
+
         $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+
         $this->setPrivateProperty('isTransaction', false);
     }
 
     protected function tearDown(): void
     {
         $this->setPrivateProperty('connections', self::CONNECTIONS);
+
         $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+
         $this->setPrivateProperty('isTransaction', false);
+
         $this->setPrivateProperty('actualCode', '');
+
         $this->setPrivateProperty('dataInfo', []);
+
         $this->setPrivateProperty('stmt', false);
+
         $this->setPrivateProperty('sql', '');
+
         $this->setPrivateProperty('listSql', []);
     }
 
     public function testMysql(): void
     {
-        $response = $this->getPrivateMethod('mysql', [fn() => (object) self::RESPONSE]);
+        $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
 
         $this->assertIsObject($response);
         $this->assertObjectHasProperty('status', $response);
@@ -86,7 +99,8 @@ class ConnectionTest extends Test
     public function testMysqlIsTransactionTrue(): void
     {
         $this->setPrivateProperty('isTransaction', true);
-        $response = $this->getPrivateMethod('mysql', [fn() => (object) self::RESPONSE]);
+
+        $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
 
         $this->assertIsObject($response);
         $this->assertObjectHasProperty('status', $response);
@@ -98,7 +112,7 @@ class ConnectionTest extends Test
 
     public function testMysqlWithException(): void
     {
-        $response = $this->getPrivateMethod('mysql', [function() {
+        $response = $this->getPrivateMethod('mysql', [function (): void {
             throw new PDOException('Connection failed');
         }]);
 
@@ -111,15 +125,14 @@ class ConnectionTest extends Test
 
     public function testPrepare(): void
     {
-        $this->getPrivateMethod('mysql', [fn() => (object) self::RESPONSE]);
+        $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
+
         $this->getPrivateMethod('prepare', ['SELECT * FROM users']);
 
         $this->assertInstanceOf(PDOStatement::class, $this->getPrivateProperty('stmt'));
     }
 
-    /**
-     * @dataProvider getValueTypeProvider
-     * */
+    #[DataProvider('getValueTypeProvider')]
     public function testGetValueType(string $value, int $fetchMode): void
     {
         $type = $this->getPrivateMethod('getValueType', [$value]);
@@ -128,26 +141,27 @@ class ConnectionTest extends Test
         $this->assertSame($fetchMode, $type);
     }
 
-    /**
-     * @dataProvider bindValueProvider
-     * */
+    #[DataProvider('bindValueProvider')]
     public function testBindValue(string $code, string $query, array $values): void
     {
-        $this->getPrivateMethod('mysql', [fn() => (object) self::RESPONSE]);
+        $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
+
         $this->getPrivateMethod('prepare', [$query]);
+
         $this->setPrivateProperty('actualCode', $code);
+
         $this->setPrivateProperty('dataInfo', [$code => $values]);
+
         $this->getPrivateMethod('bindValue', [$code]);
 
         $this->assertInstanceOf(PDOStatement::class, $this->getPrivateProperty('stmt'));
     }
 
-    /**
-     * @dataProvider getQueryStringProvider
-     * */
+    #[DataProvider('getQueryStringProvider')]
     public function testGetQueryString(string $query): void
     {
         $this->setPrivateProperty('sql', $query);
+
         $queryString = $this->customClass->getQueryString();
 
         $this->assertIsObject($queryString);

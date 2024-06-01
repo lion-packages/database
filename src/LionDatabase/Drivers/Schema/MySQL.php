@@ -78,7 +78,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
      */
     public static function execute(): object
     {
-        return parent::mysql(function () {
+        return parent::mysql(function (): object {
             self::prepare(self::$sql);
 
             self::$stmt->execute();
@@ -86,12 +86,20 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
             self::clean();
 
             return (object) [
+                'code' => 200,
                 'status' => 'success',
-                'message' => self::$message
+                'message' => self::$message,
             ];
         });
     }
 
+    /**
+     * Generate the query to create a database
+     *
+     * @param string $database [Database name]
+     *
+     * @return MySQL
+     */
     public static function createDatabase(string $database): MySQL
     {
         self::addNewQueryList([
@@ -106,6 +114,13 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
         return new static;
     }
 
+    /**
+     * Generate the query to delete a database
+     *
+     * @param string $database [Database name]
+     *
+     * @return MySQL
+     */
     public static function dropDatabase(string $database): MySQL
     {
         self::addNewQueryList([
@@ -119,6 +134,14 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
         return new static;
     }
 
+    /**
+     * Generate the query to create a table
+     *
+     * @param string $table [Table name]
+     * @param Closure $tableBody [Table body]
+     *
+     * @return MySQL
+     */
     public static function createTable(string $table, Closure $tableBody): MySQL
     {
         self::$table = $table;

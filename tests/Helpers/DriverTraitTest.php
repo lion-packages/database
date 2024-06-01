@@ -8,6 +8,7 @@ use Lion\Database\Helpers\DriverTrait;
 use Lion\Database\Helpers\KeywordsTrait;
 use Lion\Test\Test;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Provider\DriverTraitProviderTrait;
 
 class DriverTraitTest extends Test
@@ -107,9 +108,7 @@ class DriverTraitTest extends Test
         $this->assertSame(self::FALSE, $this->getPrivateProperty('enableInsert'));
     }
 
-    /**
-     * @dataProvider addNewQueryListProvider
-     * */
+    #[DataProvider('addNewQueryListProvider')]
     public function testNewAddQueryList(array $queryList, string $return): void
     {
         $this->getPrivateMethod('addNewQueryList', [$queryList]);
@@ -117,9 +116,7 @@ class DriverTraitTest extends Test
         $this->assertSame($return, $this->getPrivateProperty('sql'));
     }
 
-    /**
-     * @dataProvider addNewQueryListProvider
-     * */
+    #[DataProvider('addNewQueryListProvider')]
     public function testAddQueryList(array $queryList, string $return): void
     {
         $this->getPrivateMethod('addQueryList', [$queryList]);
@@ -130,6 +127,7 @@ class DriverTraitTest extends Test
     public function testAddConnections(): void
     {
         $this->addDefault(self::DATABASE_NAME_SECOND);
+
         $this->customClass::addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
 
         $connections = $this->getPrivateProperty('connections');
@@ -143,6 +141,7 @@ class DriverTraitTest extends Test
     public function testGetConnections(): void
     {
         $this->addDefault(self::DATABASE_NAME);
+
         $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
 
         $connections = $this->getPrivateProperty('connections');
@@ -155,6 +154,7 @@ class DriverTraitTest extends Test
     public function testRemoveConnection(): void
     {
         $this->addDefault(self::DATABASE_NAME);
+
         $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
 
         $this->assertSame(self::CONNECTIONS, $this->customClass::getConnections());
@@ -174,10 +174,8 @@ class DriverTraitTest extends Test
         $this->assertSame(' )', $this->getPrivateProperty('sql'));
     }
 
-    /**
-     * @dataProvider fetchModeProvider
-     * */
-    public function testFetchMode(int $fetchMode): void
+    #[DataProvider('fetchModeProvider')]
+    public function testFetchMode(int $fetchMode, ?string $value): void
     {
         $this->assertInstanceOf($this->customClass::class, $this->customClass::fetchMode($fetchMode));
 
@@ -214,9 +212,7 @@ class DriverTraitTest extends Test
         $this->assertSame(self::ROWS, $this->getPrivateMethod('cleanSettings', [self::ROWS_CLEAN_SETTINGS]));
     }
 
-    /**
-     * @dataProvider buildTable
-     */
+    #[DataProvider('buildTable')]
     public function testBuildTable(string $table, string $actualColumn, array $row, string $return): void
     {
         $this->setPrivateProperty('table', $table);

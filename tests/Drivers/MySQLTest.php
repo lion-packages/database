@@ -8,6 +8,7 @@ use Lion\Database\Drivers\MySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Test\Test;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Provider\MySQLProviderTrait;
 
 class MySQLTest extends Test
@@ -253,9 +254,7 @@ class MySQLTest extends Test
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
     }
 
-    /**
-     * @dataProvider transactionProvider
-     * */
+    #[DataProvider('transactionProvider')]
     public function testTransaction(bool $isTransaction): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->transaction($isTransaction));
@@ -268,9 +267,7 @@ class MySQLTest extends Test
         $this->assertTrue($this->getPrivateProperty('isSchema'));
     }
 
-    /**
-     * @dataProvider enableInsertProvider
-     * */
+    #[DataProvider('enableInsertProvider')]
     public function testEnableInsert(bool $enable): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->enableInsert($enable));
@@ -351,25 +348,23 @@ class MySQLTest extends Test
 
     public function testConstraint(): void
     {
-        -$this->assertInstanceOf(MySQL::class, $this->mysql->constraint());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->constraint());
         $this->assertSame('CONSTRAINT', $this->getQuery());
     }
 
     public function testAdd(): void
     {
-        -$this->assertInstanceOf(MySQL::class, $this->mysql->add());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->add());
         $this->assertSame('ADD', $this->getQuery());
     }
 
     public function testAlter(): void
     {
-        -$this->assertInstanceOf(MySQL::class, $this->mysql->alter());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->alter());
         $this->assertSame('ALTER', $this->getQuery());
     }
 
-    /**
-     * @dataProvider commentProvider
-     * */
+    #[DataProvider('commentProvider')]
     public function testComment(string $value, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->comment($value));
@@ -400,9 +395,7 @@ class MySQLTest extends Test
         $this->assertSame('PRIMARY', $this->getQuery());
     }
 
-    /**
-     * @dataProvider engineProvider
-     * */
+    #[DataProvider('engineProvider')]
     public function testEngine(string $value, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->engine($value));
@@ -427,18 +420,14 @@ class MySQLTest extends Test
         $this->assertSame('INNODB', $this->getQuery());
     }
 
-    /**
-     * @dataProvider collateProvider
-     * */
+    #[DataProvider('collateProvider')]
     public function testCollate(string $value, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->collate($value));
         $this->assertSame($return, $this->getQuery());
     }
 
-    /**
-     * @dataProvider setProvider
-     * */
+    #[DataProvider('setProvider')]
     public function testSet(string $value, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->set($value));
@@ -451,9 +440,7 @@ class MySQLTest extends Test
         $this->assertSame('CHARACTER', $this->getQuery());
     }
 
-    /**
-     * @dataProvider defaultProvider
-     * */
+    #[DataProvider('defaultProvider')]
     public function testDefault(string|int $value, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->default($value));
@@ -520,9 +507,7 @@ class MySQLTest extends Test
         $this->assertSame('STATUS', $this->getQuery());
     }
 
-    /**
-     * @dataProvider closeQueryProvider
-     * */
+    #[DataProvider('closeQueryProvider')]
     public function testCloseQuery(string $close): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->closeQuery($close));
@@ -561,36 +546,28 @@ class MySQLTest extends Test
         $this->assertSame('WITH', $this->getQuery());
     }
 
-    /**
-     * @dataProvider tableProvider
-     * */
+    #[DataProvider('tableProvider')]
     public function testTable(bool $table, bool $withDatabase, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table, $withDatabase));
         $this->assertSame($return, $this->getQuery());
     }
 
-    /**
-     * @dataProvider tableIsStringProvider
-     * */
+    #[DataProvider('tableIsStringProvider')]
     public function testTableIsString(string $table, bool $withDatabase, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table, $withDatabase));
         $this->assertSame($return, $this->getPrivateProperty('table'));
     }
 
-    /**
-     * @dataProvider viewProvider
-     * */
+    #[DataProvider('viewProvider')]
     public function testView(bool $view, bool $withDatabase, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->view($view, $withDatabase));
         $this->assertSame($return, $this->getQuery());
     }
 
-    /**
-     * @dataProvider viewIsStringProvider
-     * */
+    #[DataProvider('viewIsStringProvider')]
     public function testViewIsString(string $view, bool $withDatabase, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->view($view, $withDatabase));
@@ -609,9 +586,7 @@ class MySQLTest extends Test
         $this->assertSame('IS NOT NULL', $this->getQuery());
     }
 
-    /**
-     * @dataProvider offsetProvider
-     * */
+    #[DataProvider('offsetProvider')]
     public function testOffset(int $increase): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->offset($increase));
@@ -631,9 +606,7 @@ class MySQLTest extends Test
         $this->assertSame('UNION', $this->getQuery());
     }
 
-    /**
-     * @dataProvider asProvider
-     * */
+    #[DataProvider('asProvider')]
     public function testAs(string $column, string $as, string $return): void
     {
         $as = $this->mysql->as($column, $as);
@@ -642,9 +615,7 @@ class MySQLTest extends Test
         $this->assertSame($return, $as);
     }
 
-    /**
-     * @dataProvider concatProvider
-     * */
+    #[DataProvider('concatProvider')]
     public function testConcat(array $elements, string $return): void
     {
         $concat = $this->mysql->concat(...$elements);
@@ -675,9 +646,7 @@ class MySQLTest extends Test
         $this->assertSame('FROM users', $this->getQuery());
     }
 
-    /**
-     * @dataProvider fromWithFunctionsProvider
-     * */
+    #[DataProvider('fromWithFunctionsProvider')]
     public function testFromWithFunctions(string $callableFunction, string $value, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->$callableFunction($value)->from());
@@ -699,7 +668,9 @@ class MySQLTest extends Test
     public function testConstraints(): void
     {
         $query = 'SELECT CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME ';
+
         $query .= 'FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=? AND TABLE_NAME=? ';
+
         $query .= 'AND REFERENCED_COLUMN_NAME IS NOT NULL';
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table('users')->constraints());
@@ -719,9 +690,7 @@ class MySQLTest extends Test
         $this->assertSame('COLUMNS', $this->getQuery());
     }
 
-    /**
-     * @dataProvider queryProvider
-     * */
+    #[DataProvider('queryProvider')]
     public function testQuery(string $query): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->query($query));
@@ -729,12 +698,11 @@ class MySQLTest extends Test
         $this->assertSame($query, $this->getQuery());
     }
 
-    /**
-     * @dataProvider bulkProvider
-     * */
+    #[DataProvider('bulkProvider')]
     public function testBulk(bool $enable, string $table, array $columns, array $rows, string $return): void
     {
         $this->setPrivateProperty('isSchema', $enable);
+
         $mysql = $this->mysql->enableInsert($enable)->table($table)->bulk($columns, $rows);
 
         $this->assertInstanceOf(MySQL::class, $mysql);
@@ -743,9 +711,7 @@ class MySQLTest extends Test
         $this->assertMessage('Rows inserted successfully');
     }
 
-    /**
-     * @dataProvider inProvider
-     * */
+    #[DataProvider('inProvider')]
     public function testIn(?array $params, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->in($params));
@@ -760,9 +726,7 @@ class MySQLTest extends Test
         $this->assertMessage('Procedure executed successfully');
     }
 
-    /**
-     * @dataProvider deleteProvider
-     * */
+    #[DataProvider('deleteProvider')]
     public function testDelete(string $table, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->delete());
@@ -770,9 +734,7 @@ class MySQLTest extends Test
         $this->assertMessage('Rows deleted successfully');
     }
 
-    /**
-     * @dataProvider updateProvider
-     * */
+    #[DataProvider('updateProvider')]
     public function testUpdate(string $table, array $params, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->update($params));
@@ -781,9 +743,7 @@ class MySQLTest extends Test
         $this->assertMessage('Rows updated successfully');
     }
 
-    /**
-     * @dataProvider insertProvider
-     * */
+    #[DataProvider('insertProvider')]
     public function testInsert(string $table, array $params, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->insert($params));
@@ -795,7 +755,9 @@ class MySQLTest extends Test
     public function testInsertIsSchema(): void
     {
         $sql = 'INSERT INTO lion_database.users (users_name, users_last_name) VALUES (_lion, _root)';
+
         $params = ['users_name' => '_lion', 'users_last_name' => '_root'];
+
         $mysql = $this->mysql->isSchema()->table('users')->insert($params);
 
         $this->assertInstanceOf(MySQL::class, $mysql);
@@ -805,9 +767,7 @@ class MySQLTest extends Test
         $this->assertTrue($this->getPrivateProperty('isSchema'));
     }
 
-    /**
-     * @dataProvider havingProvider
-     * */
+    #[DataProvider('havingProvider')]
     public function testHaving(string $condition, int $value, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->having($condition, $value));
@@ -815,9 +775,7 @@ class MySQLTest extends Test
         $this->assertSame($return, $this->getQuery());
     }
 
-    /**
-     * @dataProvider selectProvider
-     * */
+    #[DataProvider('selectProvider')]
     public function testSelect(string $function, string $value, array $columns, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->$function($value)->select(...$columns));
@@ -828,9 +786,7 @@ class MySQLTest extends Test
         $this->assertSame($return, $this->getQuery());
     }
 
-    /**
-     * @dataProvider selectDistinctProvider
-     * */
+    #[DataProvider('selectDistinctProvider')]
     public function testSelectDistinct(string $function, string $value, array $columns, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->$function($value)->selectDistinct(...$columns));
@@ -848,9 +804,7 @@ class MySQLTest extends Test
         $this->assertSame('BETWEEN ? AND ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider likeProvider
-     * */
+    #[DataProvider('likeProvider')]
     public function testLike(string $like): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->like($like));
@@ -858,18 +812,14 @@ class MySQLTest extends Test
         $this->assertSame('LIKE ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider groupByProvider
-     * */
+    #[DataProvider('groupByProvider')]
     public function testGroupBy(array $groupBy, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->groupBy(...$groupBy));
         $this->assertSame($return, $this->getQuery());
     }
 
-    /**
-     * @dataProvider limitProvider
-     * */
+    #[DataProvider('limitProvider')]
     public function testLimit(int $start, ?int $limit, array $add, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->limit($start, $limit));
@@ -905,9 +855,7 @@ class MySQLTest extends Test
         $this->assertSame(' DESC', $desc);
     }
 
-    /**
-     * @dataProvider orderByProvider
-     * */
+    #[DataProvider('orderByProvider')]
     public function testOrderBy(array $orderBy, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->orderBy(...$orderBy));
@@ -932,9 +880,7 @@ class MySQLTest extends Test
         $this->assertSame('RIGHT', $this->getQuery());
     }
 
-    /**
-     * @dataProvider joinProvider
-     * */
+    #[DataProvider('joinProvider')]
     public function testJoin(string $table, string $valueFrom, string $valueUpTo, bool $withAlias, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->join($table, $valueFrom, $valueUpTo, $withAlias));
@@ -962,11 +908,11 @@ class MySQLTest extends Test
 
     public function testWhereWithCallback(): void
     {
-        $query = $this->mysql->where(function () {
+        $query = $this->mysql->where(function (): void {
             $this->mysql
                 ->equalTo('idusers', 1)
-                ->and(function () {
-                    $this->mysql->groupQuery(function () {
+                ->and(function (): void {
+                    $this->mysql->groupQuery(function (): void {
                         $this->mysql->notEqualTo('idusers', 2);
                     });
                 });
@@ -1004,14 +950,14 @@ class MySQLTest extends Test
 
     public function testAndWithCallback(): void
     {
-        $query = $this->mysql->where(function () {
+        $query = $this->mysql->where(function (): void {
             $this->mysql
                 ->notEqualTo('idusers', 1)
-                ->and(function () {
-                    $this->mysql->groupQuery(function () {
+                ->and(function (): void {
+                    $this->mysql->groupQuery(function (): void {
                         $this->mysql
                             ->notEqualTo('idusers', 2)
-                            ->and(function () {
+                            ->and(function (): void {
                                 $this->mysql->notEqualTo('idusers', 3);
                             });
                     });
@@ -1050,14 +996,14 @@ class MySQLTest extends Test
 
     public function testOrWithCallback(): void
     {
-        $query = $this->mysql->where(function () {
+        $query = $this->mysql->where(function (): void {
             $this->mysql
                 ->notEqualTo('idusers', 1)
-                ->and(function () {
-                    $this->mysql->groupQuery(function () {
+                ->and(function (): void {
+                    $this->mysql->groupQuery(function (): void {
                         $this->mysql
                             ->notEqualTo('idusers', 2)
-                            ->or(function () {
+                            ->or(function (): void {
                                 $this->mysql->notEqualTo('idusers', 3);
                             });
                     });
@@ -1075,9 +1021,7 @@ class MySQLTest extends Test
         $this->assertSame('OR', $this->getQuery());
     }
 
-    /**
-     * @dataProvider getColumnProvider
-     * */
+    #[DataProvider('getColumnProvider')]
     public function testGetColumn(string $column, string $table, string $return): void
     {
         $getColumn = $this->mysql->getColumn($column, $table);
@@ -1086,9 +1030,7 @@ class MySQLTest extends Test
         $this->assertSame($return, $getColumn);
     }
 
-    /**
-     * @dataProvider columnProvider
-     * */
+    #[DataProvider('columnProvider')]
     public function testColumn(string $column, string $table, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->column($column, $table));
@@ -1102,12 +1044,11 @@ class MySQLTest extends Test
         $this->assertSame('idusers = ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider equalToSchemaProvider
-     * */
+    #[DataProvider('equalToSchemaProvider')]
     public function testEqualToSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
+
         $this->setPrivateProperty('enableInsert', true);
 
         $this->assertTrue($this->getPrivateProperty('isSchema'));
@@ -1123,12 +1064,11 @@ class MySQLTest extends Test
         $this->assertSame('idusers <> ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider notEqualToSchemaProvider
-     * */
+    #[DataProvider('notEqualToSchemaProvider')]
     public function testNotEqualToSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
+
         $this->setPrivateProperty('enableInsert', true);
 
         $this->assertTrue($this->getPrivateProperty('isSchema'));
@@ -1144,12 +1084,11 @@ class MySQLTest extends Test
         $this->assertSame('idusers > ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider greaterThanSchemaProvider
-     * */
+    #[DataProvider('greaterThanSchemaProvider')]
     public function testGreaterThanSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
+
         $this->setPrivateProperty('enableInsert', true);
 
         $this->assertTrue($this->getPrivateProperty('isSchema'));
@@ -1165,12 +1104,11 @@ class MySQLTest extends Test
         $this->assertSame('idusers < ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider lessThanSchemaProvider
-     * */
+    #[DataProvider('lessThanSchemaProvider')]
     public function testLessThanSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
+
         $this->setPrivateProperty('enableInsert', true);
 
         $this->assertTrue($this->getPrivateProperty('isSchema'));
@@ -1186,12 +1124,11 @@ class MySQLTest extends Test
         $this->assertSame('idusers >= ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider greaterThanOrEqualToSchemaProvider
-     * */
+    #[DataProvider('greaterThanOrEqualToSchemaProvider')]
     public function testGreaterThanOrEqualToSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
+
         $this->setPrivateProperty('enableInsert', true);
 
         $this->assertTrue($this->getPrivateProperty('isSchema'));
@@ -1207,12 +1144,11 @@ class MySQLTest extends Test
         $this->assertSame('idusers <= ?', $this->getQuery());
     }
 
-    /**
-     * @dataProvider lessThanOrEqualToSchemaProvider
-     * */
+    #[DataProvider('lessThanOrEqualToSchemaProvider')]
     public function testLessThanOrEqualToSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
+
         $this->setPrivateProperty('enableInsert', true);
 
         $this->assertTrue($this->getPrivateProperty('isSchema'));
@@ -1285,18 +1221,14 @@ class MySQLTest extends Test
         $this->assertSame('YEAR(2023-12-22)', $year);
     }
 
-    /**
-     * @dataProvider intProvider
-     * */
+    #[DataProvider('intProvider')]
     public function testInt(string $column, ?int $length, string $query): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->int($column, $length));
         $this->assertSame($query, $this->getQuery());
     }
 
-    /**
-     * @dataProvider bigIntProvider
-     * */
+    #[DataProvider('bigIntProvider')]
     public function testBigInt(string $column, ?int $length, string $query): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->bigInt($column, $length));
@@ -1351,9 +1283,7 @@ class MySQLTest extends Test
         $this->assertSame('idusers BLOB', $this->getQuery());
     }
 
-    /**
-     * @dataProvider varBinaryProvider
-     * */
+    #[DataProvider('varBinaryProvider')]
     public function testVarBinary(string $name, string|int $length, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->varBinary($name, $length));

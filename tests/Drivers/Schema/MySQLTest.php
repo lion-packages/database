@@ -10,6 +10,7 @@ use Lion\Database\Drivers\Schema\MySQL;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Provider\MySQLSchemaProviderTrait;
 
 class MySQLTest extends Test
@@ -141,9 +142,7 @@ class MySQLTest extends Test
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
     }
 
-    /**
-     * @dataProvider createDatabaseProvider
-     * */
+    #[DataProvider('createDatabaseProvider')]
     public function testCreateDatabase(string $database, string $query): void
     {
         $this->assertIntances($this->mysql->createDatabase($database));
@@ -151,9 +150,7 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->createDatabase($database)->execute());
     }
 
-    /**
-     * @dataProvider dropDatabaseProvider
-     * */
+    #[DataProvider('dropDatabaseProvider')]
     public function testDropDatabase(string $database, string $query, array $connection): void
     {
         $this->assertResponse($this->mysql->connection(self::DATABASE_NAME)->createDatabase($database)->execute());
@@ -165,9 +162,7 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->connection($database)->dropDatabase($database)->execute());
     }
 
-    /**
-     * @dataProvider createTableProvider
-     * */
+    #[DataProvider('createTableProvider')]
     public function testCreateTable(string $table, string $query): void
     {
         $this->assertIntances(
@@ -198,9 +193,7 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->dropTable($table)->execute());
     }
 
-    /**
-     * @dataProvider dropTableProvider
-     * */
+    #[DataProvider('dropTableProvider')]
     public function testDropTable(string $table, string $query): void
     {
         $this->assertResponse(
@@ -260,9 +253,7 @@ class MySQLTest extends Test
         $this->assertSame('no data available', $readTables->message);
     }
 
-    /**
-     * @dataProvider truncateTableProvider
-     * */
+    #[DataProvider('truncateTableProvider')]
     public function testTruncateTable(string $table, bool $enableForeignKeyChecks): void
     {
         $this->assertResponse(
@@ -289,9 +280,7 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->dropTable($table)->execute());
     }
 
-    /**
-     * @dataProvider createStoreProcedureProvider
-     * */
+    #[DataProvider('createStoreProcedureProvider')]
     public function testCreateStoreProcedure(string $table, string $storeProcedure): void
     {
         $this->assertResponse(
@@ -365,9 +354,7 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->dropTable($table)->execute());
     }
 
-    /**
-     * @dataProvider dropStoreProcedureProvider
-     * */
+    #[DataProvider('dropStoreProcedureProvider')]
     public function testDropStoreProcedure(string $table, string $storeProcedure): void
     {
         $this->assertResponse(
@@ -393,15 +380,13 @@ class MySQLTest extends Test
         );
     }
 
-    /**
-     * @dataProvider createViewProvider
-     * */
+    #[DataProvider('createViewProvider')]
     public function testCreateView(string $parentTable, string $childTable, string $view): void
     {
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createTable($parentTable, function () {
+                ->createTable($parentTable, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
                         ->varchar('description', 25)->null()->comment('roles description');
@@ -412,7 +397,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createTable($childTable, function () use ($parentTable) {
+                ->createTable($childTable, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
                         ->int('num')->notNull()->comment('comment num')
@@ -424,7 +409,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createView($view, function (DriversMySQL $driversMysql) use ($parentTable, $childTable) {
+                ->createView($view, function (DriversMySQL $driversMysql) use ($parentTable, $childTable): void {
                     $driversMysql
                         ->table($childTable)
                         ->select(
@@ -462,15 +447,13 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->dropView($view)->execute());
     }
 
-    /**
-     * @dataProvider dropViewProvider
-     * */
+    #[DataProvider('dropViewProvider')]
     public function testDropView(string $table, string $view): void
     {
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createTable($table, function () {
+                ->createTable($table, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
                         ->int('num')->notNull()->comment('comment num');
@@ -481,7 +464,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(self::DATABASE_NAME)
-                ->createView($view, function (DriversMySQL $driversMysql) use ($table) {
+                ->createView($view, function (DriversMySQL $driversMysql) use ($table): void {
                     $driversMysql
                         ->table($table)
                         ->select();
@@ -502,9 +485,7 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->dropView($view)->execute());
     }
 
-    /**
-     * @dataProvider primaryKeyProvider
-     * */
+    #[DataProvider('primaryKeyProvider')]
     public function testPrimaryKey(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -516,9 +497,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider autoIncrementProvider
-     * */
+    #[DataProvider('autoIncrementProvider')]
     public function testAutoIncrement(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -530,9 +509,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider notNullProvider
-     * */
+    #[DataProvider('notNullProvider')]
     public function testNotNull(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -544,9 +521,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider nullProvider
-     * */
+    #[DataProvider('nullProvider')]
     public function testNull(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -558,9 +533,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider commentProvider
-     * */
+    #[DataProvider('commentProvider')]
     public function testComment(string $table, string $column, string $comment, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -572,9 +545,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider uniqueProvider
-     * */
+    #[DataProvider('uniqueProvider')]
     public function testUnique(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -586,9 +557,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider defaultProvider
-     * */
+    #[DataProvider('defaultProvider')]
     public function testDefault(string $table, string $column, mixed $default, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -600,9 +569,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider foreignProvider
-     * */
+    #[DataProvider('foreignProvider')]
     public function testForeign(string $table, string $column, array $relation, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -614,9 +581,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider intProvider
-     * */
+    #[DataProvider('intProvider')]
     public function testInt(string $table, string $column, ?int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -627,9 +592,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider bigIntProvider
-     * */
+    #[DataProvider('bigIntProvider')]
     public function testBigInt(string $table, string $column, ?int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -640,9 +603,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider decimalProvider
-     * */
+    #[DataProvider('decimalProvider')]
     public function testDecimal(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -653,9 +614,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider doubleProvider
-     * */
+    #[DataProvider('doubleProvider')]
     public function testDouble(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -666,9 +625,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider floatProvider
-     * */
+    #[DataProvider('floatProvider')]
     public function testFloat(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -679,9 +636,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider mediumIntProvider
-     * */
+    #[DataProvider('mediumIntProvider')]
     public function testMediumInt(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -692,9 +647,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider realProvider
-     */
+    #[DataProvider('realProvider')]
     public function testReal(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -705,9 +658,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider smallIntProvider
-     * */
+    #[DataProvider('smallIntProvider')]
     public function testSmallInt(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -718,9 +669,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider tinyIntProvider
-     * */
+    #[DataProvider('tinyIntProvider')]
     public function testTinyInt(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -731,9 +680,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider blobProvider
-     */
+    #[DataProvider('blobProvider')]
     public function testBlob(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -744,9 +691,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider varBinaryProvider
-     */
+    #[DataProvider('varBinaryProvider')]
     public function testVarBinary(string $table, string $column, string|int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -757,9 +702,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider charProvider
-     * */
+    #[DataProvider('charProvider')]
     public function testChar(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -770,9 +713,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider jsonProvider
-     */
+    #[DataProvider('jsonProvider')]
     public function testJson(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -783,9 +724,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider ncharProvider
-     * */
+    #[DataProvider('ncharProvider')]
     public function testNchar(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -796,9 +735,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider nvarcharProvider
-     * */
+    #[DataProvider('nvarcharProvider')]
     public function testNvarchar(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -809,9 +746,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider varcharProvider
-     * */
+    #[DataProvider('varcharProvider')]
     public function testVarchar(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -822,9 +757,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider longTextProvider
-     */
+    #[DataProvider('longTextProvider')]
     public function testLongText(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -835,9 +768,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider mediumTextProvider
-     */
+    #[DataProvider('mediumTextProvider')]
     public function testMediumText(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -848,9 +779,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider textProvider
-     */
+    #[DataProvider('textProvider')]
     public function testText(string $table, string $column, int $length, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -861,9 +790,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider tinyTextProvider
-     */
+    #[DataProvider('tinyTextProvider')]
     public function testTinyText(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -874,9 +801,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider enumProvider
-     */
+    #[DataProvider('enumProvider')]
     public function testEnum(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -887,9 +812,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider dateProvider
-     */
+    #[DataProvider('dateProvider')]
     public function testDate(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -900,9 +823,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider timeProvider
-     */
+    #[DataProvider('timeProvider')]
     public function testTime(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -913,9 +834,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider timeStampProvider
-     */
+    #[DataProvider('timeStampProvider')]
     public function testTimeStamp(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
@@ -926,9 +845,7 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
-    /**
-     * @dataProvider dateTimeProvider
-     */
+    #[DataProvider('dateTimeProvider')]
     public function testDateTime(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
