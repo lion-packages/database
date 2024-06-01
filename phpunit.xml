@@ -70,7 +70,7 @@
         </testsuite>
 
         <testsuite name="Schema">
-            <directory suffix=".php">tests/Drivers/MySQL/Schema/MySQLTest.php</directory>
+            <directory suffix=".php">tests/Drivers/Schema</directory>
         </testsuite>
     </testsuites>
 </phpunit>
