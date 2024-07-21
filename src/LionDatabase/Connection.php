@@ -6,9 +6,13 @@ namespace Lion\Database;
 
 use Closure;
 use Lion\Database\Helpers\FunctionsTrait;
+use Lion\Database\Interface\ConnectionConfigInterface;
+use Lion\Database\Interface\DatabaseCapsuleInterface;
+use Lion\Database\Interface\DatabaseEngineInterface;
 use PDO;
 use PDOException;
 use PDOStatement;
+use stdClass;
 
 /**
  * Class that manages the connection to databases on different drivers
@@ -19,7 +23,7 @@ use PDOStatement;
  *
  * @package Lion\Database
  */
-abstract class Connection
+abstract class Connection implements ConnectionConfigInterface, DatabaseEngineInterface
 {
     use FunctionsTrait;
 
@@ -37,13 +41,40 @@ abstract class Connection
      */
     protected static PDOStatement|bool $stmt;
 
-    protected static function mysql(Closure $callback): array|object
+    /**
+     * {@inheritdoc}
+     */
+    public static function addConnection(string $connectionName, array $options): void
+    {
+        self::$connections['connections'][$connectionName] = $options;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getConnections(): array
+    {
+        return self::$connections['connections'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function removeConnection(string $connectionName): void
+    {
+        unset(self::$connections['connections'][$connectionName]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function mysql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
     {
         $connection = self::$connections['connections'][self::$activeConnection];
 
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
         ];
 
         try {
@@ -74,11 +105,25 @@ abstract class Connection
         }
     }
 
+    /**
+     * Prepare the current sentence
+     *
+     * @param string $sql [Current sentence]
+     *
+     * @return void
+     */
     protected static function prepare(string $sql): void
     {
         self::$stmt = self::$conn->prepare(trim($sql));
     }
 
+    /**
+     * Gets the object type for a parameter of a declaration
+     *
+     * @param mixed $type [Datatype]
+     *
+     * @return int
+     */
     private static function getValueType(mixed $type): int
     {
         $pdoType = [
@@ -91,6 +136,13 @@ abstract class Connection
         return $pdoType[$type] ?? PDO::PARAM_STR;
     }
 
+    /**
+     * Nests the values in the preparation of the current statement
+     *
+     * @param string $code [Current unique code]
+     *
+     * @return void
+     */
     protected static function bindValue(string $code): void
     {
         if (!empty(self::$dataInfo[$code])) {
@@ -128,7 +180,12 @@ abstract class Connection
         }
     }
 
-    public static function getQueryString(): object
+    /**
+     * Gets an object with the current statement
+     *
+     * @return stdClass
+     */
+    public static function getQueryString(): stdClass
     {
         $query = trim(self::$sql);
 

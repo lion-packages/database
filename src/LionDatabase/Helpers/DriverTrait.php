@@ -10,7 +10,8 @@ use Lion\Database\Helpers\Constants\MySQLConstants;
 /**
  * Defines the configuration methods to run Driver processes
  *
- * @property array $connections [List of database connections]
+ * @property array<string, string|array<string, string>> $connections [List of
+ * database connections]
  * @property string $dbname [Current database name]
  * @property string $activeConnection [Name of the currently active connection]
  * @property bool $isTransaction [Defines whether the process is a transaction]
@@ -43,7 +44,7 @@ trait DriverTrait
      * @const IGNORED_ELEMENTS
      */
     private const IGNORED_ELEMENTS = [
-        MySQLConstants::CURRENT_TIMESTAMP
+        MySQLConstants::CURRENT_TIMESTAMP,
     ];
 
     /**
@@ -166,6 +167,11 @@ trait DriverTrait
      */
     protected static string $actualColumn = '';
 
+    /**
+     * Initialize the database engine properties to their initial state
+     *
+     * @return void
+     */
     protected static function clean(): void
     {
         self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
@@ -201,6 +207,13 @@ trait DriverTrait
         self::$actualColumn = '';
     }
 
+    /**
+     * Initializes the current query with the defined parameters
+     *
+     * @param array<int, string> $listQuery [List of defined parameters]
+     *
+     * @return void
+     */
     protected static function addNewQueryList(array $listQuery): void
     {
         foreach ($listQuery as $key => $query) {
@@ -212,6 +225,13 @@ trait DriverTrait
         }
     }
 
+    /**
+     * Nests the defined parameters into the current query
+     *
+     * @param array<int, string> $listQuery [List of defined parameters]
+     *
+     * @return void
+     */
     protected static function addQueryList(array $listQuery): void
     {
         foreach ($listQuery as $query) {
@@ -219,31 +239,36 @@ trait DriverTrait
         }
     }
 
-    public static function addConnections(string $connectionName, array $options): void
-    {
-        self::$connections['connections'][$connectionName] = $options;
-    }
-
-    public static function getConnections(): array
-    {
-        return self::$connections;
-    }
-
-    public static function removeConnection(string $connectionName): void
-    {
-        unset(self::$connections['connections'][$connectionName]);
-    }
-
+    /**
+     * Open a group of statements to the current query
+     *
+     * @return void
+     */
     protected static function openGroup(): void
     {
         self::$sql .= " (";
     }
 
+    /**
+     * Closes a group of statements to the current query
+     *
+     * @return void
+     */
     protected static function closeGroup(): void
     {
         self::$sql .= " )";
     }
 
+    /**
+     * Select the fetchMode
+     *
+     * @param int $fetchMode [Fetch mode]
+     * @param mixed|null $value [Search value]
+     *
+     * @return static
+     *
+     * @link https://www.php.net/manual/es/pdostatement.fetch.php
+     */
     public static function fetchMode(int $fetchMode, mixed $value = null): static
     {
         self::$fetchMode[self::$actualCode] = null === $value ? $fetchMode : [$fetchMode, $value];
@@ -251,6 +276,13 @@ trait DriverTrait
         return new static;
     }
 
+    /**
+     * Nest values to the current statement
+     *
+     * @param array<int, mixed> $rows [List of defined values]
+     *
+     * @return void
+     */
     public static function addRows(array $rows): void
     {
         foreach ($rows as $row) {
@@ -258,6 +290,13 @@ trait DriverTrait
         }
     }
 
+    /**
+     * Clears the parameters to be nested to the current statement
+     *
+     * @param array<int, string> $columns [description]
+     *
+     * @return array<int, string>
+     */
     protected static function cleanSettings(array $columns): array
     {
         $newColumns = [];
@@ -275,7 +314,13 @@ trait DriverTrait
         return $newColumns;
     }
 
-    protected static function buildTable(): object
+    /**
+     * Replaces the values defined for a database schema, nesting the values in
+     * the current statement
+     *
+     * @return static
+     */
+    protected static function buildTable(): static
     {
         if (!empty(self::$columns[self::$table])) {
             $strColumns = '';
@@ -358,6 +403,6 @@ trait DriverTrait
             );
         }
 
-        return new static;
+        return new static();
     }
 }

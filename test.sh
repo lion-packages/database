@@ -19,10 +19,6 @@ echo -e "\033[0;36m\t>>  Helpers \033[0m"
 php vendor/bin/phpunit --testsuite Helpers
 echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
 
-echo -e "\033[0;36m\t>>  Interface \033[0m"
-php vendor/bin/phpunit --testsuite Interface
-echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";
-
 echo -e "\033[0;36m\t>>  Connection|Driver \033[0m"
 php vendor/bin/phpunit --testsuite "Connection|Driver"
 echo -e "\n\033[0;31m>> -------------------------------------------------------------------------------------- << \n\033[0m";

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lion\Database;
 
+use Exception;
 use Lion\Database\Drivers\MySQL;
 use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
 
@@ -15,32 +16,43 @@ use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
 abstract class Driver
 {
     /**
-     * Defines the MySQL driver
+     * [Defines the MySQL driver]
      *
      * @const MYSQL
      */
-    const MYSQL = 'MYSQL';
+    const MYSQL = 'mysql';
 
-    public static function run(array $connections): object
+    /**
+     * Initialize database connections
+     *
+     * @param array $connections [List of defined connections]
+     *
+     * @return void
+     *
+     * @throws Exception [If database initialization is not successful]
+     */
+    public static function run(array $connections): void
     {
         if (empty($connections['default'])) {
-            return (object) ['status' => 'database-error', 'message' => 'the default driver is required'];
+            throw new Exception('no connection has been defined by default', 500);
         }
 
         $connection = $connections['connections'][$connections['default']];
+
         $type = trim(strtolower($connection['type']));
 
         switch ($type) {
-            case 'mysql':
+            case self::MYSQL:
                 MySQL::run($connections);
+
                 SchemaMySQL::run($connections);
+
                 break;
 
             default:
-                return (object) ['status' => 'database-error', 'message' => 'the driver does not exist'];
+                throw new Exception('the defined driver does not exist', 500);
+
                 break;
         }
-
-        return (object) ['status' => 'success', 'message' => 'enabled connections'];
     }
 }

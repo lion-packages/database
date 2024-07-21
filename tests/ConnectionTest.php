@@ -10,20 +10,21 @@ use PDO;
 use PDOException;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
+use stdClass;
 use Tests\Provider\ConnectionProviderTrait;
 
 class ConnectionTest extends Test
 {
     use ConnectionProviderTrait;
 
-    const DATABASE_TYPE = 'mysql';
-    const DATABASE_HOST = 'mysql';
-    const DATABASE_PORT = 3306;
-    const DATABASE_NAME = 'lion_database';
-    const DATABASE_NAME_SECOND = 'lion_database_second';
-    const DATABASE_USER = 'root';
-    const DATABASE_PASSWORD = 'lion';
-    const CONNECTION_DATA = [
+    private const string DATABASE_TYPE = 'mysql';
+    private const string DATABASE_HOST = 'mysql';
+    private const int DATABASE_PORT = 3306;
+    private const string DATABASE_NAME = 'lion_database';
+    private const string DATABASE_NAME_SECOND = 'lion_database_second';
+    private const string DATABASE_USER = 'root';
+    private const string DATABASE_PASSWORD = 'lion';
+    private const array CONNECTION_DATA = [
         'type' => self::DATABASE_TYPE,
         'host' => self::DATABASE_HOST,
         'port' => self::DATABASE_PORT,
@@ -31,7 +32,7 @@ class ConnectionTest extends Test
         'user' => self::DATABASE_USER,
         'password' => self::DATABASE_PASSWORD
     ];
-    const CONNECTION_DATA_SECOND = [
+    private const array CONNECTION_DATA_SECOND = [
         'type' => self::DATABASE_TYPE,
         'host' => self::DATABASE_HOST,
         'port' => self::DATABASE_PORT,
@@ -39,16 +40,19 @@ class ConnectionTest extends Test
         'user' => self::DATABASE_USER,
         'password' => self::DATABASE_PASSWORD
     ];
-    const CONNECTIONS = [
+    private const array CONNECTIONS = [
         'default' => self::DATABASE_NAME,
         'connections' => [
             self::DATABASE_NAME => self::CONNECTION_DATA,
-            self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND
-        ]
+            self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
+        ],
     ];
-    const RESPONSE = ['status' => 'success', 'message' => 'TEST-OK'];
+    private const array RESPONSE = [
+        'status' => 'success',
+        'message' => 'TEST-OK'
+    ];
 
-    private object $customClass;
+    private Connection $customClass;
 
     protected function setUp(): void
     {
@@ -67,9 +71,9 @@ class ConnectionTest extends Test
 
     protected function tearDown(): void
     {
-        $this->setPrivateProperty('connections', self::CONNECTIONS);
+        $this->setPrivateProperty('connections', []);
 
-        $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+        $this->setPrivateProperty('activeConnection', '');
 
         $this->setPrivateProperty('isTransaction', false);
 
@@ -89,10 +93,11 @@ class ConnectionTest extends Test
         $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
 
         $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
-        $this->assertSame('success', $response->status);
-        $this->assertSame('TEST-OK', $response->message);
+        $this->assertSame(self::RESPONSE['status'], $response->status);
+        $this->assertSame(self::RESPONSE['message'], $response->message);
         $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
     }
 
@@ -105,7 +110,7 @@ class ConnectionTest extends Test
         $this->assertIsObject($response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
-        $this->assertSame('success', $response->status);
+        $this->assertSame(self::RESPONSE['status'], $response->status);
         $this->assertSame('TEST-OK', $response->message);
         $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
     }
@@ -125,7 +130,7 @@ class ConnectionTest extends Test
 
     public function testPrepare(): void
     {
-        $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
+        $this->getPrivateMethod('mysql', [fn (): stdClass => (object) self::RESPONSE]);
 
         $this->getPrivateMethod('prepare', ['SELECT * FROM users']);
 
@@ -162,17 +167,59 @@ class ConnectionTest extends Test
     {
         $this->setPrivateProperty('sql', $query);
 
-        $queryString = $this->customClass->getQueryString();
+        $response = $this->customClass->getQueryString();
 
-        $this->assertIsObject($queryString);
-        $this->assertObjectHasProperty('status', $queryString);
-        $this->assertObjectHasProperty('message', $queryString);
-        $this->assertObjectHasProperty('data', $queryString);
-        $this->assertObjectHasProperty('query', $queryString->data);
-        $this->assertObjectHasProperty('split', $queryString->data);
-        $this->assertSame('success', $queryString->status);
-        $this->assertSame('SQL query generated successfully', $queryString->message);
-        $this->assertSame($query, $queryString->data->query);
-        $this->assertSame(explode(';', $query), $queryString->data->split);
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertObjectHasProperty('data', $response);
+        $this->assertObjectHasProperty('query', $response->data);
+        $this->assertObjectHasProperty('split', $response->data);
+        $this->assertSame(self::RESPONSE['status'], $response->status);
+        $this->assertSame('SQL query generated successfully', $response->message);
+        $this->assertSame($query, $response->data->query);
+        $this->assertSame(explode(';', $query), $response->data->split);
+    }
+
+    public function testAddConnection(): void
+    {
+        $this->setPrivateProperty('connections', ['default' => self::DATABASE_NAME_SECOND]);
+
+        $this->customClass->addConnection(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+
+        $connections = $this->getPrivateProperty('connections');
+
+        $this->assertArrayHasKey('default', $connections);
+        $this->assertSame(self::DATABASE_NAME_SECOND, $connections['default']);
+        $this->assertArrayHasKey(self::DATABASE_NAME_SECOND, $connections['connections']);
+        $this->assertSame($connections['connections'][self::DATABASE_NAME_SECOND], self::CONNECTION_DATA_SECOND);
+    }
+
+    public function testGetConnections(): void
+    {
+        $this->setPrivateProperty('connections', [
+            'default' => self::DATABASE_NAME,
+            'connections' => [
+                self::DATABASE_NAME => self::CONNECTION_DATA,
+                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
+            ],
+        ]);
+
+        $this->assertSame(self::CONNECTIONS['connections'], $this->customClass::getConnections());
+    }
+
+    public function testRemoveConnection(): void
+    {
+        $this->setPrivateProperty('connections', [
+            'default' => self::DATABASE_NAME,
+            'connections' => [
+                self::DATABASE_NAME => self::CONNECTION_DATA,
+            ],
+        ]);
+
+        $this->customClass->removeConnection(self::DATABASE_NAME);
+
+        $this->assertSame([], $this->customClass::getConnections());
     }
 }

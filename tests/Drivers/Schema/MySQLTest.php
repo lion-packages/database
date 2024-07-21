@@ -147,7 +147,7 @@ class MySQLTest extends Test
 
     public function testConnection(): void
     {
-        $this->mysql->addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+        $this->mysql->addConnection(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->connection(self::DATABASE_NAME_SECOND));
         $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('activeConnection'));
@@ -170,7 +170,7 @@ class MySQLTest extends Test
     {
         $this->assertResponse($this->mysql->connection(self::DATABASE_NAME)->createDatabase($database)->execute());
 
-        $this->mysql->addConnections($database, $connection);
+        $this->mysql->addConnection($database, $connection);
 
         $this->assertIntances($this->mysql->connection($database)->dropDatabase($database));
         $this->assertQuery($query);
