@@ -8,6 +8,7 @@ use Closure;
 use Lion\Database\Helpers\FunctionsTrait;
 use Lion\Database\Interface\ConnectionConfigInterface;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
+use Lion\Database\Interface\DatabaseEngineInterface;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -22,7 +23,7 @@ use stdClass;
  *
  * @package Lion\Database
  */
-abstract class Connection implements ConnectionConfigInterface
+abstract class Connection implements ConnectionConfigInterface, DatabaseEngineInterface
 {
     use FunctionsTrait;
 
@@ -65,19 +66,15 @@ abstract class Connection implements ConnectionConfigInterface
     }
 
     /**
-     * Initializes a MySQL database connection and runs a process
-     *
-     * @param Closure $callback [Function that is executed]
-     *
-     * @return stdClass|array<int|string, stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>|DatabaseCapsuleInterface
+     * {@inheritdoc}
      */
-    protected static function mysql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
+    public static function mysql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
     {
         $connection = self::$connections['connections'][self::$activeConnection];
 
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
         ];
 
         try {

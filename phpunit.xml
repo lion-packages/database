@@ -56,10 +56,6 @@
             <directory suffix=".php">tests/Helpers</directory>
         </testsuite>
 
-        <testsuite name="Interface">
-            <directory suffix=".php">tests/Interface</directory>
-        </testsuite>
-
         <testsuite name="Connection|Driver">
             <file>tests/ConnectionTest.php</file>
             <file>tests/DriverTest.php</file>
