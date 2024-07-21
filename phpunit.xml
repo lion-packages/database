@@ -63,6 +63,7 @@
 
         <testsuite name="Drivers">
             <file>tests/Drivers/MySQLTest.php</file>
+            <file>tests/Drivers/PostgreSQLTest.php</file>
         </testsuite>
 
         <testsuite name="Schema">
