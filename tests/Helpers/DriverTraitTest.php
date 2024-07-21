@@ -79,18 +79,15 @@ class DriverTraitTest extends Test
         $this->assertSame($this->customCode, $this->getPrivateProperty('actualCode'));
     }
 
-    private function addDefault(string $defaultConnection): void
-    {
-        $this->setPrivateProperty('connections', ['default' => $defaultConnection]);
-    }
-
     public function testClean(): void
     {
-        $this->addDefault(self::DATABASE_NAME);
-
-        $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
-
-        $this->customClass::addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+        $this->setPrivateProperty('connections', [
+            'default' => self::DATABASE_NAME,
+            'connections' => [
+                self::DATABASE_NAME => self::CONNECTION_DATA,
+                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
+            ],
+        ]);
 
         $this->getPrivateMethod('clean');
 
@@ -122,42 +119,6 @@ class DriverTraitTest extends Test
         $this->getPrivateMethod('addQueryList', [$queryList]);
 
         $this->assertSame($return, $this->getPrivateProperty('sql'));
-    }
-
-    public function testAddConnections(): void
-    {
-        $this->addDefault(self::DATABASE_NAME_SECOND);
-
-        $this->customClass::addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
-
-        $connections = $this->getPrivateProperty('connections');
-
-        $this->assertArrayHasKey('default', $connections);
-        $this->assertSame(self::DATABASE_NAME_SECOND, $connections['default']);
-        $this->assertArrayHasKey(self::DATABASE_NAME_SECOND, $connections['connections']);
-        $this->assertSame($connections['connections'][self::DATABASE_NAME_SECOND], self::CONNECTION_DATA_SECOND);
-    }
-
-    public function testGetConnections(): void
-    {
-        $this->addDefault(self::DATABASE_NAME);
-
-        $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
-
-        $connections = $this->getPrivateProperty('connections');
-
-        $this->assertArrayHasKey('default', $connections);
-        $this->assertSame(self::DATABASE_NAME, $connections['default']);
-        $this->assertSame(self::CONNECTIONS, $this->customClass::getConnections());
-    }
-
-    public function testRemoveConnection(): void
-    {
-        $this->addDefault(self::DATABASE_NAME);
-
-        $this->customClass::addConnections(self::DATABASE_NAME, self::CONNECTION_DATA);
-
-        $this->assertSame(self::CONNECTIONS, $this->customClass::getConnections());
     }
 
     public function testOpenGroup(): void

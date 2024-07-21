@@ -246,7 +246,7 @@ class MySQLTest extends Test
 
     public function testConnection(): void
     {
-        $this->mysql->addConnections(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+        $this->mysql->addConnection(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->connection(self::DATABASE_NAME_SECOND));
         $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('activeConnection'));
