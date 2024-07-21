@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Lion\Database;
 
-use Exception;
+use InvalidArgumentException;
 use Lion\Database\Drivers\MySQL;
+use Lion\Database\Drivers\PostgreSQL;
 use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
 
 /**
@@ -23,35 +24,41 @@ abstract class Driver
     const MYSQL = 'mysql';
 
     /**
+     * [Defines the PostgreSQL driver]
+     *
+     * @const PostgreSQL
+     */
+    const PostgreSQL = 'postgresql';
+
+    /**
      * Initialize database connections
      *
      * @param array $connections [List of defined connections]
      *
      * @return void
      *
-     * @throws Exception [If database initialization is not successful]
+     * @throws InvalidArgumentException [If database initialization is not
+     * successful]
      */
     public static function run(array $connections): void
     {
         if (empty($connections['default'])) {
-            throw new Exception('no connection has been defined by default', 500);
+            throw new InvalidArgumentException('no connection has been defined by default', 500);
         }
 
-        $connection = $connections['connections'][$connections['default']];
-
-        $type = trim(strtolower($connection['type']));
+        $type = trim(strtolower($connections['connections'][$connections['default']]['type']));
 
         switch ($type) {
             case self::MYSQL:
                 MySQL::run($connections);
 
                 SchemaMySQL::run($connections);
-
                 break;
-
+            case self::PostgreSQL:
+                PostgreSQL::run($connections);
+                break;
             default:
-                throw new Exception('the defined driver does not exist', 500);
-
+                throw new InvalidArgumentException('the defined driver does not exist', 500);
                 break;
         }
     }

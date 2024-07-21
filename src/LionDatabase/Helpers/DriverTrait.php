@@ -136,7 +136,7 @@ trait DriverTrait
      *
      * @var string $message
      */
-    protected static string $message = 'Execution finished';
+    protected static string $message = 'execution finished';
 
     /**
      * [Stores the information defined to add to the bindValue function]
@@ -196,7 +196,7 @@ trait DriverTrait
 
         self::$view = '';
 
-        self::$message = 'Execution finished';
+        self::$message = 'execution finished';
 
         self::$dataInfo = [];
 
@@ -281,13 +281,15 @@ trait DriverTrait
      *
      * @param array<int, mixed> $rows [List of defined values]
      *
-     * @return void
+     * @return static
      */
-    public static function addRows(array $rows): void
+    public static function addRows(array $rows): static
     {
         foreach ($rows as $row) {
             self::$dataInfo[self::$actualCode][] = $row;
         }
+
+        return new static();
     }
 
     /**

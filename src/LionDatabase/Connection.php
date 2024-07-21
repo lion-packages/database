@@ -89,7 +89,13 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
                 self::$conn->beginTransaction();
             }
 
-            return $callback();
+            $response = $callback();
+
+            if (self::$isTransaction) {
+                self::$conn->commit();
+            }
+
+            return $response;
         } catch (PDOException $e) {
             if (self::$isTransaction) {
                 self::$conn->rollBack();
@@ -119,7 +125,7 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
 
         try {
             self::$conn = new PDO(
-                "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+                "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
                 $connection['user'],
                 $connection['password'],
                 (isset($connection['options']) ? $connection['options'] : $options)
@@ -129,7 +135,13 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
                 self::$conn->beginTransaction();
             }
 
-            return $callback();
+            $response = $callback();
+
+            if (self::$isTransaction) {
+                self::$conn->commit();
+            }
+
+            return $response;
         } catch (PDOException $e) {
             if (self::$isTransaction) {
                 self::$conn->rollBack();

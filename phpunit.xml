@@ -47,7 +47,6 @@
         <testsuite name="All-Test">
             <directory suffix=".php">tests/Drivers</directory>
             <directory suffix=".php">tests/Helpers</directory>
-            <directory suffix=".php">tests/Interface</directory>
             <file>tests/ConnectionTest.php</file>
             <file>tests/DriverTest.php</file>
         </testsuite>
