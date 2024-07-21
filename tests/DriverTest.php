@@ -4,41 +4,42 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Exception;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL;
 use Lion\Test\Test;
 
 class DriverTest extends Test
 {
-    const DATABASE_TYPE = 'mysql';
-    const DATABASE_HOST = 'mysql';
-    const DATABASE_PORT = 3306;
-    const DATABASE_NAME = 'lion_database';
-    const DATABASE_NAME_SECOND = 'lion_database_second';
-    const DATABASE_USER = 'root';
-    const DATABASE_PASSWORD = 'lion';
-    const CONNECTION_DATA = [
+    private const string DATABASE_TYPE = 'mysql';
+    private const string DATABASE_HOST = 'mysql';
+    private const int DATABASE_PORT = 3306;
+    private const string DATABASE_NAME = 'lion_database';
+    private const string DATABASE_NAME_SECOND = 'lion_database_second';
+    private const string DATABASE_USER = 'root';
+    private const string DATABASE_PASSWORD = 'lion';
+    private const array CONNECTION_DATA = [
         'type' => self::DATABASE_TYPE,
         'host' => self::DATABASE_HOST,
         'port' => self::DATABASE_PORT,
         'dbname' => self::DATABASE_NAME,
         'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
+        'password' => self::DATABASE_PASSWORD,
     ];
-    const CONNECTION_DATA_SECOND = [
+    private const array CONNECTION_DATA_SECOND = [
         'type' => self::DATABASE_TYPE . '-type',
         'host' => self::DATABASE_HOST,
         'port' => self::DATABASE_PORT,
         'dbname' => self::DATABASE_NAME_SECOND,
         'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
+        'password' => self::DATABASE_PASSWORD,
     ];
-    const CONNECTIONS = [
+    private const array CONNECTIONS = [
         'default' => self::DATABASE_NAME,
         'connections' => [
             self::DATABASE_NAME => self::CONNECTION_DATA,
-            self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND
-        ]
+            self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
+        ],
     ];
 
     private MySQL $mysql;
@@ -61,13 +62,8 @@ class DriverTest extends Test
 
     public function testRun(): void
     {
-        $response = Driver::run(self::CONNECTIONS);
+        Driver::run(self::CONNECTIONS);
 
-        $this->assertIsObject($response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertSame('success', $response->status);
-        $this->assertSame('enabled connections', $response->message);
         $this->assertSame(self::CONNECTIONS, $this->getPrivateProperty('connections'));
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
@@ -75,29 +71,24 @@ class DriverTest extends Test
 
     public function testRunWithoutDefault(): void
     {
-        $response = Driver::run([]);
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(500);
+        $this->expectExceptionMessage('no connection has been defined by default');
 
-        $this->assertIsObject($response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertSame('database-error', $response->status);
-        $this->assertSame('the default driver is required', $response->message);
+        Driver::run([]);
     }
 
     public function testRunOptionDefault(): void
     {
-        $response = Driver::run([
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(500);
+        $this->expectExceptionMessage('the defined driver does not exist');
+
+        Driver::run([
             'default' => self::DATABASE_NAME_SECOND,
             'connections' => [
-                self::DATABASE_NAME => self::CONNECTION_DATA,
-                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND
-            ]
+                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
+            ],
         ]);
-
-        $this->assertIsObject($response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertSame('database-error', $response->status);
-        $this->assertSame('the driver does not exist', $response->message);
     }
 }
