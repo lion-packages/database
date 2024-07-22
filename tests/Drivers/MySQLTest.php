@@ -77,7 +77,7 @@ class MySQLTest extends Test
 
         $this->setPrivateProperty('fetchMode', []);
 
-        $this->setPrivateProperty('message', 'Execution finished');
+        $this->setPrivateProperty('message', 'execution finished');
 
         $this->mysql->drop()->table()->addQuery('roles')->execute();
     }
@@ -137,7 +137,7 @@ class MySQLTest extends Test
         $this->assertObjectHasProperty('status', $createTableResponse);
         $this->assertObjectHasProperty('message', $createTableResponse);
         $this->assertSame('success', $createTableResponse->status);
-        $this->assertSame('Execution finished', $createTableResponse->message);
+        $this->assertSame('execution finished', $createTableResponse->message);
     }
 
     public function testExecuteInsert(): void
@@ -165,7 +165,7 @@ class MySQLTest extends Test
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
         $this->assertSame('success', $response->status);
-        $this->assertSame('Execution finished', $response->message);
+        $this->assertSame('execution finished', $response->message);
     }
 
     public function testGet(): void
@@ -696,7 +696,7 @@ class MySQLTest extends Test
     public function testQuery(string $query): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->query($query));
-        $this->assertMessage('Execution finished');
+        $this->assertMessage('execution finished');
         $this->assertSame($query, $this->getQuery());
     }
 

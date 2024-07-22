@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Lion\Database\Interface;
 
+use InvalidArgumentException;
+
 /**
  * Defines settings to manage database connections
  *
@@ -17,6 +19,9 @@ interface DatabaseConfigInterface
      * @param array $connections [List of available databases]
      *
      * @return DatabaseConfigInterface
+     *
+     * @throws InvalidArgumentException [If any initialization parameter is
+     * invalid]
      */
     public static function run(array $connections): DatabaseConfigInterface;
 
@@ -27,6 +32,8 @@ interface DatabaseConfigInterface
      * @param string $connectionName [Connection name]
      *
      * @return DatabaseConfigInterface
+     *
+     * @throws InvalidArgumentException [If the connection does not exist]
      */
     public static function connection(string $connectionName): DatabaseConfigInterface;
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lion\Database\Drivers;
 
 use Closure;
+use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
@@ -34,16 +35,24 @@ use stdClass;
  */
 class MySQL extends Connection implements
     DatabaseConfigInterface,
-    TransactionInterface,
-    SchemaDriverInterface,
+    ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
-    ReadDatabaseDataInterface
+    SchemaDriverInterface,
+    TransactionInterface
 {
     /**
      * {@inheritdoc}
      */
     public static function run(array $connections): MySQL
     {
+        if (empty($connections['default'])) {
+            throw new InvalidArgumentException('no default database defined', 500);
+        }
+
+        if (empty($connections['connections'])) {
+            throw new InvalidArgumentException('no databases have been defined', 500);
+        }
+
         self::$connections = $connections;
 
         self::$activeConnection = self::$connections['default'];
@@ -101,10 +110,6 @@ class MySQL extends Connection implements
     public static function execute(): stdClass
     {
         return parent::mysql(function (): stdClass {
-            if (self::$isTransaction) {
-                self::$message = 'Transaction executed successfully';
-            }
-
             $dataInfoKeys = array_keys(self::$dataInfo);
 
             if (count($dataInfoKeys) > 0) {
@@ -116,7 +121,9 @@ class MySQL extends Connection implements
                 foreach ($dataInfoKeys as $key => $code) {
                     self::prepare(self::$listSql[$key]);
 
-                    self::bindValue($code);
+                    if (!empty(self::$dataInfo[$code])) {
+                        self::bindValue($code);
+                    }
 
                     self::$stmt->execute();
 
@@ -130,10 +137,6 @@ class MySQL extends Connection implements
                 }
 
                 self::$stmt->execute();
-            }
-
-            if (self::$isTransaction) {
-                self::$conn->commit();
             }
 
             self::clean();
@@ -164,17 +167,17 @@ class MySQL extends Connection implements
             foreach (self::$listSql as $key => $sql) {
                 self::prepare($sql);
 
-                $code = isset($codes[$key]) ? $codes[$key] : null;
+                $code = $codes[$key] ?? null;
 
                 if ($code != null && isset(self::$dataInfo[$code])) {
                     self::bindValue($code);
                 }
 
                 if ($code != null && isset(self::$fetchMode[$code])) {
-                    $get_fetch = self::$fetchMode[$codes[$key]];
+                    $getFetch = self::$fetchMode[$codes[$key]];
 
-                    if (is_array($get_fetch)) {
-                        self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
+                    if (is_array($getFetch)) {
+                        self::$stmt->setFetchMode($getFetch[0], $getFetch[1]);
                     } else {
                         self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
                     }

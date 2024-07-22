@@ -89,7 +89,59 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
                 self::$conn->beginTransaction();
             }
 
-            return $callback();
+            $response = $callback();
+
+            if (self::$isTransaction) {
+                self::$conn->commit();
+            }
+
+            return $response;
+        } catch (PDOException $e) {
+            if (self::$isTransaction) {
+                self::$conn->rollBack();
+            }
+
+            self::clean();
+
+            return (object) [
+                'code' => $e->getCode(),
+                'status' => 'database-error',
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function postgresql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
+    {
+        $connection = self::$connections['connections'][self::$activeConnection];
+
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+        ];
+
+        try {
+            self::$conn = new PDO(
+                "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+                $connection['user'],
+                $connection['password'],
+                (isset($connection['options']) ? $connection['options'] : $options)
+            );
+
+            if (self::$isTransaction) {
+                self::$conn->beginTransaction();
+            }
+
+            $response = $callback();
+
+            if (self::$isTransaction) {
+                self::$conn->commit();
+            }
+
+            return $response;
         } catch (PDOException $e) {
             if (self::$isTransaction) {
                 self::$conn->rollBack();

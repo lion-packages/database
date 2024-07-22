@@ -113,7 +113,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(RunDatabaseProcessesInterface::class, $obj);
     }
 
-    private function assertResponse(object $response, string $message = 'Execution finished'): void
+    private function assertResponse(object $response, string $message = 'execution finished'): void
     {
         $this->assertIsObject($response);
         $this->assertObjectHasProperty('status', $response);
