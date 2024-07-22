@@ -16,7 +16,8 @@ interface DatabaseConfigInterface
     /**
      * initialize the connection data to use the service
      *
-     * @param array $connections [List of available databases]
+     * @param array<string, string|array<string, string>> $connections [List of
+     * available databases]
      *
      * @return DatabaseConfigInterface
      *
