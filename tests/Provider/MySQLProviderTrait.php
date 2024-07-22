@@ -8,6 +8,29 @@ use Faker\Factory;
 
 trait MySQLProviderTrait
 {
+    public static function runInterfaceWithoutConnectionsProvider(): array
+    {
+        return [
+            [
+                'connections' => [
+                    'default' => 'lion_database',
+                ],
+            ],
+            [
+                'connections' => [
+                    'default' => 'lion_database',
+                    'connections' => null,
+                ]
+            ],
+            [
+                'connections' => [
+                    'default' => 'lion_database',
+                    'connections' => [],
+                ]
+            ],
+        ];
+    }
+
     public static function transactionProvider(): array
     {
         return [

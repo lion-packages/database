@@ -59,7 +59,7 @@ class MySQL extends Connection implements
 
         self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -67,11 +67,15 @@ class MySQL extends Connection implements
      */
     public static function connection(string $connectionName): MySQL
     {
+        if (empty(self::$connections['connections'][$connectionName])) {
+            throw new InvalidArgumentException('the selected connection does not exist', 500);
+        }
+
         self::$activeConnection = $connectionName;
 
         self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -102,51 +106,6 @@ class MySQL extends Connection implements
         self::$enableInsert = $enable;
 
         return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function execute(): stdClass
-    {
-        return parent::mysql(function (): stdClass {
-            $dataInfoKeys = array_keys(self::$dataInfo);
-
-            if (count($dataInfoKeys) > 0) {
-                self::$listSql = array_map(
-                    fn ($value) => trim($value),
-                    array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-                );
-
-                foreach ($dataInfoKeys as $key => $code) {
-                    self::prepare(self::$listSql[$key]);
-
-                    if (!empty(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
-
-                    self::$stmt->execute();
-
-                    self::$stmt->closeCursor();
-                }
-            } else {
-                self::prepare(self::$sql);
-
-                if (!empty(self::$actualCode)) {
-                    self::bindValue(self::$actualCode);
-                }
-
-                self::$stmt->execute();
-            }
-
-            self::clean();
-
-            return (object) [
-                'code' => 200,
-                'status' => 'success',
-                'message' => self::$message,
-            ];
-        });
     }
 
     /**
@@ -280,6 +239,51 @@ class MySQL extends Connection implements
             self::clean();
 
             return $responses;
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function execute(): stdClass
+    {
+        return parent::mysql(function (): stdClass {
+            $dataInfoKeys = array_keys(self::$dataInfo);
+
+            if (count($dataInfoKeys) > 0) {
+                self::$listSql = array_map(
+                    fn ($value) => trim($value),
+                    array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
+                );
+
+                foreach ($dataInfoKeys as $key => $code) {
+                    self::prepare(self::$listSql[$key]);
+
+                    if (!empty(self::$dataInfo[$code])) {
+                        self::bindValue($code);
+                    }
+
+                    self::$stmt->execute();
+
+                    self::$stmt->closeCursor();
+                }
+            } else {
+                self::prepare(self::$sql);
+
+                if (!empty(self::$actualCode)) {
+                    self::bindValue(self::$actualCode);
+                }
+
+                self::$stmt->execute();
+            }
+
+            self::clean();
+
+            return (object) [
+                'code' => 200,
+                'status' => 'success',
+                'message' => self::$message,
+            ];
         });
     }
 
