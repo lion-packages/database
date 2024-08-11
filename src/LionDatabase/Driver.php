@@ -21,14 +21,14 @@ abstract class Driver
      *
      * @const MYSQL
      */
-    const MYSQL = 'mysql';
+    public const MYSQL = 'mysql';
 
     /**
      * [Defines the PostgreSQL driver]
      *
-     * @const PostgreSQL
+     * @const POSTGRESQL
      */
-    const PostgreSQL = 'postgresql';
+    public const POSTGRESQL = 'postgresql';
 
     /**
      * Initialize database connections
@@ -54,7 +54,7 @@ abstract class Driver
 
                 SchemaMySQL::run($connections);
                 break;
-            case self::PostgreSQL:
+            case self::POSTGRESQL:
                 PostgreSQL::run($connections);
                 break;
             default:
