@@ -169,8 +169,6 @@ class MySQL extends Connection implements
                 }
             }
 
-            self::clean();
-
             return $responses;
         });
     }
@@ -236,8 +234,6 @@ class MySQL extends Connection implements
                 }
             }
 
-            self::clean();
-
             return $responses;
         });
     }
@@ -276,8 +272,6 @@ class MySQL extends Connection implements
 
                 self::$stmt->execute();
             }
-
-            self::clean();
 
             return (object) [
                 'code' => 200,
@@ -841,8 +835,6 @@ class MySQL extends Connection implements
             self::$actualCode = uniqid('code-');
         }
 
-        self::$message = 'Rows inserted successfully';
-
         foreach ($rows as $row) {
             self::addRows($row);
         }
@@ -883,8 +875,6 @@ class MySQL extends Connection implements
         if ('' === self::$actualCode) {
             self::$actualCode = uniqid('code-');
         }
-
-        self::$message = 'Procedure executed successfully';
 
         self::addRows($rows);
 
@@ -945,8 +935,6 @@ class MySQL extends Connection implements
         if ('' === self::$actualCode) {
             self::$actualCode = uniqid('code-');
         }
-
-        self::$message = 'Rows inserted successfully';
 
         self::addRows($rows);
 
