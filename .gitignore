@@ -1,3 +1,4 @@
+/.idea
 /vendor/
 /tests/build/coverage/*
 !/tests/build/coverage/.gitignore

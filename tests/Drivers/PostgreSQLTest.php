@@ -93,13 +93,6 @@ class PostgreSQLTest extends Test
         $this->setPrivateProperty('message', 'execution finished');
     }
 
-    private function setActualCode(): void
-    {
-        $this->setPrivateProperty('actualCode', $this->actualCode);
-
-        $this->assertSame($this->actualCode, $this->getPrivateProperty('actualCode'));
-    }
-
     #[Testing]
     public function runInterface(): void
     {
@@ -795,6 +788,151 @@ class PostgreSQLTest extends Test
 
         $response = $this->postgresql
             ->query(self::QUERY_SQL_DROP_TABLE_ROLES)
+            ->execute();
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertSame(200, $response->code);
+        $this->assertIsString($response->status);
+        $this->assertSame('success', $response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame('execution finished', $response->message);
+    }
+
+    #[Testing]
+    #[DataProvider('transactionInterfaceProvider')]
+    public function transactionInterface(string $dropSql, string $tableSql, string $insertSql, string $selectSql): void
+    {
+        $response = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->query($dropSql)
+            ->query($tableSql)
+            ->execute();
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertSame(200, $response->code);
+        $this->assertIsString($response->status);
+        $this->assertSame('success', $response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame('execution finished', $response->message);
+
+        $response = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->transaction()
+            ->query($insertSql)
+            ->execute();
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertSame(200, $response->code);
+        $this->assertIsString($response->status);
+        $this->assertSame('success', $response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame('execution finished', $response->message);
+
+        $data = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->query($selectSql)
+            ->getAll();
+
+        $this->assertIsArray($data);
+        $this->assertCount(4, $data);
+
+        $response = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->query($dropSql)
+            ->execute();
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertSame(200, $response->code);
+        $this->assertIsString($response->status);
+        $this->assertSame('success', $response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame('execution finished', $response->message);
+    }
+
+    #[Testing]
+    #[DataProvider('transactionInterfaceWithRollbackProvider')]
+    public function transactionInterfaceWithRollback(
+        string $dropSql,
+        string $tableSql,
+        string $insertSql,
+        string $selectSql
+    ): void {
+        $response = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->transaction()
+            ->query($dropSql)
+            ->query($tableSql)
+            ->execute();
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertSame(200, $response->code);
+        $this->assertIsString($response->status);
+        $this->assertSame('success', $response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame('execution finished', $response->message);
+
+        $response = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->transaction()
+            ->query($insertSql)
+            ->execute();
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsString($response->code);
+        $this->assertSame('23502', $response->code);
+        $this->assertIsString($response->status);
+        $this->assertSame('database-error', $response->status);
+        $this->assertIsString($response->message);
+
+        $data = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->query($selectSql)
+            ->getAll();
+
+        $this->assertIsObject($data);
+        $this->assertInstanceOf(stdClass::class, $data);
+        $this->assertObjectHasProperty('code', $data);
+        $this->assertObjectHasProperty('status', $data);
+        $this->assertObjectHasProperty('message', $data);
+        $this->assertIsInt($data->code);
+        $this->assertSame(200, $data->code);
+        $this->assertIsString($data->status);
+        $this->assertSame('success', $data->status);
+        $this->assertIsString($data->message);
+        $this->assertSame('no data available', $data->message);
+
+        $response = $this->postgresql
+            ->run(self::CONNECTIONS)
+            ->query($dropSql)
             ->execute();
 
         $this->assertIsObject($response);

@@ -772,7 +772,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql);
         $this->assertAddRows(array_merge(...$rows));
         $this->assertSame($return, $this->getQuery());
-        $this->assertMessage('Rows inserted successfully');
+        $this->assertMessage('execution finished');
     }
 
     #[DataProvider('inProvider')]
@@ -789,7 +789,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql->call('store_procedure', [1, 2, 3]));
         $this->assertAddRows([1, 2, 3]);
         $this->assertSame('CALL lion_database.store_procedure(?, ?, ?)', $this->getQuery());
-        $this->assertMessage('Procedure executed successfully');
+        $this->assertMessage('execution finished');
     }
 
     #[DataProvider('deleteProvider')]
@@ -821,7 +821,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->insert($params));
         $this->assertAddRows(array_values($params));
         $this->assertSame($return, $this->getQuery());
-        $this->assertMessage('Rows inserted successfully');
+        $this->assertMessage('execution finished');
     }
 
     public function testInsertIsSchema(): void
@@ -837,7 +837,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $mysql);
         $this->assertAddRows(array_values($params));
         $this->assertSame($sql, $this->getQuery());
-        $this->assertMessage('Rows inserted successfully');
+        $this->assertMessage('execution finished');
         $this->assertTrue($this->getPrivateProperty('isSchema'));
     }
 

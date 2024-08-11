@@ -18,7 +18,8 @@
         }
     },
     "require": {
-        "php": ">=8.3"
+        "php": ">=8.3",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

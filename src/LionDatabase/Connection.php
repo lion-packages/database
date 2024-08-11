@@ -37,7 +37,7 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     /**
      * [PDO declaration object to perform database processes]
      *
-     * @var PDO $conn
+     * @var PDOStatement|bool $stmt
      */
     protected static PDOStatement|bool $stmt;
 
@@ -82,7 +82,7 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
                 "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
                 $connection['user'],
                 $connection['password'],
-                (isset($connection['options']) ? $connection['options'] : $options)
+                ($connection['options'] ?? $options)
             );
 
             if (self::$isTransaction) {
@@ -94,6 +94,8 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
             if (self::$isTransaction) {
                 self::$conn->commit();
             }
+
+            self::clean();
 
             return $response;
         } catch (PDOException $e) {
@@ -128,7 +130,7 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
                 "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
                 $connection['user'],
                 $connection['password'],
-                (isset($connection['options']) ? $connection['options'] : $options)
+                ($connection['options'] ?? $options)
             );
 
             if (self::$isTransaction) {
@@ -140,6 +142,8 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
             if (self::$isTransaction) {
                 self::$conn->commit();
             }
+
+            self::clean();
 
             return $response;
         } catch (PDOException $e) {

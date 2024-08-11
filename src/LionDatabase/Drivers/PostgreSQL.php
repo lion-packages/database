@@ -10,6 +10,7 @@ use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use Lion\Database\Interface\TransactionInterface;
 use PDO;
 use stdClass;
 
@@ -32,7 +33,8 @@ use stdClass;
 class PostgreSQL extends Connection implements
     DatabaseConfigInterface,
     ReadDatabaseDataInterface,
-    RunDatabaseProcessesInterface
+    RunDatabaseProcessesInterface,
+    TransactionInterface
 {
     /**
      * {@inheritdoc}
@@ -133,8 +135,6 @@ class PostgreSQL extends Connection implements
                 }
             }
 
-            self::clean();
-
             return $responses;
         });
     }
@@ -200,8 +200,6 @@ class PostgreSQL extends Connection implements
                 }
             }
 
-            self::clean();
-
             return $responses;
         });
     }
@@ -237,14 +235,22 @@ class PostgreSQL extends Connection implements
                 self::$stmt->execute();
             }
 
-            self::clean();
-
             return (object) [
                 'code' => 200,
                 'status' => 'success',
                 'message' => self::$message,
             ];
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function transaction(bool $isTransaction = true): PostgreSQL
+    {
+        self::$isTransaction = $isTransaction;
+
+        return new static();
     }
 
     /**

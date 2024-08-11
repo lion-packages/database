@@ -39,12 +39,20 @@ trait PostgreSQLProviderTrait
     private const string QUERY_SQL_INSERT_ROLES = <<<SQL
         INSERT INTO public.roles (role_name) VALUES ('Admin'), ('User'), ('Editor'), ('Moderator');
     SQL;
+    private const string QUERY_SQL_INSERT_ROLES_ERR = <<<SQL
+        INSERT INTO public.roles (role_name) VALUES (null), ('Admin');
+    SQL;
     private const string QUERY_SQL_INSERT_USERS = <<<SQL
         INSERT INTO public.users (username, email, password_hash, first_name, last_name, date_of_birth, role_id) VALUES
             ('john_doe', 'john.doe@example.com', 'hashed_password1', 'John', 'Doe', '1990-01-15', 1),
             ('jane_smith', 'jane.smith@example.com', 'hashed_password2', 'Jane', 'Smith', '1985-05-22', 2),
             ('alice_jones', 'alice.jones@example.com', 'hashed_password3', 'Alice', 'Jones', '1992-12-01', 3),
             ('bob_brown', 'bob.brown@example.com', 'hashed_password4', 'Bob', 'Brown', '1988-07-30', 4);
+    SQL;
+    private const string QUERY_SQL_INSERT_USERS_ERR = <<<SQL
+        INSERT INTO public.users (username, email, password_hash, first_name, last_name, date_of_birth, role_id) VALUES
+            (null, 'john.doe@example.com', 'hashed_password1', 'John', 'Doe', '1990-01-15', 1),
+            ('jane_smith', 'jane.smith@example.com', 'hashed_password2', 'Jane', 'Smith', '1985-05-22', 2);
     SQL;
     private const string QUERY_SQL_NESTED_INSERT_ROLES = <<<SQL
         INSERT INTO public.roles (role_name) VALUES (?);
@@ -394,6 +402,42 @@ trait PostgreSQLProviderTrait
                 'dropSql' => self::QUERY_SQL_DROP_TABLE_USERS,
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
+            ]
+        ];
+    }
+
+    public static function transactionInterfaceProvider(): array
+    {
+        return [
+            [
+                'dropSql' => self::QUERY_SQL_DROP_TABLE_ROLES,
+                'tableSql' => self::QUERY_SQL_TABLE_ROLES,
+                'insertSql' => self::QUERY_SQL_INSERT_ROLES,
+                'selectSql' => self::QUERY_SQL_SELECT_ROLES,
+            ],
+            [
+                'dropSql' => self::QUERY_SQL_DROP_TABLE_USERS,
+                'tableSql' => self::QUERY_SQL_TABLE_USERS,
+                'insertSql' => self::QUERY_SQL_INSERT_USERS,
+                'selectSql' => self::QUERY_SQL_SELECT_USERS,
+            ]
+        ];
+    }
+
+    public static function transactionInterfaceWithRollbackProvider(): array
+    {
+        return [
+            [
+                'dropSql' => self::QUERY_SQL_DROP_TABLE_ROLES,
+                'tableSql' => self::QUERY_SQL_TABLE_ROLES,
+                'insertSql' => self::QUERY_SQL_INSERT_ROLES_ERR,
+                'selectSql' => self::QUERY_SQL_SELECT_ROLES,
+            ],
+            [
+                'dropSql' => self::QUERY_SQL_DROP_TABLE_USERS,
+                'tableSql' => self::QUERY_SQL_TABLE_USERS,
+                'insertSql' => self::QUERY_SQL_INSERT_USERS_ERR,
+                'selectSql' => self::QUERY_SQL_SELECT_USERS,
             ]
         ];
     }
