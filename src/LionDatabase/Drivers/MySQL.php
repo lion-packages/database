@@ -8,6 +8,7 @@ use Closure;
 use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
+use Lion\Database\Helpers\ConnectionInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
@@ -40,6 +41,8 @@ class MySQL extends Connection implements
     SchemaDriverInterface,
     TransactionInterface
 {
+    use ConnectionInterfaceTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -58,22 +61,6 @@ class MySQL extends Connection implements
         self::$activeConnection = self::$connections['default'];
 
         self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-
-        return new static();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function connection(string $connectionName): MySQL
-    {
-        if (empty(self::$connections['connections'][$connectionName])) {
-            throw new InvalidArgumentException('the selected connection does not exist', 500);
-        }
-
-        self::$activeConnection = $connectionName;
-
-        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
 
         return new static();
     }

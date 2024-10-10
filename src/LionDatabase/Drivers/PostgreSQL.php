@@ -6,6 +6,7 @@ namespace Lion\Database\Drivers;
 
 use InvalidArgumentException;
 use Lion\Database\Connection;
+use Lion\Database\Helpers\ConnectionInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
@@ -36,6 +37,8 @@ class PostgreSQL extends Connection implements
     RunDatabaseProcessesInterface,
     TransactionInterface
 {
+    use ConnectionInterfaceTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -54,22 +57,6 @@ class PostgreSQL extends Connection implements
         self::$activeConnection = self::$connections['default'];
 
         self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-
-        return new static();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function connection(string $connectionName): PostgreSQL
-    {
-        if (empty(self::$connections['connections'][$connectionName])) {
-            throw new InvalidArgumentException('the selected connection does not exist', 500);
-        }
-
-        self::$activeConnection = $connectionName;
-
-        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
 
         return new static();
     }
