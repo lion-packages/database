@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\RunInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
@@ -42,28 +43,7 @@ class MySQL extends Connection implements
     TransactionInterface
 {
     use ConnectionInterfaceTrait;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function run(array $connections): MySQL
-    {
-        if (empty($connections['default'])) {
-            throw new InvalidArgumentException('no default database defined', 500);
-        }
-
-        if (empty($connections['connections'])) {
-            throw new InvalidArgumentException('no databases have been defined', 500);
-        }
-
-        self::$connections = $connections;
-
-        self::$activeConnection = self::$connections['default'];
-
-        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-
-        return new static();
-    }
+    use RunInterfaceTrait;
 
     /**
      * {@inheritdoc}
