@@ -7,6 +7,7 @@ namespace Lion\Database\Drivers;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\ExecuteInterfaceTrait;
 use Lion\Database\Helpers\GetAllInterfaceTrait;
 use Lion\Database\Helpers\GetInterfaceTrait;
 use Lion\Database\Helpers\QueryInterfaceTrait;
@@ -17,7 +18,6 @@ use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\TransactionInterface;
-use stdClass;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
@@ -46,6 +46,7 @@ class PostgreSQL extends Connection implements
     TransactionInterface
 {
     use ConnectionInterfaceTrait;
+    use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
     use QueryInterfaceTrait;
@@ -63,43 +64,4 @@ class PostgreSQL extends Connection implements
      * @var string $databaseMethod
      */
     private static string $databaseMethod = Driver::POSTGRESQL;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function execute(): stdClass
-    {
-        return parent::postgresql(function (): stdClass {
-            $dataInfoKeys = array_keys(self::$dataInfo);
-
-            if (count($dataInfoKeys) > 0) {
-                self::$listSql = array_map(
-                    fn ($value) => trim($value),
-                    array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-                );
-
-                foreach ($dataInfoKeys as $key => $code) {
-                    self::prepare(self::$listSql[$key]);
-
-                    if (!empty(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
-
-                    self::$stmt->execute();
-
-                    self::$stmt->closeCursor();
-                }
-            } else {
-                self::prepare(self::$sql);
-
-                self::$stmt->execute();
-            }
-
-            return (object) [
-                'code' => 200,
-                'status' => 'success',
-                'message' => self::$message,
-            ];
-        });
-    }
 }
