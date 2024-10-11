@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
 use Lion\Database\Helpers\RunInterfaceTrait;
+use Lion\Database\Helpers\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
@@ -40,6 +41,7 @@ class PostgreSQL extends Connection implements
 {
     use ConnectionInterfaceTrait;
     use RunInterfaceTrait;
+    use TransactionInterfaceTrait;
 
     /**
      * {@inheritdoc}
@@ -208,16 +210,6 @@ class PostgreSQL extends Connection implements
                 'message' => self::$message,
             ];
         });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function transaction(bool $isTransaction = true): PostgreSQL
-    {
-        self::$isTransaction = $isTransaction;
-
-        return new static();
     }
 
     /**

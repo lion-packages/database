@@ -10,6 +10,7 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
 use Lion\Database\Helpers\RunInterfaceTrait;
+use Lion\Database\Helpers\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
@@ -44,16 +45,7 @@ class MySQL extends Connection implements
 {
     use ConnectionInterfaceTrait;
     use RunInterfaceTrait;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function transaction(bool $isTransaction = true): MySQL
-    {
-        self::$isTransaction = $isTransaction;
-
-        return new static;
-    }
+    use TransactionInterfaceTrait;
 
     /**
      * {@inheritdoc}
