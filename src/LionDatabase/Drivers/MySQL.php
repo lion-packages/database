@@ -8,10 +8,10 @@ use Closure;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\GetInterfaceTrait;
 use Lion\Database\Helpers\QueryInterfaceTrait;
 use Lion\Database\Helpers\RunInterfaceTrait;
 use Lion\Database\Helpers\TransactionInterfaceTrait;
-use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
@@ -35,6 +35,9 @@ use stdClass;
  * * Optimization for MySQL: Designed specifically to work with MySQL,
  * guaranteeing compatibility and optimization with this DBMS
  *
+ * @property string $databaseMethod [Defines the database connection method to
+ * use]
+ *
  * @package Lion\Database\Drivers
  */
 class MySQL extends Connection implements
@@ -46,9 +49,22 @@ class MySQL extends Connection implements
     TransactionInterface
 {
     use ConnectionInterfaceTrait;
+    use GetInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
     use TransactionInterfaceTrait;
+
+    /**
+     * Defines the database connection method to use
+     *
+     * This property determines which connection method to use in the `trait` to
+     * perform database operations. Allowed values are `mysql` or `postgresql`,
+     * depending on the database being used. The class using the `trait` must
+     * set this value to define the connection type
+     *
+     * @var string $databaseMethod
+     */
+    private static string $databaseMethod = Driver::MYSQL;
 
     /**
      * {@inheritdoc}
@@ -68,71 +84,6 @@ class MySQL extends Connection implements
         self::$enableInsert = $enable;
 
         return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function get(): stdClass|array|DatabaseCapsuleInterface
-    {
-        return parent::mysql(function (): stdClass|array|DatabaseCapsuleInterface {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn ($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-            );
-
-            $codes = array_keys(self::$fetchMode);
-
-            foreach (self::$listSql as $key => $sql) {
-                self::prepare($sql);
-
-                $code = $codes[$key] ?? null;
-
-                if ($code != null && isset(self::$dataInfo[$code])) {
-                    self::bindValue($code);
-                }
-
-                if ($code != null && isset(self::$fetchMode[$code])) {
-                    $getFetch = self::$fetchMode[$codes[$key]];
-
-                    if (is_array($getFetch)) {
-                        self::$stmt->setFetchMode($getFetch[0], $getFetch[1]);
-                    } else {
-                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                    }
-                }
-
-                self::$stmt->execute();
-
-                $request = self::$stmt->fetch();
-
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
-                } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
-                }
-            }
-
-            return $responses;
-        });
     }
 
     /**
