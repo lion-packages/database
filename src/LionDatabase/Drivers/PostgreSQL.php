@@ -7,6 +7,7 @@ namespace Lion\Database\Drivers;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\GetAllInterfaceTrait;
 use Lion\Database\Helpers\GetInterfaceTrait;
 use Lion\Database\Helpers\QueryInterfaceTrait;
 use Lion\Database\Helpers\RunInterfaceTrait;
@@ -46,6 +47,7 @@ class PostgreSQL extends Connection implements
 {
     use ConnectionInterfaceTrait;
     use GetInterfaceTrait;
+    use GetAllInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
     use TransactionInterfaceTrait;
@@ -61,71 +63,6 @@ class PostgreSQL extends Connection implements
      * @var string $databaseMethod
      */
     private static string $databaseMethod = Driver::POSTGRESQL;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getAll(): stdClass|array
-    {
-        return parent::postgresql(function (): stdClass|array {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn ($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-            );
-
-            $codes = array_keys(self::$fetchMode);
-
-            foreach (self::$listSql as $key => $sql) {
-                self::prepare($sql);
-
-                $code = isset($codes[$key]) ? $codes[$key] : null;
-
-                if ($code != null && isset(self::$dataInfo[$code])) {
-                    self::bindValue($code);
-                }
-
-                if ($code != null && isset(self::$fetchMode[$code])) {
-                    $get_fetch = self::$fetchMode[$codes[$key]];
-
-                    if (is_array($get_fetch)) {
-                        self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
-                    } else {
-                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                    }
-                }
-
-                self::$stmt->execute();
-
-                $request = self::$stmt->fetchAll();
-
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
-                } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
-                }
-            }
-
-            return $responses;
-        });
-    }
 
     /**
      * {@inheritdoc}
