@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Lion\Database\Drivers;
 
 use Closure;
-use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\QueryInterfaceTrait;
 use Lion\Database\Helpers\RunInterfaceTrait;
 use Lion\Database\Helpers\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
@@ -46,6 +46,7 @@ class MySQL extends Connection implements
     TransactionInterface
 {
     use ConnectionInterfaceTrait;
+    use QueryInterfaceTrait;
     use RunInterfaceTrait;
     use TransactionInterfaceTrait;
 
@@ -775,17 +776,6 @@ class MySQL extends Connection implements
     public static function columns(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'columns')]);
-
-        return new static;
-    }
-
-    public static function query(string $sql): MySQL
-    {
-        if ('' === self::$actualCode) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::addQueryList([$sql]);
 
         return new static;
     }

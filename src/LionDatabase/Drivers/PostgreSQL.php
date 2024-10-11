@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Lion\Database\Drivers;
 
-use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Helpers\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\QueryInterfaceTrait;
 use Lion\Database\Helpers\RunInterfaceTrait;
 use Lion\Database\Helpers\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
@@ -15,7 +15,6 @@ use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\TransactionInterface;
-use PDO;
 use stdClass;
 
 /**
@@ -42,6 +41,7 @@ class PostgreSQL extends Connection implements
     TransactionInterface
 {
     use ConnectionInterfaceTrait;
+    use QueryInterfaceTrait;
     use RunInterfaceTrait;
     use TransactionInterfaceTrait;
 
@@ -212,25 +212,5 @@ class PostgreSQL extends Connection implements
                 'message' => self::$message,
             ];
         });
-    }
-
-    /**
-     * The defined sentence alludes to the current sentence
-     *
-     * @param string $sql [Defined sentence]
-     *
-     * @return PostgreSQL
-     */
-    public static function query(string $sql): PostgreSQL
-    {
-        self::$actualCode = uniqid('code-');
-
-        self::$dataInfo[self::$actualCode] = null;
-
-        self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
-
-        self::addQueryList([$sql]);
-
-        return new static();
     }
 }
