@@ -11,6 +11,7 @@ use Lion\Database\Helpers\RunInterfaceTrait;
 use Lion\Database\Helpers\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\TransactionInterface;
@@ -35,6 +36,7 @@ use stdClass;
  */
 class PostgreSQL extends Connection implements
     DatabaseConfigInterface,
+    QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
     TransactionInterface
