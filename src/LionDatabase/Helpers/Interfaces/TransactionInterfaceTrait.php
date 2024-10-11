@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Lion\Database\Helpers;
+namespace Lion\Database\Helpers\Interfaces;
 
 /**
  * Declare the transaction method of the interface

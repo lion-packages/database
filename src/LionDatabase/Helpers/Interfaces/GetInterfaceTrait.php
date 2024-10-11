@@ -2,25 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Lion\Database\Helpers;
+namespace Lion\Database\Helpers\Interfaces;
 
+use Lion\Database\Interface\DatabaseCapsuleInterface;
 use stdClass;
 
 /**
- * Declare the getAll method of the interface
+ * Declare the get method of the interface
  *
  * @package Lion\Database\Helpers
  */
-trait GetAllInterfaceTrait
+trait GetInterfaceTrait
 {
     /**
      * {@inheritdoc}
      */
-    public static function getAll(): stdClass|array
+    public static function get(): stdClass|array|DatabaseCapsuleInterface
     {
         $method = self::$databaseMethod;
 
-        return parent::{$method}(function (): stdClass|array {
+        return parent::{$method}(function (): stdClass|array|DatabaseCapsuleInterface {
             $responses = [];
 
             self::$listSql = array_map(
@@ -40,10 +41,10 @@ trait GetAllInterfaceTrait
                 }
 
                 if ($code != null && isset(self::$fetchMode[$code])) {
-                    $get_fetch = self::$fetchMode[$codes[$key]];
+                    $getFetch = self::$fetchMode[$codes[$key]];
 
-                    if (is_array($get_fetch)) {
-                        self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
+                    if (is_array($getFetch)) {
+                        self::$stmt->setFetchMode($getFetch[0], $getFetch[1]);
                     } else {
                         self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
                     }
@@ -51,7 +52,7 @@ trait GetAllInterfaceTrait
 
                 self::$stmt->execute();
 
-                $request = self::$stmt->fetchAll();
+                $request = self::$stmt->fetch();
 
                 if (!$request) {
                     if (count(self::$fetchMode) > 1) {
