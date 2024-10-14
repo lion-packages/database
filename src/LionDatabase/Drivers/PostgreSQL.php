@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Lion\Database\Drivers;
 
-use InvalidArgumentException;
 use Lion\Database\Connection;
-use Lion\Database\Interface\DatabaseCapsuleInterface;
+use Lion\Database\Driver;
+use Lion\Database\Helpers\Interfaces\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\ExecuteInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\GetAllInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\GetInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\QueryInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\TransactionInterface;
-use PDO;
-use stdClass;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
@@ -28,248 +33,35 @@ use stdClass;
  * * Optimization for PostgreSQL: Designed specifically to work with PostgreSQL,
  *   guaranteeing compatibility and optimization with this DBMS.
  *
+ * @property string $databaseMethod [Defines the database connection method to
+ * use]
+ *
  * @package Lion\Database\Drivers
  */
 class PostgreSQL extends Connection implements
     DatabaseConfigInterface,
+    QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
     TransactionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function run(array $connections): PostgreSQL
-    {
-        if (empty($connections['default'])) {
-            throw new InvalidArgumentException('no default database defined', 500);
-        }
-
-        if (empty($connections['connections'])) {
-            throw new InvalidArgumentException('no databases have been defined', 500);
-        }
-
-        self::$connections = $connections;
-
-        self::$activeConnection = self::$connections['default'];
-
-        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-
-        return new static();
-    }
+    use ConnectionInterfaceTrait;
+    use ExecuteInterfaceTrait;
+    use GetInterfaceTrait;
+    use GetAllInterfaceTrait;
+    use QueryInterfaceTrait;
+    use RunInterfaceTrait;
+    use TransactionInterfaceTrait;
 
     /**
-     * {@inheritdoc}
-     */
-    public static function connection(string $connectionName): PostgreSQL
-    {
-        if (empty(self::$connections['connections'][$connectionName])) {
-            throw new InvalidArgumentException('the selected connection does not exist', 500);
-        }
-
-        self::$activeConnection = $connectionName;
-
-        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
-
-        return new static();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function get(): stdClass|array|DatabaseCapsuleInterface
-    {
-        return parent::postgresql(function (): stdClass|array|DatabaseCapsuleInterface {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn ($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-            );
-
-            $codes = array_keys(self::$fetchMode);
-
-            foreach (self::$listSql as $key => $sql) {
-                self::prepare($sql);
-
-                $code = $codes[$key] ?? null;
-
-                if ($code != null && isset(self::$dataInfo[$code])) {
-                    self::bindValue($code);
-                }
-
-                if ($code != null && isset(self::$fetchMode[$code])) {
-                    $getFetch = self::$fetchMode[$codes[$key]];
-
-                    if (is_array($getFetch)) {
-                        self::$stmt->setFetchMode($getFetch[0], $getFetch[1]);
-                    } else {
-                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                    }
-                }
-
-                self::$stmt->execute();
-
-                $request = self::$stmt->fetch();
-
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
-                } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
-                }
-            }
-
-            return $responses;
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getAll(): stdClass|array
-    {
-        return parent::postgresql(function (): stdClass|array {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn ($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-            );
-
-            $codes = array_keys(self::$fetchMode);
-
-            foreach (self::$listSql as $key => $sql) {
-                self::prepare($sql);
-
-                $code = isset($codes[$key]) ? $codes[$key] : null;
-
-                if ($code != null && isset(self::$dataInfo[$code])) {
-                    self::bindValue($code);
-                }
-
-                if ($code != null && isset(self::$fetchMode[$code])) {
-                    $get_fetch = self::$fetchMode[$codes[$key]];
-
-                    if (is_array($get_fetch)) {
-                        self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
-                    } else {
-                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                    }
-                }
-
-                self::$stmt->execute();
-
-                $request = self::$stmt->fetchAll();
-
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
-                } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
-                }
-            }
-
-            return $responses;
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function execute(): stdClass
-    {
-        return parent::postgresql(function (): stdClass {
-            $dataInfoKeys = array_keys(self::$dataInfo);
-
-            if (count($dataInfoKeys) > 0) {
-                self::$listSql = array_map(
-                    fn ($value) => trim($value),
-                    array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-                );
-
-                foreach ($dataInfoKeys as $key => $code) {
-                    self::prepare(self::$listSql[$key]);
-
-                    if (!empty(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
-
-                    self::$stmt->execute();
-
-                    self::$stmt->closeCursor();
-                }
-            } else {
-                self::prepare(self::$sql);
-
-                self::$stmt->execute();
-            }
-
-            return (object) [
-                'code' => 200,
-                'status' => 'success',
-                'message' => self::$message,
-            ];
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function transaction(bool $isTransaction = true): PostgreSQL
-    {
-        self::$isTransaction = $isTransaction;
-
-        return new static();
-    }
-
-    /**
-     * The defined sentence alludes to the current sentence
+     * Defines the database connection method to use
      *
-     * @param string $sql [Defined sentence]
+     * This property determines which connection method to use in the `trait` to
+     * perform database operations. Allowed values are `mysql` or `postgresql`,
+     * depending on the database being used. The class using the `trait` must
+     * set this value to define the connection type
      *
-     * @return PostgreSQL
+     * @var string $databaseMethod
      */
-    public static function query(string $sql): PostgreSQL
-    {
-        self::$actualCode = uniqid('code-');
-
-        self::$dataInfo[self::$actualCode] = null;
-
-        self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
-
-        self::addQueryList([$sql]);
-
-        return new static();
-    }
+    private static string $databaseMethod = Driver::POSTGRESQL;
 }

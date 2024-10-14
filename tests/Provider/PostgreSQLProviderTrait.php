@@ -122,7 +122,7 @@ trait PostgreSQLProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
                 'selectSql' => self::QUERY_SQL_SELECT_USERS_BY_ID,
-            ]
+            ],
         ];
     }
 

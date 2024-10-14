@@ -5,17 +5,22 @@ declare(strict_types=1);
 namespace Lion\Database\Drivers;
 
 use Closure;
-use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
-use Lion\Database\Interface\DatabaseCapsuleInterface;
+use Lion\Database\Helpers\Interfaces\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\ExecuteInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\GetAllInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\GetInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\QueryInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use PDO;
-use stdClass;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
@@ -31,62 +36,38 @@ use stdClass;
  * * Optimization for MySQL: Designed specifically to work with MySQL,
  * guaranteeing compatibility and optimization with this DBMS
  *
+ * @property string $databaseMethod [Defines the database connection method to
+ * use]
+ *
  * @package Lion\Database\Drivers
  */
 class MySQL extends Connection implements
     DatabaseConfigInterface,
+    QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
     SchemaDriverInterface,
     TransactionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function run(array $connections): MySQL
-    {
-        if (empty($connections['default'])) {
-            throw new InvalidArgumentException('no default database defined', 500);
-        }
-
-        if (empty($connections['connections'])) {
-            throw new InvalidArgumentException('no databases have been defined', 500);
-        }
-
-        self::$connections = $connections;
-
-        self::$activeConnection = self::$connections['default'];
-
-        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-
-        return new static();
-    }
+    use ConnectionInterfaceTrait;
+    use ExecuteInterfaceTrait;
+    use GetInterfaceTrait;
+    use GetAllInterfaceTrait;
+    use QueryInterfaceTrait;
+    use RunInterfaceTrait;
+    use TransactionInterfaceTrait;
 
     /**
-     * {@inheritdoc}
+     * Defines the database connection method to use
+     *
+     * This property determines which connection method to use in the `trait` to
+     * perform database operations. Allowed values are `mysql` or `postgresql`,
+     * depending on the database being used. The class using the `trait` must
+     * set this value to define the connection type
+     *
+     * @var string $databaseMethod
      */
-    public static function connection(string $connectionName): MySQL
-    {
-        if (empty(self::$connections['connections'][$connectionName])) {
-            throw new InvalidArgumentException('the selected connection does not exist', 500);
-        }
-
-        self::$activeConnection = $connectionName;
-
-        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
-
-        return new static();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function transaction(bool $isTransaction = true): MySQL
-    {
-        self::$isTransaction = $isTransaction;
-
-        return new static;
-    }
+    private static string $databaseMethod = Driver::MYSQL;
 
     /**
      * {@inheritdoc}
@@ -106,179 +87,6 @@ class MySQL extends Connection implements
         self::$enableInsert = $enable;
 
         return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function get(): stdClass|array|DatabaseCapsuleInterface
-    {
-        return parent::mysql(function (): stdClass|array|DatabaseCapsuleInterface {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn ($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-            );
-
-            $codes = array_keys(self::$fetchMode);
-
-            foreach (self::$listSql as $key => $sql) {
-                self::prepare($sql);
-
-                $code = $codes[$key] ?? null;
-
-                if ($code != null && isset(self::$dataInfo[$code])) {
-                    self::bindValue($code);
-                }
-
-                if ($code != null && isset(self::$fetchMode[$code])) {
-                    $getFetch = self::$fetchMode[$codes[$key]];
-
-                    if (is_array($getFetch)) {
-                        self::$stmt->setFetchMode($getFetch[0], $getFetch[1]);
-                    } else {
-                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                    }
-                }
-
-                self::$stmt->execute();
-
-                $request = self::$stmt->fetch();
-
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
-                } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
-                }
-            }
-
-            return $responses;
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getAll(): stdClass|array
-    {
-        return parent::mysql(function (): stdClass|array {
-            $responses = [];
-
-            self::$listSql = array_map(
-                fn ($value) => trim($value),
-                array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-            );
-
-            $codes = array_keys(self::$fetchMode);
-
-            foreach (self::$listSql as $key => $sql) {
-                self::prepare($sql);
-
-                $code = isset($codes[$key]) ? $codes[$key] : null;
-
-                if ($code != null && isset(self::$dataInfo[$code])) {
-                    self::bindValue($code);
-                }
-
-                if ($code != null && isset(self::$fetchMode[$code])) {
-                    $get_fetch = self::$fetchMode[$codes[$key]];
-
-                    if (is_array($get_fetch)) {
-                        self::$stmt->setFetchMode($get_fetch[0], $get_fetch[1]);
-                    } else {
-                        self::$stmt->setFetchMode(self::$fetchMode[$codes[$key]]);
-                    }
-                }
-
-                self::$stmt->execute();
-
-                $request = self::$stmt->fetchAll();
-
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
-                } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
-                }
-            }
-
-            return $responses;
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function execute(): stdClass
-    {
-        return parent::mysql(function (): stdClass {
-            $dataInfoKeys = array_keys(self::$dataInfo);
-
-            if (count($dataInfoKeys) > 0) {
-                self::$listSql = array_map(
-                    fn ($value) => trim($value),
-                    array_filter(explode(';', trim(self::$sql)), fn ($value) => trim($value) != '')
-                );
-
-                foreach ($dataInfoKeys as $key => $code) {
-                    self::prepare(self::$listSql[$key]);
-
-                    if (!empty(self::$dataInfo[$code])) {
-                        self::bindValue($code);
-                    }
-
-                    self::$stmt->execute();
-
-                    self::$stmt->closeCursor();
-                }
-            } else {
-                self::prepare(self::$sql);
-
-                if (!empty(self::$actualCode)) {
-                    self::bindValue(self::$actualCode);
-                }
-
-                self::$stmt->execute();
-            }
-
-            return (object) [
-                'code' => 200,
-                'status' => 'success',
-                'message' => self::$message,
-            ];
-        });
     }
 
     public static function database(): MySQL
@@ -814,17 +622,6 @@ class MySQL extends Connection implements
     public static function columns(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'columns')]);
-
-        return new static;
-    }
-
-    public static function query(string $sql): MySQL
-    {
-        if ('' === self::$actualCode) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::addQueryList([$sql]);
 
         return new static;
     }

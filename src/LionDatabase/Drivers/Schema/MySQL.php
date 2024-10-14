@@ -9,6 +9,8 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL as DriverMySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
+use Lion\Database\Helpers\Interfaces\ConnectionInterfaceTrait;
+use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use stdClass;
@@ -40,6 +42,9 @@ use stdClass;
  */
 class MySQL extends Connection implements DatabaseConfigInterface, RunDatabaseProcessesInterface
 {
+    use ConnectionInterfaceTrait;
+    use RunInterfaceTrait;
+
     /**
      * [Enable the configuration of the properties to implement the IN
      * statement]
@@ -47,32 +52,6 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
      * @var bool $in
      */
     private static bool $in = false;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function run(array $connections): MySQL
-    {
-        self::$connections = $connections;
-
-        self::$activeConnection = self::$connections['default'];
-
-        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-
-        return new static;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function connection(string $connectionName): MySQL
-    {
-        self::$activeConnection = $connectionName;
-
-        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
-
-        return new static;
-    }
 
     /**
      * {@inheritdoc}
