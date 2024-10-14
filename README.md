@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <img src="http://poser.pugx.org/lion/database/v" alt="Latest Stable Version">
-  <img src="http://poser.pugx.org/lion/database/downloads" alt="Total Downloads">
-  <img src="http://poser.pugx.org/lion/database/license" alt="License">
-  <img src="http://poser.pugx.org/lion/database/require/php" alt="PHP Version Require">
+  <img src="https://poser.pugx.org/lion/database/v" alt="Latest Stable Version">
+  <img src="https://poser.pugx.org/lion/database/downloads" alt="Total Downloads">
+  <img src="https://poser.pugx.org/lion/database/license" alt="License">
+  <img src="https://poser.pugx.org/lion/database/require/php" alt="PHP Version Require">
 </p>
 
 ## About Lion-Database
