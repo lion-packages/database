@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use InvalidArgumentException;
 use Lion\Database\Connection;
+use Lion\Database\Driver;
 use Lion\Test\Test;
 use PDO;
 use PDOException;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test as Testing;
+use PHPUnit\Framework\Attributes\TestWith;
 use stdClass;
 use Tests\Provider\ConnectionProviderTrait;
 
@@ -17,26 +21,36 @@ class ConnectionTest extends Test
 {
     use ConnectionProviderTrait;
 
-    private const string DATABASE_TYPE = 'mysql';
-    private const string DATABASE_HOST = 'mysql';
-    private const int DATABASE_PORT = 3306;
+    private const string DATABASE_HOST_MYSQL = 'mysql';
+    private const string DATABASE_HOST_POSTGRESQL = 'postgres';
+    private const int DATABASE_PORT_MYSQL = 3306;
+    private const int DATABASE_PORT_POSTGRESQL = 5432;
     private const string DATABASE_NAME = 'lion_database';
     private const string DATABASE_NAME_SECOND = 'lion_database_second';
+    private const string DATABASE_NAME_THIRD = 'lion_database_third';
     private const string DATABASE_USER = 'root';
     private const string DATABASE_PASSWORD = 'lion';
     private const array CONNECTION_DATA = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
+        'type' => Driver::MYSQL,
+        'host' => self::DATABASE_HOST_MYSQL,
+        'port' => self::DATABASE_PORT_MYSQL,
         'dbname' => self::DATABASE_NAME,
         'user' => self::DATABASE_USER,
         'password' => self::DATABASE_PASSWORD
     ];
     private const array CONNECTION_DATA_SECOND = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
+        'type' => Driver::MYSQL,
+        'host' => self::DATABASE_HOST_MYSQL,
+        'port' => self::DATABASE_PORT_MYSQL,
         'dbname' => self::DATABASE_NAME_SECOND,
+        'user' => self::DATABASE_USER,
+        'password' => self::DATABASE_PASSWORD
+    ];
+    private const array CONNECTION_DATA_THIRD = [
+        'type' => Driver::POSTGRESQL,
+        'host' => self::DATABASE_HOST_POSTGRESQL,
+        'port' => self::DATABASE_PORT_POSTGRESQL,
+        'dbname' => self::DATABASE_NAME,
         'user' => self::DATABASE_USER,
         'password' => self::DATABASE_PASSWORD
     ];
@@ -86,6 +100,8 @@ class ConnectionTest extends Test
         $this->setPrivateProperty('sql', '');
 
         $this->setPrivateProperty('listSql', []);
+
+        $this->setPrivateProperty('databaseInstances', []);
     }
 
     public function testMysql(): void
@@ -221,5 +237,53 @@ class ConnectionTest extends Test
         $this->customClass->removeConnection(self::DATABASE_NAME);
 
         $this->assertSame([], $this->customClass::getConnections());
+    }
+
+    #[Testing]
+    #[TestWith(['driver' => 'mysql', 'databaseName' => self::DATABASE_NAME])]
+    #[TestWith(['driver' => 'pgsql', 'databaseName' => self::DATABASE_NAME_THIRD])]
+    public function getDatabaseInstance(string $driver, string $databaseName): void
+    {
+        $this->setPrivateProperty('connections', [
+            'default' => self::DATABASE_NAME,
+            'connections' => [
+                self::DATABASE_NAME => self::CONNECTION_DATA,
+                self::DATABASE_NAME_THIRD => self::CONNECTION_DATA_THIRD,
+            ],
+        ]);
+
+        $this->setPrivateProperty('activeConnection', $databaseName);
+
+        $conn = $this->getPrivateMethod('getDatabaseInstance');
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame($driver, $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+    }
+
+    #[Testing]
+    public function getDatabaseInstanceIsError(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionCode(500);
+        $this->expectExceptionMessage('the database connection type is not supported');
+
+        $this->setPrivateProperty('connections', [
+            'default' => self::DATABASE_NAME,
+            'connections' => [
+                self::DATABASE_NAME => [
+                    'type' => 'mixed',
+                    'host' => self::DATABASE_HOST_MYSQL,
+                    'port' => self::DATABASE_PORT_MYSQL,
+                    'dbname' => self::DATABASE_NAME,
+                    'user' => self::DATABASE_USER,
+                    'password' => self::DATABASE_PASSWORD
+                ],
+            ],
+        ]);
+
+        $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+
+        $this->getPrivateMethod('getDatabaseInstance');
     }
 }

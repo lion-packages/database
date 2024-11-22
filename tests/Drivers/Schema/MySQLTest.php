@@ -93,6 +93,8 @@ class MySQLTest extends Test
         $this->setPrivateProperty('columns', []);
 
         $this->setPrivateProperty('in', false);
+
+        $this->setPrivateProperty('databaseInstances', []);
     }
 
     private function assertQuery(string $queryStr): void

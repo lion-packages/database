@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lion\Database;
 
 use Closure;
+use InvalidArgumentException;
 use Lion\Database\Helpers\FunctionsTrait;
 use Lion\Database\Interface\ConnectionConfigInterface;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
@@ -20,12 +21,24 @@ use stdClass;
  * @property PDO $conn [PDO driver object to make connections to databases]
  * @property PDOStatement|bool $stmt [PDO declaration object to perform database
  * processes]
+ * @property array<string, PDO> $databaseInstances [List of database
+ * connections]
  *
  * @package Lion\Database
  */
 abstract class Connection implements ConnectionConfigInterface, DatabaseEngineInterface
 {
     use FunctionsTrait;
+
+    /**
+     * [Default settings for database connections]
+     *
+     * @const DEFAULT_DATABASE_OPTIONS
+     */
+    private const array DEFAULT_DATABASE_OPTIONS = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+    ];
 
     /**
      * [PDO driver object to make connections to databases]
@@ -40,6 +53,13 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
      * @var PDOStatement|bool $stmt
      */
     protected static PDOStatement|bool $stmt;
+
+    /**
+     * [List of database connections]
+     *
+     * @var array<string, PDO> $databaseInstances
+     */
+    protected static array $databaseInstances;
 
     /**
      * {@inheritdoc}
@@ -70,20 +90,8 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
      */
     public static function mysql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
     {
-        $connection = self::$connections['connections'][self::$activeConnection];
-
-        $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-        ];
-
         try {
-            self::$conn = new PDO(
-                "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
-                $connection['user'],
-                $connection['password'],
-                ($connection['options'] ?? $options)
-            );
+            self::$conn = self::getDatabaseInstance();
 
             if (self::$isTransaction) {
                 self::$conn->beginTransaction();
@@ -118,20 +126,8 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
      */
     public static function postgresql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
     {
-        $connection = self::$connections['connections'][self::$activeConnection];
-
-        $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-        ];
-
         try {
-            self::$conn = new PDO(
-                "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
-                $connection['user'],
-                $connection['password'],
-                ($connection['options'] ?? $options)
-            );
+            self::$conn = self::getDatabaseInstance();
 
             if (self::$isTransaction) {
                 self::$conn->beginTransaction();
@@ -262,5 +258,40 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
                 'split' => $newListSql,
             ],
         ];
+    }
+
+    /**
+     * Stores database connections to avoid generating multiple connections
+     *
+     * @return PDO
+     *
+     * @throws InvalidArgumentException [If the database connection is not
+     * supported]
+     */
+    private static function getDatabaseInstance(): PDO
+    {
+        if (empty(self::$databaseInstances[self::$activeConnection])) {
+            $connection = self::$connections['connections'][self::$activeConnection];
+
+            if (Driver::POSTGRESQL === $connection['type']) {
+                self::$databaseInstances[self::$activeConnection] = new PDO(
+                    "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+                    $connection['user'],
+                    $connection['password'],
+                    ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
+                );
+            } else if (Driver::MYSQL === $connection['type']) {
+                self::$databaseInstances[self::$activeConnection] = new PDO(
+                    "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+                    $connection['user'],
+                    $connection['password'],
+                    ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
+                );
+            } else {
+                throw new InvalidArgumentException('the database connection type is not supported', 500);
+            }
+        }
+
+        return self::$databaseInstances[self::$activeConnection];
     }
 }

@@ -89,6 +89,8 @@ class MySQLTest extends Test
         $this->setPrivateProperty('fetchMode', []);
 
         $this->setPrivateProperty('message', 'execution finished');
+
+        $this->setPrivateProperty('databaseInstances', []);
     }
 
     private function setActualCode(): void
