@@ -91,6 +91,8 @@ class PostgreSQLTest extends Test
         $this->setPrivateProperty('fetchMode', []);
 
         $this->setPrivateProperty('message', 'execution finished');
+
+        $this->setPrivateProperty('databaseInstances', []);
     }
 
     #[Testing]
