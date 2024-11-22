@@ -286,4 +286,14 @@ class ConnectionTest extends Test
 
         $this->getPrivateMethod('getDatabaseInstance');
     }
+
+    #[Testing]
+    public function getDatabaseInstanceMySQL(): void
+    {
+        $conn = $this->getPrivateMethod('getDatabaseInstanceMySQL', [self::CONNECTION_DATA]);
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame('mysql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+    }
 }

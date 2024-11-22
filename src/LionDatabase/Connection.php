@@ -281,17 +281,27 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
                     ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
                 );
             } else if (Driver::MYSQL === $connection['type']) {
-                self::$databaseInstances[self::$activeConnection] = new PDO(
-                    "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
-                    $connection['user'],
-                    $connection['password'],
-                    ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
-                );
+                self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceMySQL($connection);
             } else {
                 throw new InvalidArgumentException('the database connection type is not supported', 500);
             }
         }
 
         return self::$databaseInstances[self::$activeConnection];
+    }
+
+    /**
+     * @param array<string, int|string> $connection [Database connection data]
+     *
+     * @return PDO
+     */
+    private static function getDatabaseInstanceMySQL(array $connection): PDO
+    {
+        return new PDO(
+            "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+            $connection['user'],
+            $connection['password'],
+            ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
+        );
     }
 }
