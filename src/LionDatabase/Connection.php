@@ -274,12 +274,7 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
             $connection = self::$connections['connections'][self::$activeConnection];
 
             if (Driver::POSTGRESQL === $connection['type']) {
-                self::$databaseInstances[self::$activeConnection] = new PDO(
-                    "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
-                    $connection['user'],
-                    $connection['password'],
-                    ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
-                );
+                self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstancePostgreSQL($connection);
             } else if (Driver::MYSQL === $connection['type']) {
                 self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceMySQL($connection);
             } else {
@@ -291,6 +286,8 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     }
 
     /**
+     * Gets a PDO instance for MySQL database connections
+     *
      * @param array<string, int|string> $connection [Database connection data]
      *
      * @return PDO
@@ -299,6 +296,23 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     {
         return new PDO(
             "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+            $connection['user'],
+            $connection['password'],
+            ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
+        );
+    }
+
+    /**
+     * Gets a PDO instance for PostgreSQL database connections
+     *
+     * @param array<string, int|string> $connection [Database connection data]
+     *
+     * @return PDO
+     */
+    private static function getDatabaseInstancePostgreSQL(array $connection): PDO
+    {
+        return new PDO(
+            "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
             $connection['user'],
             $connection['password'],
             ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)

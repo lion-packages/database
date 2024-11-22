@@ -296,4 +296,14 @@ class ConnectionTest extends Test
         $this->assertInstanceOf(PDO::class, $conn);
         $this->assertSame('mysql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
     }
+
+    #[Testing]
+    public function getDatabaseInstancePostgreSQL(): void
+    {
+        $conn = $this->getPrivateMethod('getDatabaseInstancePostgreSQL', [self::CONNECTION_DATA_THIRD]);
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame('pgsql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+    }
 }
