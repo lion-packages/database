@@ -568,7 +568,14 @@ class MySQL extends Connection implements
         return new static;
     }
 
-    public static function from(string $from = null): MySQL
+    /**
+     * Add a FROM to the current statement
+     *
+     * @param string|null $from [Reference table or function]
+     *
+     * @return MySQL
+     */
+    public static function from(?string $from = null): MySQL
     {
         if (null === $from) {
             self::addQueryList([
