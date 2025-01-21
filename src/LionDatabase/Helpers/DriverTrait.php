@@ -273,7 +273,7 @@ trait DriverTrait
     {
         self::$fetchMode[self::$actualCode] = null === $value ? $fetchMode : [$fetchMode, $value];
 
-        return new static;
+        return new static();
     }
 
     /**

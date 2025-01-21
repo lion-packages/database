@@ -141,7 +141,8 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
             self::getKey(Driver::MYSQL, 'default'),
             self::getKey(Driver::MYSQL, 'character'),
             self::getKey(Driver::MYSQL, 'set') . ' = ' . MySQLConstants::UTF8MB4,
-            self::getKey(Driver::MYSQL, 'collate') . ' = ' . MySQLConstants::UTF8MB4_SPANISH_CI . '; --REPLACE-INDEXES--'
+            self::getKey(Driver::MYSQL, 'collate') . ' = ',
+            MySQLConstants::UTF8MB4_SPANISH_CI . '; --REPLACE-INDEXES--',
         ]);
 
         $tableBody();

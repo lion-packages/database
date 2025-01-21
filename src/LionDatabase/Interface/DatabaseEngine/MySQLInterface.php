@@ -21,7 +21,9 @@ interface MySQLInterface
      *
      * @param Closure $callback [Function that is executed]
      *
-     * @return stdClass|array<int|string, stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>|DatabaseCapsuleInterface
+     * @return stdClass
+     *         | array<int|string, stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>
+     *         | DatabaseCapsuleInterface
      *
      * @throws PDOException [If the database process fails]
      *
