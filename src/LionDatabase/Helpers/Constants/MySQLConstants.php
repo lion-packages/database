@@ -23,7 +23,7 @@ class MySQLConstants
      *
      * @const CURRENT_TIMESTAMP
      */
-    const CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
+    public const string CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
 
     /**
      * [The utf8mb4 Character Set (4-Byte UTF-8 Unicode Encoding)]
@@ -49,21 +49,21 @@ class MySQLConstants
      *
      * @const UTF8MB4
      */
-    const UTF8MB4 = 'UTF8MB4';
+    public const string UTF8MB4 = 'UTF8MB4';
 
     /**
      * [Collation UTF8MB4_SPANISH_CI]
      *
      * @const UTF8MB4_SPANISH_CI
      */
-    const UTF8MB4_SPANISH_CI = 'UTF8MB4_SPANISH_CI';
+    public const string UTF8MB4_SPANISH_CI = 'UTF8MB4_SPANISH_CI';
 
     /**
      * [MySQL word list]
      *
      * @const KEYWORDS
      */
-    const KEYWORDS = [
+    public const array KEYWORDS = [
         'delimiter' => ' DELIMITER',
         'not' => ' NOT',
         'truncate' => ' TRUNCATE',
@@ -177,6 +177,6 @@ class MySQLConstants
         'restrict' => ' RESTRICT',
         'cascade' => ' CASCADE',
         'no' => ' NO',
-        'action' => ' ACTION'
+        'action' => ' ACTION',
     ];
 }

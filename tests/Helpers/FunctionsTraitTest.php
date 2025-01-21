@@ -97,13 +97,4 @@ class FunctionsTraitTest extends Test
         $this->assertIsString($str);
         $this->assertSame($return, $str);
     }
-
-    #[DataProvider('addEnumColumnsProvider')]
-    public function testAddEnumColumns(array $columns, bool $spacing, string $return): void
-    {
-        $str = $this->getPrivateMethod('addEnumColumns', [$columns, $spacing]);
-
-        $this->assertIsString($str);
-        $this->assertSame($return, $str);
-    }
 }

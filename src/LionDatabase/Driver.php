@@ -21,14 +21,14 @@ abstract class Driver
      *
      * @const MYSQL
      */
-    public const MYSQL = 'mysql';
+    public const string MYSQL = 'mysql';
 
     /**
      * [Defines the PostgreSQL driver]
      *
      * @const POSTGRESQL
      */
-    public const POSTGRESQL = 'postgresql';
+    public const string POSTGRESQL = 'postgresql';
 
     /**
      * Initialize database connections
@@ -54,12 +54,13 @@ abstract class Driver
 
                 SchemaMySQL::run($connections);
                 break;
+
             case self::POSTGRESQL:
                 PostgreSQL::run($connections);
                 break;
+
             default:
                 throw new InvalidArgumentException('the defined driver does not exist', 500);
-                break;
         }
     }
 }

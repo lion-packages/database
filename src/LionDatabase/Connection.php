@@ -275,7 +275,7 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
 
             if (Driver::POSTGRESQL === $connection['type']) {
                 self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstancePostgreSQL($connection);
-            } else if (Driver::MYSQL === $connection['type']) {
+            } elseif (Driver::MYSQL === $connection['type']) {
                 self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceMySQL($connection);
             } else {
                 throw new InvalidArgumentException('the database connection type is not supported', 500);

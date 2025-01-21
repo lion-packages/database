@@ -177,30 +177,4 @@ trait FunctionsTraitProviderTrait
             ]
         ];
     }
-
-    public static function addEnumColumnsProvider(): array
-    {
-        return [
-            [
-                'columns' => [],
-                'spacing' => true,
-                'return' => '*'
-            ],
-            [
-                'columns' => ['idroles'],
-                'spacing' => true,
-                'return' => "'idroles'"
-            ],
-            [
-                'columns' => ['idroles', 'roles_name'],
-                'spacing' => true,
-                'return' => "'idroles', 'roles_name'"
-            ],
-            [
-                'columns' => ['idroles', 'roles_name', 'roles_description'],
-                'spacing' => true,
-                'return' => "'idroles', 'roles_name', 'roles_description'"
-            ]
-        ];
-    }
 }

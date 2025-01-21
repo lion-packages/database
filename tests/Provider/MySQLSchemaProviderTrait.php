@@ -60,7 +60,7 @@ trait MySQLSchemaProviderTrait
                 'query' => 'USE `lion_database_1`; DROP DATABASE `lion_database_1`',
                 'connection' => [
                     'type' => 'mysql',
-                    'host' => 'mysql',
+                    'host' => DATABASE_HOST_MYSQL,
                     'port' => 3306,
                     'dbname' => 'lion_database_1',
                     'user' => 'root',
@@ -72,7 +72,7 @@ trait MySQLSchemaProviderTrait
                 'query' => 'USE `lion_database_2`; DROP DATABASE `lion_database_2`',
                 'connection' => [
                     'type' => 'mysql',
-                    'host' => 'mysql',
+                    'host' => DATABASE_HOST_MYSQL,
                     'port' => 3306,
                     'dbname' => 'lion_database_2',
                     'user' => 'root',
@@ -84,7 +84,7 @@ trait MySQLSchemaProviderTrait
                 'query' => 'USE `lion_database_3`; DROP DATABASE `lion_database_3`',
                 'connection' => [
                     'type' => 'mysql',
-                    'host' => 'mysql',
+                    'host' => DATABASE_HOST_MYSQL,
                     'port' => 3306,
                     'dbname' => 'lion_database_3',
                     'user' => 'root',
@@ -96,7 +96,7 @@ trait MySQLSchemaProviderTrait
                 'query' => 'USE `lion_database_4`; DROP DATABASE `lion_database_4`',
                 'connection' => [
                     'type' => 'mysql',
-                    'host' => 'mysql',
+                    'host' => DATABASE_HOST_MYSQL,
                     'port' => 3306,
                     'dbname' => 'lion_database_4',
                     'user' => 'root',
