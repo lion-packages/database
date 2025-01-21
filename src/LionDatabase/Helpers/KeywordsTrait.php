@@ -19,14 +19,14 @@ trait KeywordsTrait
      *
      * @const DATABASE_KEYWORDS
      */
-    private const DATABASE_KEYWORDS = [
-        Driver::MYSQL => MySQLConstants::KEYWORDS
+    private const array DATABASE_KEYWORDS = [
+        Driver::MYSQL => MySQLConstants::KEYWORDS,
     ];
 
     /**
      * Get a value from a dictionary
      *
-     * @param string $type [Define the dictionary]
+     * @param string $dictionary [Define the dictionary]
      * @param string $key [Value to look up in the dictionary]
      *
      * @return string|null

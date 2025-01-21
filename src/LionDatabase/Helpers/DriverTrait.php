@@ -43,14 +43,14 @@ trait DriverTrait
      *
      * @const IGNORED_ELEMENTS
      */
-    private const IGNORED_ELEMENTS = [
+    private const array IGNORED_ELEMENTS = [
         MySQLConstants::CURRENT_TIMESTAMP,
     ];
 
     /**
      * [List of database connections]
      *
-     * @var array $connections
+     * @var array<string, string|array<string, array<string, mixed>>> $connections
      */
     protected static array $connections = [];
 
@@ -99,7 +99,7 @@ trait DriverTrait
     /**
      * [List of statements separated by ';']
      *
-     * @var array $listSql
+     * @var array<int|string, string> $listSql
      */
     protected static array $listSql = [];
 
@@ -141,21 +141,21 @@ trait DriverTrait
     /**
      * [Stores the information defined to add to the bindValue function]
      *
-     * @var array $dataInfo
+     * @var array<string, mixed> $dataInfo
      */
     protected static array $dataInfo = [];
 
     /**
      * [Defines the FETCH_MODE for the defined query]
      *
-     * @var array $fetchMode
+     * @var array<string, int> $fetchMode
      */
     protected static array $fetchMode = [];
 
     /**
      * [List of columns defined for the SQL query]
      *
-     * @var array $columns
+     * @var array<string, array<string, array<string, mixed>>> $columns
      */
     protected static array $columns = [];
 
@@ -295,7 +295,7 @@ trait DriverTrait
     /**
      * Clears the parameters to be nested to the current statement
      *
-     * @param array<int, string> $columns [description]
+     * @param array<int, string> $columns [List of columns]
      *
      * @return array<int, string>
      */

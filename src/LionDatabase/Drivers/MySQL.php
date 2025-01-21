@@ -76,7 +76,7 @@ class MySQL extends Connection implements
     {
         self::$isSchema = true;
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -86,58 +86,98 @@ class MySQL extends Connection implements
     {
         self::$enableInsert = $enable;
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the DATABASE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function database(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'database')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the TRUNCATE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function truncate(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'truncate')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the AUTO_INCREMENT statement in the current query
+     *
+     * @return MySQL
+     */
     public static function autoIncrement(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'auto-increment')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ACTION statement in the current query
+     *
+     * @return MySQL
+     */
     public static function action(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'action')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the NO statement in the current query
+     *
+     * @return MySQL
+     */
     public static function no(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'no')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the CASCADE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function cascade(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'cascade')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the RESTRICT statement in the current query
+     *
+     * @return MySQL
+     */
     public static function restrict(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'restrict')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ON DELETE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function onDelete(): MySQL
     {
         self::addQueryList([
@@ -145,9 +185,14 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'delete')
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ON UPDATE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function onUpdate(): MySQL
     {
         self::addQueryList([
@@ -155,223 +200,361 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'update')
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ON statement in the current query
+     *
+     * @return MySQL
+     */
     public static function on(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'on')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the REFERENCES statement in the current query
+     *
+     * @return MySQL
+     */
     public static function references(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'references')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the FOREIGN statement in the current query
+     *
+     * @return MySQL
+     */
     public static function foreign(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'foreign')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the CONSTRAINT statement in the current query
+     *
+     * @return MySQL
+     */
     public static function constraint(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'constraint')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ADD statement in the current query
+     *
+     * @return MySQL
+     */
     public static function add(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'add')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ALTER statement in the current query
+     *
+     * @return MySQL
+     */
     public static function alter(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'alter')]);
 
-        return new static;
+        return new static();
     }
 
-    public static function comment(string $value = ''): MySQL
+    /**
+     * Nests the COMMENT statement in the current query
+     *
+     * @param string $comment [Description comment]
+     *
+     * @return MySQL
+     */
+    public static function comment(string $comment = ''): MySQL
     {
-        if ('' === $value) {
+        if ('' === $comment) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'comment')]);
         } else {
             self::addQueryList([
                 self::getKey(Driver::MYSQL, 'comment'),
                 ' ',
-                "'{$value}'"
+                "'{$comment}'"
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the UNIQUE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function unique(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'unique')]);
 
-        return new static;
+        return new static();
     }
 
-    public static function primaryKey(string $value): MySQL
+    /**
+     * Nests the PRIMARY KEY statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function primaryKey(string $column): MySQL
     {
         self::addQueryList([
-            self::getKey(Driver::MYSQL, 'primary'),
-            self::getKey(Driver::MYSQL, 'key'),
-            " ({$value})"
+            str_replace('?', $column, self::getKey(Driver::MYSQL, 'primary-key'))
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the KEY statement in the current query
+     *
+     * @return MySQL
+     */
     public static function key(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'key')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the PRIMARY statement in the current query
+     *
+     * @return MySQL
+     */
     public static function primary(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'primary')]);
 
-        return new static;
+        return new static();
     }
 
-    public static function engine(string $value = ''): MySQL
+    /**
+     * Nests the ENGINE statement in the current query
+     *
+     * @param string $engine [Engine value]
+     *
+     * @return MySQL
+     */
+    public static function engine(string $engine = ''): MySQL
     {
-        if ('' === $value) {
+        if ('' === $engine) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'engine')]);
         } else {
             self::addQueryList([
                 self::getKey(Driver::MYSQL, 'engine'),
                 ' = ',
-                $value
+                $engine
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the NOT NULL statement in the current query
+     *
+     * @return MySQL
+     */
     public static function notNull(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'not-null')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the NULL statement in the current query
+     *
+     * @return MySQL
+     */
     public static function null(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'null')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the INNODB statement in the current query
+     *
+     * @return MySQL
+     */
     public static function innoDB(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'innodb')]);
 
-        return new static;
+        return new static();
     }
 
-    public static function collate(string $value = ''): MySQL
+    /**
+     * Nests the COLLATE statement in the current query
+     *
+     * @param string $collate [Default collation for a comparison]
+     *
+     * @return MySQL
+     */
+    public static function collate(string $collate = ''): MySQL
     {
-        if ('' === $value) {
+        if ('' === $collate) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'collate')]);
         } else {
             self::addQueryList([
                 self::getKey(Driver::MYSQL, 'collate'),
                 ' = ',
-                $value
+                $collate
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function set(string $value = ''): MySQL
+    /**
+     * Nests the SET statement in the current query
+     *
+     * @param string $set [Column values that consist of multiple set members]
+     *
+     * @return MySQL
+     */
+    public static function set(string $set = ''): MySQL
     {
-        if ('' === $value) {
+        if ('' === $set) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'set')]);
         } else {
             self::addQueryList([
                 self::getKey(Driver::MYSQL, 'set'),
                 ' = ',
-                $value
+                $set
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the CHARACTER statement in the current query
+     *
+     * @return MySQL
+     */
     public static function character(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'character')]);
 
-        return new static;
+        return new static();
     }
 
-    public static function default(string|int $value = ''): MySQL
+    /**
+     * Nests the DEFAULT statement in the current query
+     *
+     * @param int|string $default [Default value]
+     *
+     * @return MySQL
+     */
+    public static function default(int|string $default = ''): MySQL
     {
-        if ('' === $value) {
+        if ('' === $default) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'default')]);
         } else {
             self::addQueryList([
                 self::getKey(Driver::MYSQL, 'default'),
                 ' ',
-                (is_string($value) ? "'{$value}'" : $value)
+                (is_string($default) ? "'{$default}'" : $default)
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the SCHEMA statement in the current query
+     *
+     * @return MySQL
+     */
     public static function schema(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'schema')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the query in the current query
+     *
+     * @param string $query [Query SQL]
+     *
+     * @return MySQL
+     */
     public static function addQuery(string $query): MySQL
     {
         self::addQueryList([" {$query}"]);
 
-        return new static;
+        return new static();
     }
 
-    public static function ifExists(string $exist): MySQL
+    /**
+     * Nests the IF EXISTS statement in the current query
+     *
+     * @param string $ifExist [Value]
+     *
+     * @return MySQL
+     */
+    public static function ifExists(string $ifExist): MySQL
     {
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'if'),
             self::getKey(Driver::MYSQL, 'exists'),
-            " `{$exist}`"
+            " `{$ifExist}`"
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function ifNotExists(string $notExist): MySQL
+    /**
+     * Nests the IF NOT EXISTS statement in the current query
+     *
+     * @param string $ifNotExist [Value]
+     *
+     * @return MySQL
+     */
+    public static function ifNotExists(string $ifNotExist): MySQL
     {
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'if'),
             self::getKey(Driver::MYSQL, 'not'),
             self::getKey(Driver::MYSQL, 'exists'),
-            " `{$notExist}`"
+            " `{$ifNotExist}`"
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the USE statement in the current query
+     *
+     * @param string $use [Use value]
+     *
+     * @return MySQL
+     */
     public static function use(string $use): MySQL
     {
         self::addQueryList([
@@ -379,58 +562,102 @@ class MySQL extends Connection implements
             " `{$use}`"
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the BEGIN statement in the current query
+     *
+     * @return MySQL
+     */
     public static function begin(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'begin')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the END statement in the current query
+     *
+     * @return MySQL
+     */
     public static function end(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'end')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the CREATE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function create(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'create')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the PROCEDURE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function procedure(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'procedure')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the STATUS statement in the current query
+     *
+     * @return MySQL
+     */
     public static function status(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'status')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Add semicolon to the end of the query
+     *
+     * @param string $close
+     *
+     * @return MySQL
+     */
     public static function closeQuery(string $close = ';'): MySQL
     {
         self::addQueryList([$close]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the FULL statement in the current query
+     *
+     * @return MySQL
+     */
     public static function full(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'full')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Adds a SQL statement to the current query
+     *
+     * @param Closure $callback [SQL query group]
+     *
+     * @return MySQL
+     */
     public static function groupQuery(Closure $callback): MySQL
     {
         self::openGroup();
@@ -439,9 +666,16 @@ class MySQL extends Connection implements
 
         self::closeGroup();
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the RECURSIVE AS statement in the current query
+     *
+     * @param string $name [Reference name]
+     *
+     * @return MySQL
+     */
     public static function recursive(string $name): MySQL
     {
         self::addQueryList([
@@ -450,9 +684,17 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'as')
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the WITH statement in the current query
+     *
+     * @param bool $isString [Determines whether to nest the current query or
+     * return the WITH statement]
+     *
+     * @return MySQL|string
+     */
     public static function with(bool $isString = false): MySQL|string
     {
         if ($isString) {
@@ -461,9 +703,19 @@ class MySQL extends Connection implements
 
         self::addQueryList([self::getKey(Driver::MYSQL, 'with')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the TABLE statement in the current query
+     *
+     * @param string|bool $table [Nests the table in the current query or nests
+     * the TABLE statement in the current query]
+     * @param bool $withDatabase [Determines whether to nest the current
+     * database in the table]
+     *
+     * @return MySQL
+     */
     public static function table(string|bool $table = true, bool $withDatabase = true): MySQL
     {
         if (is_string($table)) {
@@ -474,9 +726,19 @@ class MySQL extends Connection implements
             }
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the VIEW statement in the current query
+     *
+     * @param string|bool $view [Nests the view in the current query or nests
+     * the VIEW statement in the current query]
+     * @param bool $withDatabase [Determines whether to nest the current
+     * database in the view]
+     *
+     * @return MySQL
+     */
     public static function view(string|bool $view = true, bool $withDatabase = true): MySQL
     {
         if (is_string($view)) {
@@ -487,35 +749,57 @@ class MySQL extends Connection implements
             }
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the IS NULL statement in the current query
+     *
+     * @return MySQL
+     */
     public static function isNull(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'is-null')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the IS NOT NULL statement in the current query
+     *
+     * @return MySQL
+     */
     public static function isNotNull(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'is-not-null')]);
 
-        return new static;
+        return new static();
     }
 
-    public static function offset(int $increase = 0): MySQL
+    /**
+     * Nests the OFFSET statement in the current query
+     *
+     * @param int $offset [Must be greater than or equal to zero]
+     *
+     * @return MySQL
+     */
+    public static function offset(int $offset = 0): MySQL
     {
-        self::addRows([$increase]);
+        self::addRows([$offset]);
 
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'offset'),
             ' ?'
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the UNION ALL statement in the current query
+     *
+     * @return MySQL
+     */
     public static function unionAll(): MySQL
     {
         self::addQueryList([
@@ -523,26 +807,49 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'all')
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the UNION statement in the current query
+     *
+     * @return MySQL
+     */
     public static function union(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'union')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the AS statement in the current query
+     *
+     * @param string $column
+     * @param string $as
+     *
+     * @return string
+     */
     public static function as(string $column, string $as): string
     {
         return $column . self::getKey(Driver::MYSQL, 'as') . " {$as}";
     }
 
-    public static function concat()
+    /**
+     * Nests the CONCAT statement in the current query
+     *
+     * @return array<int, string>|string|null
+     */
+    public static function concat(): array|string|null
     {
         return str_replace('*', implode(', ', func_get_args()), self::getKey(Driver::MYSQL, 'concat'));
     }
 
+    /**
+     * Nests the CREATE TABLE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function createTable(): MySQL
     {
         self::addQueryList([
@@ -552,12 +859,17 @@ class MySQL extends Connection implements
             self::$table
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the SHOW statement in the current query
+     *
+     * @return MySQL
+     */
     public static function show(): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -565,7 +877,7 @@ class MySQL extends Connection implements
 
         self::$sql = self::getKey(Driver::MYSQL, 'show');
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -587,23 +899,38 @@ class MySQL extends Connection implements
             self::addQueryList([self::getKey(Driver::MYSQL, 'from'), ' ', $from]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the INDEX statement in the current query
+     *
+     * @return MySQL
+     */
     public static function index(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'index')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the DROP statement in the current query
+     *
+     * @return MySQL
+     */
     public static function drop(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'drop')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the CONSTRAINTS statement in the current query
+     *
+     * @return MySQL
+     */
     public static function constraints(): MySQL
     {
         self::addRows(explode('.', self::$table));
@@ -616,26 +943,44 @@ class MySQL extends Connection implements
             'TABLE_SCHEMA=? AND TABLE_NAME=? AND REFERENCED_COLUMN_NAME IS NOT NULL'
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the TABLES statement in the current query
+     *
+     * @return MySQL
+     */
     public static function tables(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'tables')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the COLUMNS statement in the current query
+     *
+     * @return MySQL
+     */
     public static function columns(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'columns')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nesting multiple values in an insert run
+     *
+     * @param array<int, string> $columns [List of columns]
+     * @param array<int, array<string, mixed>> $rows [Insertion rows]
+     *
+     * @return MySQL
+     */
     public static function bulk(array $columns, array $rows): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -656,9 +1001,16 @@ class MySQL extends Connection implements
             self::addCharacterBulk($rows, (self::$isSchema && self::$enableInsert))
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the IN statement in the current query
+     *
+     * @param array|null $values [List of values]
+     *
+     * @return MySQL
+     */
     public static function in(?array $values = null): MySQL
     {
         if (is_array($values)) {
@@ -671,12 +1023,20 @@ class MySQL extends Connection implements
             self::addQueryList([str_replace("(?)", '', self::getKey(Driver::MYSQL, 'in'))]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function call(string $storeProcedure, array $rows = []): MySQL
+    /**
+     * Nests the CALL statement in the current query
+     *
+     * @param string $storedProcedure [Stored Procedure Name]
+     * @param array<string, mixed> $rows [List of values]
+     *
+     * @return MySQL
+     */
+    public static function call(string $storedProcedure, array $rows = []): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -686,17 +1046,22 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'call'),
             ' ',
             self::$dbname,
-            ".{$storeProcedure}(",
+            ".{$storedProcedure}(",
             self::addCharacter($rows),
             ")"
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the DELETE statement in the current query
+     *
+     * @return MySQL
+     */
     public static function delete(): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -709,12 +1074,19 @@ class MySQL extends Connection implements
             self::$table
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the IN statement in the current query
+     *
+     * @param array<string, mixed> $rows [List of values]
+     *
+     * @return MySQL
+     */
     public static function update(array $rows = []): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -731,12 +1103,19 @@ class MySQL extends Connection implements
             self::addCharacterEqualTo($rows)
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the INSERT statement in the current query
+     *
+     * @param array<string, mixed> $rows [List of values]
+     *
+     * @return MySQL
+     */
     public static function insert(array $rows = []): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -754,19 +1133,27 @@ class MySQL extends Connection implements
             ' (',
             (
                 !self::$isSchema
-                ? self::addCharacterAssoc($rows)
-                : self::addColumns(
-                    array_values($rows),
-                    true,
-                    (self::$isSchema && self::$enableInsert && self::$isProcedure ? false : true)
-                )
+                    ? self::addCharacterAssoc($rows)
+                    : self::addColumns(
+                        array_values($rows),
+                        true,
+                        !(self::$isSchema && self::$enableInsert && self::$isProcedure)
+                    )
             ),
             ')'
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the HAVING statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param mixed $value [Value]
+     *
+     * @return MySQL
+     */
     public static function having(string $column, mixed $value): MySQL
     {
         self::addRows([$value]);
@@ -776,12 +1163,17 @@ class MySQL extends Connection implements
             " {$column}"
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the SELECT statement in the current query
+     *
+     * @return MySQL
+     */
     public static function select(): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -807,12 +1199,17 @@ class MySQL extends Connection implements
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the SELECT DISTINCT statement in the current query
+     *
+     * @return MySQL
+     */
     public static function selectDistinct(): MySQL
     {
-        if ('' === self::$actualCode) {
+        if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
         }
 
@@ -840,9 +1237,17 @@ class MySQL extends Connection implements
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the BETWEEN statement in the current query
+     *
+     * @param mixed $between [Value between]
+     * @param mixed $and [Value and]
+     *
+     * @return MySQL
+     */
     public static function between(mixed $between, mixed $and): MySQL
     {
         self::addRows([$between, $and]);
@@ -854,9 +1259,16 @@ class MySQL extends Connection implements
             ' ? '
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the LIKE statement in the current query
+     *
+     * @param string $like [Preference value]
+     *
+     * @return MySQL
+     */
     public static function like(string $like): MySQL
     {
         self::addRows([$like]);
@@ -867,9 +1279,14 @@ class MySQL extends Connection implements
             self::addCharacter([$like])
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the GROUP BY statement in the current query
+     *
+     * @return MySQL
+     */
     public static function groupBy(): MySQL
     {
         self::addQueryList([
@@ -878,9 +1295,17 @@ class MySQL extends Connection implements
             self::addColumns(func_get_args())
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the LIMIT statement in the current query
+     *
+     * @param int $start [Start limit]
+     * @param int|null $limit [End limit]
+     *
+     * @return MySQL
+     */
     public static function limit(int $start, ?int $limit = null): MySQL
     {
         $items = [$start];
@@ -899,9 +1324,17 @@ class MySQL extends Connection implements
             self::addCharacter($items)
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ASC statement in the current query
+     *
+     * @param bool $isString [Determines whether to nest the ASC statement in
+     * the current query or return the statement]
+     *
+     * @return MySQL|string
+     */
     public static function asc(bool $isString = false): MySQL|string
     {
         if ($isString) {
@@ -910,9 +1343,17 @@ class MySQL extends Connection implements
 
         self::addQueryList([self::getKey(Driver::MYSQL, 'asc')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the DESC statement in the current query
+     *
+     * @param bool $isString [Determines whether to nest the DESC statement in
+     * the current query or return the statement]
+     *
+     * @return MySQL|string
+     */
     public static function desc(bool $isString = false): MySQL|string
     {
         if ($isString) {
@@ -921,9 +1362,14 @@ class MySQL extends Connection implements
 
         self::addQueryList([self::getKey(Driver::MYSQL, 'desc')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the ORDER BY statement in the current query
+     *
+     * @return MySQL
+     */
     public static function orderBy(): MySQL
     {
         self::addQueryList([
@@ -932,31 +1378,57 @@ class MySQL extends Connection implements
             self::addColumns(func_get_args())
         ]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the INNER statement in the current query
+     *
+     * @return MySQL
+     */
     public static function inner(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'inner')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the LEFT statement in the current query
+     *
+     * @return MySQL
+     */
     public static function left(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'left')]);
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the RIGHT statement in the current query
+     *
+     * @return MySQL
+     */
     public static function right(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'right')]);
 
-        return new static;
+        return new static();
     }
 
-    public static function join(string $table, string $valueFrom, string $valueUpTo, bool $withAlias = true): MySQL
+    /**
+     * Nests the JOIN statement in the current query
+     *
+     * @param string $table [Table name]
+     * @param string $valueFrom [Column from]
+     * @param string $valueTo [Column to]
+     * @param bool $withAlias [Determines if the table is nested with the
+     * database name]
+     *
+     * @return MySQL
+     */
+    public static function join(string $table, string $valueFrom, string $valueTo, bool $withAlias = true): MySQL
     {
         if ($withAlias) {
             self::addQueryList([
@@ -965,464 +1437,795 @@ class MySQL extends Connection implements
                 self::$dbname,
                 ".{$table}",
                 self::getKey(Driver::MYSQL, 'on'),
-                " {$valueFrom} = {$valueUpTo}"
+                " {$valueFrom} = {$valueTo}"
             ]);
         } else {
             self::addQueryList([
                 self::getKey(Driver::MYSQL, 'join'),
                 " {$table}",
                 self::getKey(Driver::MYSQL, 'on'),
-                " {$valueFrom} = {$valueUpTo}"
+                " {$valueFrom} = {$valueTo}"
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function where(Closure|string|bool $valueType = true): MySQL
+    /**
+     * Nests the WHERE statement in the current query
+     *
+     * @param Closure|string|bool $where [You can add a WHERE to the current
+     * statement, group by group, or return the WHERE statement]
+     *
+     * @return MySQL
+     */
+    public static function where(Closure|string|bool $where = true): MySQL
     {
-        if (is_callable($valueType)) {
+        if (is_callable($where)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
 
-            $valueType();
-        } elseif (is_string($valueType)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'where'), " {$valueType}"]);
+            $where();
+        } elseif (is_string($where)) {
+            self::addQueryList([self::getKey(Driver::MYSQL, 'where'), " {$where}"]);
         } else {
-            if ($valueType) {
+            if ($where) {
                 self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
             }
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function and(Closure|string|bool $valueType = true): MySQL
+    /**
+     * Nests the AND statement in the current query
+     *
+     * @param Closure|string|bool $and [You can add a AND to the current
+     * statement, group by group, or return the AND statement]
+     *
+     * @return MySQL
+     */
+    public static function and(Closure|string|bool $and = true): MySQL
     {
-        if (is_callable($valueType)) {
+        if (is_callable($and)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
 
-            $valueType();
-        } elseif (is_string($valueType)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'and'), " {$valueType}"]);
+            $and();
+        } elseif (is_string($and)) {
+            self::addQueryList([self::getKey(Driver::MYSQL, 'and'), " {$and}"]);
         } else {
-            if ($valueType) {
+            if ($and) {
                 self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
             }
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function or(Closure|string|bool $valueType = true): MySQL
+    /**
+     * Nests the OR statement in the current query
+     *
+     * @param Closure|string|bool $or [You can add a OR to the current
+     * statement, group by group, or return the OR statement]
+     *
+     * @return MySQL
+     */
+    public static function or(Closure|string|bool $or = true): MySQL
     {
-        if (is_callable($valueType)) {
+        if (is_callable($or)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'or')]);
 
-            $valueType();
-        } elseif (is_string($valueType)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'or'), " {$valueType}"]);
+            $or();
+        } elseif (is_string($or)) {
+            self::addQueryList([self::getKey(Driver::MYSQL, 'or'), " {$or}"]);
         } else {
-            if ($valueType) {
+            if ($or) {
                 self::addQueryList([self::getKey(Driver::MYSQL, 'or')]);
             }
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Gets the column
+     *
+     * @param string $column [Column name]
+     * @param string $table [Table name]
+     *
+     * @return string
+     */
     public static function getColumn(string $column, string $table = ''): string
     {
         return '' === $table ? trim($column) : trim("{$table}.{$column}");
     }
 
+    /**
+     * Adds a column to the current statement
+     *
+     * @param string $column [Column name]
+     * @param string $table [Table name]
+     *
+     * @return MySQL
+     */
     public static function column(string $column, string $table = ''): MySQL
     {
         self::addQueryList('' === $table ? [' ', trim($column)] : [' ', trim("{$table}.{$column}")]);
 
-        return new static;
+        return new static();
     }
 
-    public static function equalTo(string $column, mixed $value): MySQL
+    /**
+     * Adds an "equals to" to the current statement
+     *
+     * @param string $column [Column name]
+     * @param mixed $equalTo [Equal to]
+     *
+     * @return MySQL
+     */
+    public static function equalTo(string $column, mixed $equalTo): MySQL
     {
         if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' = ', trim($value)]);
+            self::addQueryList([' ', trim($column), ' = ', trim($equalTo)]);
         } else {
-            self::addRows([$value]);
+            self::addRows([$equalTo]);
 
             self::addQueryList([' ', trim($column . ' = ?')]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function notEqualTo(string $column, mixed $value): MySQL
+    /**
+     * Adds a "not equal to" to the current statement
+     *
+     * @param string $column [Column name]
+     * @param mixed $notEqualTo [Not equal to]
+     *
+     * @return MySQL
+     */
+    public static function notEqualTo(string $column, mixed $notEqualTo): MySQL
     {
         if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' <> ', trim($value)]);
+            self::addQueryList([' ', trim($column), ' <> ', trim($notEqualTo)]);
         } else {
-            self::addRows([$value]);
+            self::addRows([$notEqualTo]);
 
             self::addQueryList([' ', trim($column . ' <> ?')]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function greaterThan(string $column, mixed $value): MySQL
+    /**
+     * Adds a "greater than" to the current statement
+     *
+     * @param string $column [Column name]
+     * @param mixed $greaterThan [Greather than]
+     *
+     * @return MySQL
+     */
+    public static function greaterThan(string $column, mixed $greaterThan): MySQL
     {
         if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' > ', trim($value)]);
+            self::addQueryList([' ', trim($column), ' > ', trim($greaterThan)]);
         } else {
-            self::addRows([$value]);
+            self::addRows([$greaterThan]);
 
             self::addQueryList([' ', trim($column . ' > ?')]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function lessThan(string $column, mixed $value): MySQL
+    /**
+     * Adds a "less than" to the current statement
+     *
+     * @param string $column [Column name]
+     * @param mixed $lessThan [Less than]
+     *
+     * @return MySQL
+     */
+    public static function lessThan(string $column, mixed $lessThan): MySQL
     {
         if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' < ', trim($value)]);
+            self::addQueryList([' ', trim($column), ' < ', trim($lessThan)]);
         } else {
-            self::addRows([$value]);
+            self::addRows([$lessThan]);
 
             self::addQueryList([' ', trim($column . ' < ?')]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function greaterThanOrEqualTo(string $column, mixed $value): MySQL
+    /**
+     * Adds a "greater than or equal to" to the current statement
+     *
+     * @param string $column [Column name]
+     * @param mixed $greaterThanOrEqualTo [Greater than or equal to]
+     *
+     * @return MySQL
+     */
+    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): MySQL
     {
         if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' >= ', trim($value)]);
+            self::addQueryList([' ', trim($column), ' >= ', trim($greaterThanOrEqualTo)]);
         } else {
-            self::addRows([$value]);
+            self::addRows([$greaterThanOrEqualTo]);
 
             self::addQueryList([' ', trim($column . ' >= ?')]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function lessThanOrEqualTo(string $column, mixed $value): MySQL
+    /**
+     * Adds a "less than or equal to" to the current statement
+     *
+     * @param string $column [Column name]
+     * @param mixed $lessThanOrEqualTo [Less than or equal to]
+     *
+     * @return MySQL
+     */
+    public static function lessThanOrEqualTo(string $column, mixed $lessThanOrEqualTo): MySQL
     {
         if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' <= ', trim($value)]);
+            self::addQueryList([' ', trim($column), ' <= ', trim($lessThanOrEqualTo)]);
         } else {
-            self::addRows([$value]);
+            self::addRows([$lessThanOrEqualTo]);
 
             self::addQueryList([' ', trim($column . ' <= ?')]);
         }
 
-        return new static;
+        return new static();
     }
 
+    /**
+     * Nests the MIN statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function min(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'min')));
     }
 
+    /**
+     * Nests the MAX statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function max(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'max')));
     }
 
+    /**
+     * Nests the AVG statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function avg(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'avg')));
     }
 
+    /**
+     * Nests the SUM statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function sum(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'sum')));
     }
 
+    /**
+     * Nests the COUNT statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function count(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'count')));
     }
 
+    /**
+     * Nests the DAY statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function day(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'day')));
     }
 
+    /**
+     * Nests the MONTH statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function month(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'month')));
     }
 
+    /**
+     * Nests the YEAR statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return string
+     */
     public static function year(string $column): string
     {
         return trim(str_replace('?', $column, self::getKey(Driver::MYSQL, 'year')));
     }
 
-    public static function int(string $name, ?int $length = null): MySQL
+    /**
+     * Nests the INT statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int|null $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function int(string $column, ?int $length = null): MySQL
     {
         if (null === $length) {
             self::addQueryList([
-                " {$name}",
+                " {$column}",
                 str_replace('(?)', '', self::getKey(Driver::MYSQL, 'int'))
             ]);
         } else {
             self::addQueryList([
-                " {$name}",
+                " {$column}",
                 str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'int'))
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function bigInt(string $name, ?int $length = null): MySQL
+    /**
+     * Nests the BIGINT statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int|null $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function bigInt(string $column, ?int $length = null): MySQL
     {
         if (null === $length) {
             self::addQueryList([
-                " {$name}",
+                " {$column}",
                 str_replace('(?)', '', self::getKey(Driver::MYSQL, 'bigint'))
             ]);
         } else {
             self::addQueryList([
-                " {$name}",
+                " {$column}",
                 str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'bigint'))
             ]);
         }
 
-        return new static;
+        return new static();
     }
 
-    public static function decimal(string $name): MySQL
+    /**
+     * Nests the DECIMAL statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function decimal(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'decimal')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function double(string $name): MySQL
+    /**
+     * Nests the DOUBLE statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function double(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'double')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function float(string $name): MySQL
+    /**
+     * Nests the FLOAT statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function float(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'float')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function mediumInt(string $name, int $length): MySQL
+    /**
+     * Nests the MEDIUMINT statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function mediumInt(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'mediumint'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function real(string $name): MySQL
+    /**
+     * Nests the REAL statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function real(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'real')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function smallInt(string $name, int $length): MySQL
+    /**
+     * Nests the SMALLINT statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function smallInt(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'smallint'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function tinyInt(string $name, int $length): MySQL
+    /**
+     * Nests the TINYINT statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function tinyInt(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'tinyint'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function blob(string $name): MySQL
+    /**
+     * Nests the BLOB statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function blob(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'blob')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function varBinary(string $name, string|int $length = 'MAX'): MySQL
+    /**
+     * Nests the VARBINARY statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param string|int $length [length]
+     *
+     * @return MySQL
+     */
+    public static function varBinary(string $column, string|int $length = 'MAX'): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varbinary'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function char(string $name, int $length): MySQL
+    /**
+     * Nests the CHAR statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function char(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'char'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function json(string $name): MySQL
+    /**
+     * Nests the JSON statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function json(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'json')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function nchar(string $name, int $length): MySQL
+    /**
+     * Nests the NCHAR statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function nchar(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nchar'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function nvarchar(string $name, int $length): MySQL
+    /**
+     * Nests the NVARCHAR statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function nvarchar(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nvarchar'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function varchar(string $name, int $length): MySQL
+    /**
+     * Nests the VARCHAR statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function varchar(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varchar'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function longText(string $name): MySQL
+    /**
+     * Nests the LONGTEXT statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function longText(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'longtext')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function mediumText(string $name): MySQL
+    /**
+     * Nests the MEDIUMTEXT statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function mediumText(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'mediumtext')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function text(string $name, int $length): MySQL
+    /**
+     * Nests the TEXT statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param int $length [Length]
+     *
+     * @return MySQL
+     */
+    public static function text(string $column, int $length): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'text'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function tinyText(string $name): MySQL
+    /**
+     * Nests the TINYTEXT statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function tinyText(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'tinytext')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function enum(string $name, array $options): MySQL
+    /**
+     * Nests the ENUM statement in the current query
+     *
+     * @param string $column [Column name]
+     * @param array<int, string> $options [Options]
+     *
+     * @return MySQL
+     */
+    public static function enum(string $column, array $options): MySQL
     {
         $split = array_map(fn ($op) => "'{$op}'", $options);
 
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             str_replace('?', implode(', ', $split), self::getKey(Driver::MYSQL, 'enum'))
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function date(string $name): MySQL
+    /**
+     * Nests the DATE statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function date(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'date')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function time(string $name): MySQL
+    /**
+     * Nests the TIME statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function time(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'time')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function timeStamp(string $name): MySQL
+    /**
+     * Nests the TIMESTAMP statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function timeStamp(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'timestamp')
         ]);
 
-        return new static;
+        return new static();
     }
 
-    public static function dateTime(string $name): MySQL
+    /**
+     * Nests the DATETIME statement in the current query
+     *
+     * @param string $column [Column name]
+     *
+     * @return MySQL
+     */
+    public static function dateTime(string $column): MySQL
     {
         self::addQueryList([
-            " {$name}",
+            " {$column}",
             self::getKey(Driver::MYSQL, 'datetime')
         ]);
 
-        return new static;
+        return new static();
     }
 }

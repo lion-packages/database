@@ -21,17 +21,17 @@ use Lion\Database\Interface\TransactionInterface;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
- * that interact with PostgreSQL databases.
+ * that interact with PostgreSQL databases
  *
  * Key Features:
  *
- * * Intuitive methods: Simple methods to build SQL queries programmatically.
+ * * Intuitive methods: Simple methods to build SQL queries programmatically
  * * SQL Injection Prevention: Helps prevent SQL injection attacks by sanitizing
- *   data entered in queries.
+ *   data entered in queries
  * * Flexibility: Allows the construction of dynamic queries adapted to
- *   different application scenarios.
+ *   different application scenarios
  * * Optimization for PostgreSQL: Designed specifically to work with PostgreSQL,
- *   guaranteeing compatibility and optimization with this DBMS.
+ *   guaranteeing compatibility and optimization with this DBMS
  *
  * @property string $databaseMethod [Defines the database connection method to
  * use]
