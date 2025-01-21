@@ -203,6 +203,8 @@ class MySQLTest extends Test
             ->closeQuery()
             ->execute();
 
+        var_dump($createTableResponse);
+
         $this->assertIsObject($createTableResponse);
         $this->assertObjectHasProperty('status', $createTableResponse);
         $this->assertObjectHasProperty('message', $createTableResponse);
