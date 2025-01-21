@@ -11,50 +11,26 @@ use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Test\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionException;
 use Tests\Provider\MySQLSchemaProviderTrait;
 
 class MySQLTest extends Test
 {
     use MySQLSchemaProviderTrait;
 
-    const DATABASE_TYPE = 'mysql';
-    const DATABASE_HOST = 'mysql';
-    const DATABASE_PORT = 3306;
-    const DATABASE_NAME = 'lion_database';
-    const DATABASE_USER = 'root';
-    const DATABASE_PASSWORD = 'lion';
-    const DATABASE_NAME_SECOND = 'lion_database_second';
-    const CONNECTION_DATA = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
-    ];
-    const CONNECTION_DATA_SECOND = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME_SECOND,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
-    ];
-    const CONNECTIONS = [
-        'default' => self::DATABASE_NAME,
-        'connections' => [self::DATABASE_NAME => self::CONNECTION_DATA]
-    ];
-
     private MySQL $mysql;
 
+    /**
+     * @throws ReflectionException
+     */
     protected function setUp(): void
     {
         Driver::run([
-            'default' => self::DATABASE_NAME,
+            'default' => DATABASE_NAME_MYSQL,
             'connections' => [
-                self::DATABASE_NAME => self::CONNECTION_DATA,
-                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND
-            ]
+                DATABASE_NAME_MYSQL => CONNECTION_DATA_MYSQL,
+                DATABASE_NAME_SECOND_MYSQL => CONNECTION_DATA_SECOND_MYSQL,
+            ],
         ]);
 
         $this->mysql = new MySQL();
@@ -62,13 +38,16 @@ class MySQLTest extends Test
         $this->initReflection($this->mysql);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function tearDown(): void
     {
-        $this->setPrivateProperty('connections', self::CONNECTIONS);
+        $this->setPrivateProperty('connections', CONNECTIONS_MYSQL);
 
-        $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+        $this->setPrivateProperty('activeConnection', DATABASE_NAME_MYSQL);
 
-        $this->setPrivateProperty('dbname', self::DATABASE_NAME);
+        $this->setPrivateProperty('dbname', DATABASE_NAME_MYSQL);
 
         $this->setPrivateProperty('sql', '');
 
@@ -124,39 +103,30 @@ class MySQLTest extends Test
         $this->assertSame($message, $response->message);
     }
 
-    // public function testExample(): void
-    // {
-    //     $response = $this->mysql
-    //         ->run(self::CONNECTIONS)
-    //         ->connection(self::DATABASE_NAME)
-    //         ->createTable('example_tests', function () {
-    //             $this->mysql
-    //                 ->int('id')->notNull()->autoIncrement()->primaryKey()
-    //                 ->int('num')->notNull()->comment('comment num');
-    //         })
-    //         ->execute();
-
-    //     $this->assertTrue(true);
-    // }
-
+    /**
+     * @throws ReflectionException
+     */
     public function testRun(): void
     {
-        $this->assertIntances($this->mysql->run(self::CONNECTIONS));
-        $this->assertSame(self::CONNECTIONS, $this->getPrivateProperty('connections'));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
+        $this->assertIntances($this->mysql->run(CONNECTIONS_MYSQL));
+        $this->assertSame(CONNECTIONS_MYSQL, $this->getPrivateProperty('connections'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('dbname'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testConnection(): void
     {
-        $this->mysql->addConnection(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+        $this->mysql->addConnection(DATABASE_NAME_SECOND_MYSQL, CONNECTION_DATA_SECOND_MYSQL);
 
-        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(self::DATABASE_NAME_SECOND));
-        $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('activeConnection'));
-        $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('dbname'));
-        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(self::DATABASE_NAME));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(DATABASE_NAME_SECOND_MYSQL));
+        $this->assertSame(DATABASE_NAME_SECOND_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_SECOND_MYSQL, $this->getPrivateProperty('dbname'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(DATABASE_NAME_MYSQL));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('dbname'));
     }
 
     #[DataProvider('createDatabaseProvider')]
@@ -170,7 +140,7 @@ class MySQLTest extends Test
     #[DataProvider('dropDatabaseProvider')]
     public function testDropDatabase(string $database, string $query, array $connection): void
     {
-        $this->assertResponse($this->mysql->connection(self::DATABASE_NAME)->createDatabase($database)->execute());
+        $this->assertResponse($this->mysql->connection(DATABASE_NAME_MYSQL)->createDatabase($database)->execute());
 
         $this->mysql->addConnection($database, $connection);
 
@@ -184,7 +154,7 @@ class MySQLTest extends Test
     {
         $this->assertIntances(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($table, function () {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -197,7 +167,7 @@ class MySQLTest extends Test
 
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($table, function () {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -215,7 +185,7 @@ class MySQLTest extends Test
     {
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($table, function () {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -224,16 +194,16 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $this->assertIntances($this->mysql->connection(self::DATABASE_NAME)->dropTable($table));
+        $this->assertIntances($this->mysql->connection(DATABASE_NAME_MYSQL)->dropTable($table));
         $this->assertQuery($query);
-        $this->assertResponse($this->mysql->connection(self::DATABASE_NAME)->dropTable($table)->execute());
+        $this->assertResponse($this->mysql->connection(DATABASE_NAME_MYSQL)->dropTable($table)->execute());
     }
 
     public function testDropTables(): void
     {
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable('roles_lion', function () {
                     $this->mysql
                         ->int('idroles')->notNull()->autoIncrement()->primaryKey()
@@ -244,7 +214,7 @@ class MySQLTest extends Test
 
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable('users_lion', function () {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -253,7 +223,7 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
+        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
 
         foreach ($driversMysql->show()->tables()->getAll() as $table) {
             $this->assertContains($table->Tables_in_lion_database, ['users_lion', 'roles_lion']);
@@ -275,7 +245,7 @@ class MySQLTest extends Test
     {
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($table, function () {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -284,7 +254,7 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
+        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse($driversMysql->table($table)->insert(['num' => 1])->execute());
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
@@ -298,7 +268,7 @@ class MySQLTest extends Test
     {
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($table, function () {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -310,7 +280,7 @@ class MySQLTest extends Test
 
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createStoreProcedure($storeProcedure, function () {
                     $this->mysql
                         ->in()->int('_num')
@@ -328,7 +298,7 @@ class MySQLTest extends Test
 
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createStoreProcedure("update_{$storeProcedure}", function () {
                     $this->mysql
                         ->in()->int('_num')
@@ -343,17 +313,17 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
+        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse($driversMysql->call($storeProcedure, [1, 1])->execute());
         $this->assertResponse($driversMysql->call("update_{$storeProcedure}", [1, 1])->execute());
 
         $this->assertResponse(
-            $this->mysql->connection(self::DATABASE_NAME)->dropStoreProcedure($storeProcedure)->execute()
+            $this->mysql->connection(DATABASE_NAME_MYSQL)->dropStoreProcedure($storeProcedure)->execute()
         );
 
         $this->assertResponse(
-            $this->mysql->connection(self::DATABASE_NAME)->dropStoreProcedure("update_{$storeProcedure}")->execute()
+            $this->mysql->connection(DATABASE_NAME_MYSQL)->dropStoreProcedure("update_{$storeProcedure}")->execute()
         );
 
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
@@ -365,7 +335,7 @@ class MySQLTest extends Test
     {
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createStoreProcedure($storeProcedure, function () {
                     $this->mysql
                         ->in()->int('_num')
@@ -382,7 +352,7 @@ class MySQLTest extends Test
         );
 
         $this->assertResponse(
-            $this->mysql->connection(self::DATABASE_NAME)->dropStoreProcedure($storeProcedure)->execute()
+            $this->mysql->connection(DATABASE_NAME_MYSQL)->dropStoreProcedure($storeProcedure)->execute()
         );
     }
 
@@ -391,7 +361,7 @@ class MySQLTest extends Test
     {
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($parentTable, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -402,7 +372,7 @@ class MySQLTest extends Test
 
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($childTable, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -414,7 +384,7 @@ class MySQLTest extends Test
 
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createView($view, function (DriversMySQL $driversMysql) use ($parentTable, $childTable): void {
                     $driversMysql
                         ->table($childTable)
@@ -433,7 +403,7 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
+        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse(
             $driversMysql->table($parentTable)->insert(['description' => 'roles_description'])->execute()
@@ -453,7 +423,7 @@ class MySQLTest extends Test
     {
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createTable($table, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
@@ -464,7 +434,7 @@ class MySQLTest extends Test
 
         $this->assertResponse(
             $this->mysql
-                ->connection(self::DATABASE_NAME)
+                ->connection(DATABASE_NAME_MYSQL)
                 ->createView($view, function (DriversMySQL $driversMysql) use ($table): void {
                     $driversMysql
                         ->table($table)
@@ -473,7 +443,7 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(self::CONNECTIONS);
+        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse($driversMysql->table($table)->insert(['num' => 1])->execute());
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
@@ -482,6 +452,9 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->dropView($view)->execute());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('primaryKeyProvider')]
     public function testPrimaryKey(string $table, string $column, array $configColumn): void
     {
@@ -494,6 +467,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('autoIncrementProvider')]
     public function testAutoIncrement(string $table, string $column, array $configColumn): void
     {
@@ -506,6 +482,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('notNullProvider')]
     public function testNotNull(string $table, string $column, array $configColumn): void
     {
@@ -518,6 +497,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('nullProvider')]
     public function testNull(string $table, string $column, array $configColumn): void
     {
@@ -530,6 +512,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('commentProvider')]
     public function testComment(string $table, string $column, string $comment, array $configColumn): void
     {
@@ -542,6 +527,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('uniqueProvider')]
     public function testUnique(string $table, string $column, array $configColumn): void
     {
@@ -554,6 +542,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('defaultProvider')]
     public function testDefault(string $table, string $column, mixed $default, array $configColumn): void
     {
@@ -566,6 +557,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('foreignProvider')]
     public function testForeign(string $table, string $column, array $relation, array $configColumn): void
     {
@@ -578,6 +572,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('intProvider')]
     public function testInt(string $table, string $column, ?int $length, array $configColumn): void
     {
@@ -589,6 +586,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('bigIntProvider')]
     public function testBigInt(string $table, string $column, ?int $length, array $configColumn): void
     {
@@ -600,6 +600,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('decimalProvider')]
     public function testDecimal(string $table, string $column, array $configColumn): void
     {
@@ -611,6 +614,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('doubleProvider')]
     public function testDouble(string $table, string $column, array $configColumn): void
     {
@@ -622,6 +628,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('floatProvider')]
     public function testFloat(string $table, string $column, array $configColumn): void
     {
@@ -633,6 +642,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('mediumIntProvider')]
     public function testMediumInt(string $table, string $column, int $length, array $configColumn): void
     {
@@ -644,6 +656,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('realProvider')]
     public function testReal(string $table, string $column, array $configColumn): void
     {
@@ -655,6 +670,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('smallIntProvider')]
     public function testSmallInt(string $table, string $column, int $length, array $configColumn): void
     {
@@ -666,6 +684,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('tinyIntProvider')]
     public function testTinyInt(string $table, string $column, int $length, array $configColumn): void
     {
@@ -677,6 +698,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('blobProvider')]
     public function testBlob(string $table, string $column, array $configColumn): void
     {
@@ -688,6 +712,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('varBinaryProvider')]
     public function testVarBinary(string $table, string $column, string|int $length, array $configColumn): void
     {
@@ -699,6 +726,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('charProvider')]
     public function testChar(string $table, string $column, int $length, array $configColumn): void
     {
@@ -710,6 +740,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('jsonProvider')]
     public function testJson(string $table, string $column, array $configColumn): void
     {
@@ -721,6 +754,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('ncharProvider')]
     public function testNchar(string $table, string $column, int $length, array $configColumn): void
     {
@@ -732,6 +768,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('nvarcharProvider')]
     public function testNvarchar(string $table, string $column, int $length, array $configColumn): void
     {
@@ -743,6 +782,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('varcharProvider')]
     public function testVarchar(string $table, string $column, int $length, array $configColumn): void
     {
@@ -754,6 +796,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('longTextProvider')]
     public function testLongText(string $table, string $column, array $configColumn): void
     {
@@ -765,6 +810,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('mediumTextProvider')]
     public function testMediumText(string $table, string $column, array $configColumn): void
     {
@@ -776,6 +824,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('textProvider')]
     public function testText(string $table, string $column, int $length, array $configColumn): void
     {
@@ -787,6 +838,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('tinyTextProvider')]
     public function testTinyText(string $table, string $column, array $configColumn): void
     {
@@ -798,6 +852,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('enumProvider')]
     public function testEnum(string $table, string $column, array $configColumn): void
     {
@@ -809,6 +866,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('dateProvider')]
     public function testDate(string $table, string $column, array $configColumn): void
     {
@@ -820,6 +880,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('timeProvider')]
     public function testTime(string $table, string $column, array $configColumn): void
     {
@@ -831,6 +894,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('timeStampProvider')]
     public function testTimeStamp(string $table, string $column, array $configColumn): void
     {
@@ -842,6 +908,9 @@ class MySQLTest extends Test
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('dateTimeProvider')]
     public function testDateTime(string $table, string $column, array $configColumn): void
     {

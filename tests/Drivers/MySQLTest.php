@@ -14,6 +14,7 @@ use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
 use PHPUnit\Framework\Attributes\TestWith;
+use ReflectionException;
 use stdClass;
 use Tests\Provider\MySQLProviderTrait;
 
@@ -21,38 +22,12 @@ class MySQLTest extends Test
 {
     use MySQLProviderTrait;
 
-    const DATABASE_TYPE = 'mysql';
-    const DATABASE_HOST = 'mysql';
-    const DATABASE_PORT = 3306;
-    const DATABASE_NAME = 'lion_database';
-    const DATABASE_USER = 'root';
-    const DATABASE_PASSWORD = 'lion';
-    const DATABASE_NAME_SECOND = 'lion_database_second';
-    const CONNECTION_DATA = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
-    ];
-    const CONNECTION_DATA_SECOND = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME_SECOND,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
-    ];
-    const CONNECTIONS = [
-        'default' => self::DATABASE_NAME,
-        'connections' => [self::DATABASE_NAME => self::CONNECTION_DATA]
-    ];
-    const ADMINISTRATOR = 'administrator';
-
     private MySQL $mysql;
     private string $actualCode;
 
+    /**
+     * @throws ReflectionException
+     */
     protected function setUp(): void
     {
         $this->mysql = new MySQL();
@@ -64,6 +39,9 @@ class MySQLTest extends Test
         $this->setActualCode();
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function tearDown(): void
     {
         $this->setPrivateProperty('connections', []);
@@ -93,6 +71,9 @@ class MySQLTest extends Test
         $this->setPrivateProperty('databaseInstances', []);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function setActualCode(): void
     {
         $this->setPrivateProperty('actualCode', $this->actualCode);
@@ -112,11 +93,17 @@ class MySQLTest extends Test
         return $query->data->query;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function assertMessage(string $message): void
     {
         $this->assertSame($message, $this->getPrivateProperty('message'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function assertAddRows(mixed $assertValue): void
     {
         $rows = $this->getPrivateProperty('dataInfo');
@@ -128,13 +115,13 @@ class MySQLTest extends Test
     #[Testing]
     public function runInterface(): void
     {
-        $this->assertInstances($this->mysql->run(self::CONNECTIONS), [
+        $this->assertInstances($this->mysql->run(CONNECTIONS_MYSQL), [
             MySQL::class,
             Connection::class,
             DatabaseConfigInterface::class,
         ]);
 
-        $this->assertSame(self::CONNECTIONS, $this->getPrivateProperty('connections'));
+        $this->assertSame(CONNECTIONS_MYSQL, $this->getPrivateProperty('connections'));
     }
 
     #[Testing]
@@ -154,27 +141,30 @@ class MySQLTest extends Test
         $this->expectExceptionCode(500);
         $this->expectExceptionMessage('no databases have been defined');
 
-        $this->mysql->run(['default' => self::DATABASE_NAME]);
+        $this->mysql->run(['default' => DATABASE_NAME_MYSQL]);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function connectionInterface(): void
     {
         $this->mysql
-            ->run(self::CONNECTIONS)
-            ->addConnection(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+            ->run(CONNECTIONS_MYSQL)
+            ->addConnection(DATABASE_NAME_SECOND_MYSQL, CONNECTION_DATA_SECOND_MYSQL);
 
-        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(self::DATABASE_NAME_SECOND));
-        $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('activeConnection'));
-        $this->assertSame(self::DATABASE_NAME_SECOND, $this->getPrivateProperty('dbname'));
-        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(self::DATABASE_NAME));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(DATABASE_NAME_SECOND_MYSQL));
+        $this->assertSame(DATABASE_NAME_SECOND_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_SECOND_MYSQL, $this->getPrivateProperty('dbname'));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(DATABASE_NAME_MYSQL));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('dbname'));
     }
 
     #[Testing]
-    #[TestWith(['connection' => self::DATABASE_NAME])]
-    #[TestWith(['connection' => self::DATABASE_NAME_SECOND])]
+    #[TestWith(['connection' => DATABASE_NAME_MYSQL])]
+    #[TestWith(['connection' => DATABASE_NAME_SECOND_MYSQL])]
     public function connectionInterfaceConnectionDoesNotExist(string $connection): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -184,11 +174,12 @@ class MySQLTest extends Test
         $this->mysql->connection($connection);
     }
 
-    public function testExecute(): void
+    #[Testing]
+    public function execute(): void
     {
         $createTableResponse = $this->mysql
-            ->run(self::CONNECTIONS)->isSchema()->enableInsert(true)
-            ->use(self::DATABASE_NAME)->closeQuery()
+            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->use(DATABASE_NAME_MYSQL)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
             ->groupQuery(function () {
@@ -202,8 +193,6 @@ class MySQLTest extends Test
             ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
             ->closeQuery()
             ->execute();
-
-        var_dump($createTableResponse);
 
         $this->assertIsObject($createTableResponse);
         $this->assertObjectHasProperty('status', $createTableResponse);
@@ -212,11 +201,12 @@ class MySQLTest extends Test
         $this->assertSame('execution finished', $createTableResponse->message);
     }
 
-    public function testExecuteInsert(): void
+    #[Testing]
+    public function executeInsert(): void
     {
         $this->mysql
-            ->run(self::CONNECTIONS)->isSchema()->enableInsert(true)
-            ->use(self::DATABASE_NAME)->closeQuery()
+            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->use(DATABASE_NAME_MYSQL)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
             ->groupQuery(function () {
@@ -231,7 +221,7 @@ class MySQLTest extends Test
             ->closeQuery()
             ->execute();
 
-        $response = $this->mysql->table('roles')->insert(['roles_name' => self::ADMINISTRATOR])->execute();
+        $response = $this->mysql->table('roles')->insert(['roles_name' => ADMINISTRATOR_MYSQL])->execute();
 
         $this->assertIsObject($response);
         $this->assertObjectHasProperty('status', $response);
@@ -240,14 +230,15 @@ class MySQLTest extends Test
         $this->assertSame('execution finished', $response->message);
     }
 
-    public function testGet(): void
+    #[Testing]
+    public function get(): void
     {
         $this->mysql
-            ->run(self::CONNECTIONS)->isSchema()->enableInsert(true)
-            ->use(self::DATABASE_NAME)->closeQuery()
+            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->use(DATABASE_NAME_MYSQL)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
-            ->groupQuery(function () {
+            ->groupQuery(function (): void {
                 $this->mysql
                     ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
                     ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
@@ -259,26 +250,27 @@ class MySQLTest extends Test
             ->closeQuery()
             ->execute();
 
-        $this->mysql->table('roles')->insert(['roles_name' => self::ADMINISTRATOR])->execute();
+        $this->mysql->table('roles')->insert(['roles_name' => ADMINISTRATOR_MYSQL])->execute();
 
         $validateRowResponse = $this->mysql
             ->table('roles')
             ->select('roles_name')
             ->where()
-            ->equalTo('roles_name', self::ADMINISTRATOR)
+            ->equalTo('roles_name', ADMINISTRATOR_MYSQL)
             ->get();
 
         $this->assertIsObject($validateRowResponse);
         $this->assertInstanceOf(stdClass::class, $validateRowResponse);
         $this->assertObjectHasProperty('roles_name', $validateRowResponse);
-        $this->assertSame(self::ADMINISTRATOR, $validateRowResponse->roles_name);
+        $this->assertSame(ADMINISTRATOR_MYSQL, $validateRowResponse->roles_name);
     }
 
-    public function testGetAll(): void
+    #[Testing]
+    public function getAll(): void
     {
         $this->mysql
-            ->run(self::CONNECTIONS)->isSchema()->enableInsert(true)
-            ->use(self::DATABASE_NAME)->closeQuery()
+            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->use(DATABASE_NAME_MYSQL)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
             ->groupQuery(function () {
@@ -294,8 +286,8 @@ class MySQLTest extends Test
             ->execute();
 
         $this->mysql->table('roles')->bulk(['roles_name'], [
-            [self::ADMINISTRATOR],
-            [self::ADMINISTRATOR . '-2']
+            [ADMINISTRATOR_MYSQL],
+            [ADMINISTRATOR_MYSQL . '-2']
         ])->execute();
 
         $validateRowResponse = $this->mysql->table('roles')->select('roles_name')->getAll();
@@ -304,7 +296,7 @@ class MySQLTest extends Test
 
         foreach ($validateRowResponse as $row) {
             $this->assertObjectHasProperty('roles_name', $row);
-            $this->assertContains($row->roles_name, [self::ADMINISTRATOR, (self::ADMINISTRATOR . '-2')]);
+            $this->assertContains($row->roles_name, [ADMINISTRATOR_MYSQL, (ADMINISTRATOR_MYSQL . '-2')]);
         }
     }
 
@@ -509,25 +501,25 @@ class MySQLTest extends Test
 
     public function testAddQuery(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->addQuery(self::DATABASE_NAME));
-        $this->assertSame(self::DATABASE_NAME, $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->addQuery(DATABASE_NAME_MYSQL));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getQuery());
     }
 
     public function testIfExist(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->ifExists(self::DATABASE_NAME));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->ifExists(DATABASE_NAME_MYSQL));
         $this->assertSame('IF EXISTS `lion_database`', $this->getQuery());
     }
 
     public function testIfNotExist(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->ifNotExists(self::DATABASE_NAME));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->ifNotExists(DATABASE_NAME_MYSQL));
         $this->assertSame('IF NOT EXISTS `lion_database`', $this->getQuery());
     }
 
     public function testUse(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->use(self::DATABASE_NAME));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->use(DATABASE_NAME_MYSQL));
         $this->assertSame('USE `lion_database`', $this->getQuery());
     }
 
@@ -582,7 +574,7 @@ class MySQLTest extends Test
 
     public function testRecursive(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->recursive(self::DATABASE_USER));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->recursive(DATABASE_USER_MYSQL));
         $this->assertSame('RECURSIVE root AS', $this->getQuery());
     }
 
@@ -610,7 +602,7 @@ class MySQLTest extends Test
     #[DataProvider('tableIsStringProvider')]
     public function testTableIsString(string $table, bool $withDatabase, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table, $withDatabase));
         $this->assertSame($return, $this->getPrivateProperty('table'));
@@ -626,7 +618,7 @@ class MySQLTest extends Test
     #[DataProvider('viewIsStringProvider')]
     public function testViewIsString(string $view, bool $withDatabase, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->view($view, $withDatabase));
         $this->assertSame($return, $this->getPrivateProperty('view'));
@@ -684,7 +676,7 @@ class MySQLTest extends Test
 
     public function testCreateTable(): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table('users')->createTable());
         $this->assertSame('CREATE TABLE lion_database.users', $this->getQuery());
@@ -709,7 +701,7 @@ class MySQLTest extends Test
     #[DataProvider('fromWithFunctionsProvider')]
     public function testFromWithFunctions(string $callableFunction, string $value, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->$callableFunction($value)->from());
         $this->assertSame($return, $this->getQuery());
@@ -729,7 +721,7 @@ class MySQLTest extends Test
 
     public function testConstraints(): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $query = 'SELECT CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME ';
 
@@ -768,7 +760,7 @@ class MySQLTest extends Test
         $this->setPrivateProperty('isSchema', $enable);
 
         $this->mysql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_MYSQL)
             ->enableInsert($enable)
             ->table($table)
             ->bulk($columns, $rows);
@@ -788,7 +780,7 @@ class MySQLTest extends Test
 
     public function testCall(): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->call('store_procedure', [1, 2, 3]));
         $this->assertAddRows([1, 2, 3]);
@@ -799,7 +791,7 @@ class MySQLTest extends Test
     #[DataProvider('deleteProvider')]
     public function testDelete(string $table, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->delete());
         $this->assertSame($return, $this->getQuery());
@@ -809,7 +801,7 @@ class MySQLTest extends Test
     #[DataProvider('updateProvider')]
     public function testUpdate(string $table, array $params, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->update($params));
         $this->assertAddRows(array_values($params));
@@ -820,7 +812,7 @@ class MySQLTest extends Test
     #[DataProvider('insertProvider')]
     public function testInsert(string $table, array $params, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->insert($params));
         $this->assertAddRows(array_values($params));
@@ -830,7 +822,7 @@ class MySQLTest extends Test
 
     public function testInsertIsSchema(): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $sql = 'INSERT INTO lion_database.users (users_name, users_last_name) VALUES (_lion, _root)';
 
@@ -856,7 +848,7 @@ class MySQLTest extends Test
     #[DataProvider('selectProvider')]
     public function testSelect(string $function, string $value, array $columns, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->$function($value)->select(...$columns));
 
@@ -869,7 +861,7 @@ class MySQLTest extends Test
     #[DataProvider('selectDistinctProvider')]
     public function testSelectDistinct(string $function, string $value, array $columns, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->$function($value)->selectDistinct(...$columns));
 
@@ -965,7 +957,7 @@ class MySQLTest extends Test
     #[DataProvider('joinProvider')]
     public function testJoin(string $table, string $valueFrom, string $valueUpTo, bool $withAlias, string $return): void
     {
-        $this->mysql->run(self::CONNECTIONS);
+        $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->join($table, $valueFrom, $valueUpTo, $withAlias));
         $this->assertSame($return, $this->getQuery());

@@ -14,6 +14,7 @@ use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
 use PHPUnit\Framework\Attributes\TestWith;
+use ReflectionException;
 use stdClass;
 use Tests\Provider\ConnectionProviderTrait;
 
@@ -21,46 +22,6 @@ class ConnectionTest extends Test
 {
     use ConnectionProviderTrait;
 
-    private const string DATABASE_HOST_MYSQL = 'mysql';
-    private const string DATABASE_HOST_POSTGRESQL = 'postgres';
-    private const int DATABASE_PORT_MYSQL = 3306;
-    private const int DATABASE_PORT_POSTGRESQL = 5432;
-    private const string DATABASE_NAME = 'lion_database';
-    private const string DATABASE_NAME_SECOND = 'lion_database_second';
-    private const string DATABASE_NAME_THIRD = 'lion_database_third';
-    private const string DATABASE_USER = 'root';
-    private const string DATABASE_PASSWORD = 'lion';
-    private const array CONNECTION_DATA = [
-        'type' => Driver::MYSQL,
-        'host' => self::DATABASE_HOST_MYSQL,
-        'port' => self::DATABASE_PORT_MYSQL,
-        'dbname' => self::DATABASE_NAME,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
-    ];
-    private const array CONNECTION_DATA_SECOND = [
-        'type' => Driver::MYSQL,
-        'host' => self::DATABASE_HOST_MYSQL,
-        'port' => self::DATABASE_PORT_MYSQL,
-        'dbname' => self::DATABASE_NAME_SECOND,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
-    ];
-    private const array CONNECTION_DATA_THIRD = [
-        'type' => Driver::POSTGRESQL,
-        'host' => self::DATABASE_HOST_POSTGRESQL,
-        'port' => self::DATABASE_PORT_POSTGRESQL,
-        'dbname' => self::DATABASE_NAME,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD
-    ];
-    private const array CONNECTIONS = [
-        'default' => self::DATABASE_NAME,
-        'connections' => [
-            self::DATABASE_NAME => self::CONNECTION_DATA,
-            self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
-        ],
-    ];
     private const array RESPONSE = [
         'status' => 'success',
         'message' => 'TEST-OK'
@@ -68,6 +29,9 @@ class ConnectionTest extends Test
 
     private Connection $customClass;
 
+    /**
+     * @throws ReflectionException
+     */
     protected function setUp(): void
     {
         $this->customClass = new class extends Connection
@@ -76,13 +40,16 @@ class ConnectionTest extends Test
 
         $this->initReflection($this->customClass);
 
-        $this->setPrivateProperty('connections', self::CONNECTIONS);
+        $this->setPrivateProperty('connections', CONNECTIONS_CONNECTION);
 
-        $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+        $this->setPrivateProperty('activeConnection', DATABASE_NAME_CONNECTION);
 
         $this->setPrivateProperty('isTransaction', false);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function tearDown(): void
     {
         $this->setPrivateProperty('connections', []);
@@ -104,6 +71,9 @@ class ConnectionTest extends Test
         $this->setPrivateProperty('databaseInstances', []);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testMysql(): void
     {
         $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
@@ -117,6 +87,9 @@ class ConnectionTest extends Test
         $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testMysqlIsTransactionTrue(): void
     {
         $this->setPrivateProperty('isTransaction', true);
@@ -131,6 +104,9 @@ class ConnectionTest extends Test
         $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testMysqlWithException(): void
     {
         $response = $this->getPrivateMethod('mysql', [function (): void {
@@ -144,6 +120,9 @@ class ConnectionTest extends Test
         $this->assertSame('Connection failed', $response->message);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testPrepare(): void
     {
         $this->getPrivateMethod('mysql', [fn (): stdClass => (object) self::RESPONSE]);
@@ -153,6 +132,9 @@ class ConnectionTest extends Test
         $this->assertInstanceOf(PDOStatement::class, $this->getPrivateProperty('stmt'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('getValueTypeProvider')]
     public function testGetValueType(string $value, int $fetchMode): void
     {
@@ -162,6 +144,9 @@ class ConnectionTest extends Test
         $this->assertSame($fetchMode, $type);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('bindValueProvider')]
     public function testBindValue(string $code, string $query, array $values): void
     {
@@ -178,6 +163,9 @@ class ConnectionTest extends Test
         $this->assertInstanceOf(PDOStatement::class, $this->getPrivateProperty('stmt'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('getQueryStringProvider')]
     public function testGetQueryString(string $query): void
     {
@@ -198,57 +186,73 @@ class ConnectionTest extends Test
         $this->assertSame(explode(';', $query), $response->data->split);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testAddConnection(): void
     {
-        $this->setPrivateProperty('connections', ['default' => self::DATABASE_NAME_SECOND]);
+        $this->setPrivateProperty('connections', ['default' => DATABASE_NAME_SECOND_CONNECTION]);
 
-        $this->customClass->addConnection(self::DATABASE_NAME_SECOND, self::CONNECTION_DATA_SECOND);
+        $this->customClass->addConnection(DATABASE_NAME_SECOND_CONNECTION, CONNECTION_DATA_SECOND_CONNECTION);
 
         $connections = $this->getPrivateProperty('connections');
 
         $this->assertArrayHasKey('default', $connections);
-        $this->assertSame(self::DATABASE_NAME_SECOND, $connections['default']);
-        $this->assertArrayHasKey(self::DATABASE_NAME_SECOND, $connections['connections']);
-        $this->assertSame($connections['connections'][self::DATABASE_NAME_SECOND], self::CONNECTION_DATA_SECOND);
+        $this->assertSame(DATABASE_NAME_SECOND_CONNECTION, $connections['default']);
+        $this->assertArrayHasKey(DATABASE_NAME_SECOND_CONNECTION, $connections['connections']);
+
+        $this->assertSame(
+            $connections['connections'][DATABASE_NAME_SECOND_CONNECTION],
+            CONNECTION_DATA_SECOND_CONNECTION
+        );
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetConnections(): void
     {
         $this->setPrivateProperty('connections', [
-            'default' => self::DATABASE_NAME,
+            'default' => DATABASE_NAME_CONNECTION,
             'connections' => [
-                self::DATABASE_NAME => self::CONNECTION_DATA,
-                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
+                DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
+                DATABASE_NAME_SECOND_CONNECTION => CONNECTION_DATA_SECOND_CONNECTION,
             ],
         ]);
 
-        $this->assertSame(self::CONNECTIONS['connections'], $this->customClass::getConnections());
+        $this->assertSame(CONNECTIONS_CONNECTION['connections'], $this->customClass::getConnections());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testRemoveConnection(): void
     {
         $this->setPrivateProperty('connections', [
-            'default' => self::DATABASE_NAME,
+            'default' => DATABASE_NAME_CONNECTION,
             'connections' => [
-                self::DATABASE_NAME => self::CONNECTION_DATA,
+                DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
             ],
         ]);
 
-        $this->customClass->removeConnection(self::DATABASE_NAME);
+        $this->customClass->removeConnection(DATABASE_NAME_CONNECTION);
 
         $this->assertSame([], $this->customClass::getConnections());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
-    #[TestWith(['driver' => 'mysql', 'databaseName' => self::DATABASE_NAME])]
-    #[TestWith(['driver' => 'pgsql', 'databaseName' => self::DATABASE_NAME_THIRD])]
+    #[TestWith(['driver' => 'mysql', 'databaseName' => DATABASE_NAME_CONNECTION])]
+    #[TestWith(['driver' => 'pgsql', 'databaseName' => DATABASE_NAME_THIRD_CONNECTION])]
     public function getDatabaseInstance(string $driver, string $databaseName): void
     {
         $this->setPrivateProperty('connections', [
-            'default' => self::DATABASE_NAME,
+            'default' => DATABASE_NAME_CONNECTION,
             'connections' => [
-                self::DATABASE_NAME => self::CONNECTION_DATA,
-                self::DATABASE_NAME_THIRD => self::CONNECTION_DATA_THIRD,
+                DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
+                DATABASE_NAME_THIRD_CONNECTION => CONNECTION_DATA_THIRD_CONNECTION,
             ],
         ]);
 
@@ -261,6 +265,9 @@ class ConnectionTest extends Test
         $this->assertSame($driver, $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function getDatabaseInstanceIsError(): void
     {
@@ -269,38 +276,44 @@ class ConnectionTest extends Test
         $this->expectExceptionMessage('the database connection type is not supported');
 
         $this->setPrivateProperty('connections', [
-            'default' => self::DATABASE_NAME,
+            'default' => DATABASE_NAME_CONNECTION,
             'connections' => [
-                self::DATABASE_NAME => [
+                DATABASE_NAME_CONNECTION => [
                     'type' => 'mixed',
-                    'host' => self::DATABASE_HOST_MYSQL,
-                    'port' => self::DATABASE_PORT_MYSQL,
-                    'dbname' => self::DATABASE_NAME,
-                    'user' => self::DATABASE_USER,
-                    'password' => self::DATABASE_PASSWORD
+                    'host' => DATABASE_HOST_MYSQL,
+                    'port' => DATABASE_PORT_MYSQL,
+                    'dbname' => DATABASE_NAME_CONNECTION,
+                    'user' => DATABASE_USER_MYSQL,
+                    'password' => DATABASE_PASSWORD_MYSQL,
                 ],
             ],
         ]);
 
-        $this->setPrivateProperty('activeConnection', self::DATABASE_NAME);
+        $this->setPrivateProperty('activeConnection', DATABASE_NAME_CONNECTION);
 
         $this->getPrivateMethod('getDatabaseInstance');
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function getDatabaseInstanceMySQL(): void
     {
-        $conn = $this->getPrivateMethod('getDatabaseInstanceMySQL', [self::CONNECTION_DATA]);
+        $conn = $this->getPrivateMethod('getDatabaseInstanceMySQL', [CONNECTION_DATA_CONNECTION]);
 
         $this->assertIsObject($conn);
         $this->assertInstanceOf(PDO::class, $conn);
         $this->assertSame('mysql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function getDatabaseInstancePostgreSQL(): void
     {
-        $conn = $this->getPrivateMethod('getDatabaseInstancePostgreSQL', [self::CONNECTION_DATA_THIRD]);
+        $conn = $this->getPrivateMethod('getDatabaseInstancePostgreSQL', [CONNECTION_DATA_THIRD_CONNECTION]);
 
         $this->assertIsObject($conn);
         $this->assertInstanceOf(PDO::class, $conn);

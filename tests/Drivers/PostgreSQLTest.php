@@ -14,6 +14,7 @@ use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
 use PHPUnit\Framework\Attributes\TestWith;
+use ReflectionException;
 use stdClass;
 use Tests\Provider\IdInterface;
 use Tests\Provider\PostgreSQLProviderTrait;
@@ -24,39 +25,13 @@ class PostgreSQLTest extends Test
 
     private const int USERS_ID = 1;
     private const int USERS_SECOND_ID = 2;
-    private const string DATABASE_TYPE = 'postgresql';
-    private const string DATABASE_HOST = 'postgres';
-    private const int DATABASE_PORT = 5432;
-    private const string DATABASE_NAME = 'lion_database';
-    private const string DATABASE_USER = 'root';
-    private const string DATABASE_PASSWORD = 'lion';
-    private const string DATABASE_NAME_SECOND = 'lion_database_second';
-    private const array CONNECTION_DATA = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD,
-    ];
-    private const array CONNECTION_DATA_SECOND = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME_SECOND,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD,
-    ];
-    private const array CONNECTIONS = [
-        'default' => self::DATABASE_NAME,
-        'connections' => [
-            self::DATABASE_NAME => self::CONNECTION_DATA,
-        ],
-    ];
 
     private PostgreSQL $postgresql;
     private string $actualCode;
 
+    /**
+     * @throws ReflectionException
+     */
     protected function setUp(): void
     {
         $this->postgresql = new PostgreSQL();
@@ -66,6 +41,9 @@ class PostgreSQLTest extends Test
         $this->initReflection($this->postgresql);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function tearDown(): void
     {
         $this->setPrivateProperty('connections', []);
@@ -95,16 +73,19 @@ class PostgreSQLTest extends Test
         $this->setPrivateProperty('databaseInstances', []);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function runInterface(): void
     {
-        $this->assertInstances($this->postgresql->run(self::CONNECTIONS), [
+        $this->assertInstances($this->postgresql->run(CONNECTIONS_POSTGRESQL), [
             PostgreSQL::class,
             Connection::class,
             DatabaseConfigInterface::class,
         ]);
 
-        $this->assertSame(self::CONNECTIONS, $this->getPrivateProperty('connections'));
+        $this->assertSame(CONNECTIONS_POSTGRESQL, $this->getPrivateProperty('connections'));
     }
 
     #[Testing]
@@ -128,30 +109,33 @@ class PostgreSQLTest extends Test
         $this->postgresql->run($connections);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function connectionInterface(): void
     {
-        $this->assertInstances($this->postgresql->run(self::CONNECTIONS), [
+        $this->assertInstances($this->postgresql->run(CONNECTIONS_POSTGRESQL), [
             PostgreSQL::class,
             Connection::class,
             DatabaseConfigInterface::class,
         ]);
 
-        $this->assertSame(self::CONNECTIONS, $this->getPrivateProperty('connections'));
+        $this->assertSame(CONNECTIONS_POSTGRESQL, $this->getPrivateProperty('connections'));
 
-        $this->assertInstances($this->postgresql->connection(self::DATABASE_NAME), [
+        $this->assertInstances($this->postgresql->connection(DATABASE_NAME_POSTGRESQL), [
             PostgreSQL::class,
             Connection::class,
             DatabaseConfigInterface::class,
         ]);
 
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
+        $this->assertSame(DATABASE_NAME_POSTGRESQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_POSTGRESQL, $this->getPrivateProperty('dbname'));
     }
 
     #[Testing]
-    #[TestWith(['connection' => self::DATABASE_NAME])]
-    #[TestWith(['connection' => self::DATABASE_NAME_SECOND])]
+    #[TestWith(['connection' => DATABASE_NAME_POSTGRESQL])]
+    #[TestWith(['connection' => DATABASE_NAME_SECOND_POSTGRESQL])]
     public function connectionInterfaceConnectionDoesNotExist(string $connection): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -166,7 +150,7 @@ class PostgreSQLTest extends Test
     public function getInterface(string $dropSql, string $tableSql, string $insertSql, string $selectSql): void
     {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->query($insertSql)
@@ -185,7 +169,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->get();
 
@@ -194,7 +178,7 @@ class PostgreSQLTest extends Test
         $this->assertObjectHasProperty('id', $response);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -220,7 +204,7 @@ class PostgreSQLTest extends Test
         string $selectSql
     ): void {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->execute();
@@ -238,7 +222,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->get();
 
@@ -255,7 +239,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('no data available', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -282,7 +266,7 @@ class PostgreSQLTest extends Test
         DatabaseCapsuleInterface|IdInterface $capsule
     ): void {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->query($insertSql)
@@ -302,7 +286,7 @@ class PostgreSQLTest extends Test
 
         /** @var DatabaseCapsuleInterface|IdInterface $response */
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->addRows([self::USERS_ID])
             ->fetchMode(PDO::FETCH_CLASS, $capsule::class)
@@ -319,7 +303,7 @@ class PostgreSQLTest extends Test
         $this->assertSame(1, $response->getId());
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -346,7 +330,7 @@ class PostgreSQLTest extends Test
         DatabaseCapsuleInterface|IdInterface $capsule
     ): void {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->query($insertSql)
@@ -366,7 +350,7 @@ class PostgreSQLTest extends Test
 
         /** @var array<int, array<int, DatabaseCapsuleInterface|IdInterface>> $response */
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->addRows([self::USERS_ID])
             ->fetchMode(PDO::FETCH_CLASS, $capsule::class)
@@ -405,7 +389,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('no data available', $secondUser->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -427,7 +411,7 @@ class PostgreSQLTest extends Test
     public function getAllInterface(string $dropSql, string $tableSql, string $insertSql, string $selectSql): void
     {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->query($insertSql)
@@ -446,7 +430,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->getAll();
 
@@ -460,7 +444,7 @@ class PostgreSQLTest extends Test
         $this->assertObjectHasProperty('id', $firstUser);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -486,7 +470,7 @@ class PostgreSQLTest extends Test
         string $selectSql
     ): void {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->execute();
@@ -504,7 +488,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->getAll();
 
@@ -521,7 +505,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('no data available', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -548,7 +532,7 @@ class PostgreSQLTest extends Test
         DatabaseCapsuleInterface|IdInterface $capsule
     ): void {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->query($insertSql)
@@ -568,7 +552,7 @@ class PostgreSQLTest extends Test
 
         /** @var array $response */
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->fetchMode(PDO::FETCH_CLASS, $capsule::class)
             ->getAll();
@@ -589,7 +573,7 @@ class PostgreSQLTest extends Test
         $this->assertSame(1, $firstUser->getId());
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -616,7 +600,7 @@ class PostgreSQLTest extends Test
         DatabaseCapsuleInterface|IdInterface $capsule
     ): void {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->query($insertSql)
@@ -636,7 +620,7 @@ class PostgreSQLTest extends Test
 
         /** @var array<int, array<int, DatabaseCapsuleInterface|IdInterface>> $response */
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->addRows([self::USERS_ID, self::USERS_SECOND_ID])
             ->fetchMode(PDO::FETCH_CLASS, $capsule::class)
@@ -680,7 +664,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('no data available', $secondList->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -702,7 +686,7 @@ class PostgreSQLTest extends Test
     public function executeInterface(string $dropSql, string $tableSql, string $insertSql): void
     {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->query($insertSql)
@@ -726,7 +710,7 @@ class PostgreSQLTest extends Test
     public function executeInterfaceWithParams(): void
     {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query(self::QUERY_SQL_DROP_TABLE_ROLES)
             ->query(self::QUERY_SQL_TABLE_ROLES)
             ->query(self::QUERY_SQL_NESTED_INSERT_ROLES)
@@ -751,7 +735,7 @@ class PostgreSQLTest extends Test
     public function executeInterfaceMultipleQueryAndParams(): void
     {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query(self::QUERY_SQL_DROP_TABLE_ROLES)
             ->query(self::QUERY_SQL_TABLE_ROLES)
             ->execute();
@@ -810,7 +794,7 @@ class PostgreSQLTest extends Test
     public function transactionInterface(string $dropSql, string $tableSql, string $insertSql, string $selectSql): void
     {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->query($tableSql)
             ->execute();
@@ -828,7 +812,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->transaction()
             ->query($insertSql)
             ->execute();
@@ -846,7 +830,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
 
         $data = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->getAll();
 
@@ -854,7 +838,7 @@ class PostgreSQLTest extends Test
         $this->assertCount(4, $data);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
@@ -880,7 +864,7 @@ class PostgreSQLTest extends Test
         string $selectSql
     ): void {
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->transaction()
             ->query($dropSql)
             ->query($tableSql)
@@ -899,7 +883,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->transaction()
             ->query($insertSql)
             ->execute();
@@ -916,7 +900,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->message);
 
         $data = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
             ->getAll();
 
@@ -933,7 +917,7 @@ class PostgreSQLTest extends Test
         $this->assertSame('no data available', $data->message);
 
         $response = $this->postgresql
-            ->run(self::CONNECTIONS)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->query($dropSql)
             ->execute();
 
