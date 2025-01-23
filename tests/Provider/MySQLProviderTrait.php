@@ -338,32 +338,6 @@ trait MySQLProviderTrait
         ];
     }
 
-    public static function havingProvider(): array
-    {
-        return [
-            [
-                'condition' => 'idusers = ?',
-                'value' => 1,
-                'return' => 'HAVING idusers = ?'
-            ],
-            [
-                'condition' => 'idusers <> ?',
-                'value' => 1,
-                'return' => 'HAVING idusers <> ?'
-            ],
-            [
-                'condition' => 'idusers > ?',
-                'value' => 1,
-                'return' => 'HAVING idusers > ?'
-            ],
-            [
-                'condition' => 'idusers < ?',
-                'value' => 1,
-                'return' => 'HAVING idusers < ?'
-            ]
-        ];
-    }
-
     public static function selectProvider(): array
     {
         return [
