@@ -837,12 +837,10 @@ class MySQLTest extends Test
         $this->assertTrue($this->getPrivateProperty('isSchema'));
     }
 
-    #[DataProvider('havingProvider')]
-    public function testHaving(string $condition, int $value, string $return): void
+    public function testHaving(): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->having($condition, $value));
-        $this->assertAddRows([$value]);
-        $this->assertSame($return, $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->having());
+        $this->assertSame('HAVING', $this->getQuery());
     }
 
     #[DataProvider('selectProvider')]

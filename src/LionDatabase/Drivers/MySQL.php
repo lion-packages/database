@@ -927,7 +927,10 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the CONSTRAINTS statement in the current query
+     * Nests the 'SELECT CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME,
+     * REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME FROM
+     * information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=? AND TABLE_NAME=?
+     * AND REFERENCED_COLUMN_NAME IS NOT NULL' statement in the current query
      *
      * @return MySQL
      */
@@ -1078,7 +1081,7 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the IN statement in the current query
+     * Nests the UPDATE statement in the current query
      *
      * @param array<string, mixed> $rows [List of values]
      *
@@ -1100,7 +1103,7 @@ class MySQL extends Connection implements
             self::$table,
             self::getKey(Driver::MYSQL, 'set'),
             ' ',
-            self::addCharacterEqualTo($rows)
+            self::addCharacterEqualTo($rows),
         ]);
 
         return new static();
@@ -1149,19 +1152,11 @@ class MySQL extends Connection implements
     /**
      * Nests the HAVING statement in the current query
      *
-     * @param string $column [Column name]
-     * @param mixed $value [Value]
-     *
      * @return MySQL
      */
-    public static function having(string $column, mixed $value): MySQL
+    public static function having(): MySQL
     {
-        self::addRows([$value]);
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'having'),
-            " {$column}"
-        ]);
+        self::addQueryList([self::getKey(Driver::MYSQL, 'having')]);
 
         return new static();
     }
