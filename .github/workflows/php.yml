@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - actions
   pull_request:
     branches:
       - main
@@ -62,7 +63,7 @@ jobs:
           extensions: mbstring, gd, zip
 
       - name: Composer Install
-        run: composer install
+        run: composer install --dev
 
       - name: PHP CodeSnifer (Src)
         run: php -d memory_limit=-1 vendor/bin/phpcs --standard=PSR12 src/
@@ -135,4 +136,4 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           files: tests/build/logs/clover.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN_LION_DATABASE }}
