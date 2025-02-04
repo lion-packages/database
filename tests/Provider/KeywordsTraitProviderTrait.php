@@ -8,39 +8,46 @@ use Lion\Database\Driver;
 
 trait KeywordsTraitProviderTrait
 {
+    /**
+     * @return array<int, array{
+     *     type: string,
+     *     key: string,
+     *     return: string|null
+     * }>
+     */
     public static function getKeyProvider(): array
     {
         return [
             [
                 'type' => Driver::MYSQL,
                 'key' => 'charset',
-                'return' => ' CHARSET'
+                'return' => ' CHARSET',
             ],
             [
                 'type' => Driver::MYSQL,
                 'key' => 'status',
-                'return' => ' STATUS'
+                'return' => ' STATUS',
             ],
             [
                 'type' => Driver::MYSQL,
                 'key' => 'month',
-                'return' => ' MONTH(?)'
+                'return' => ' MONTH(?)',
             ],
             [
                 'type' => Driver::MYSQL,
                 'key' => 'order-by',
-                'return' => ' ORDER BY'
+                'return' => ' ORDER BY',
             ],
             [
                 'type' => Driver::MYSQL,
                 'key' => 'primary-key',
-                'return' => ' PRIMARY KEY (?)'
+                'return' => ' PRIMARY KEY (?)',
             ],
             [
                 'type' => Driver::MYSQL,
                 'key' => 'testing',
-                'return' => null
-            ]
+                'return' => null,
+            ],
         ];
     }
 }

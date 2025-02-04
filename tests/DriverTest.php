@@ -73,7 +73,7 @@ class DriverTest extends Test
     {
         $this->expectException(Exception::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('no connection has been defined by default');
+        $this->expectExceptionMessage('No connection has been defined by default');
 
         Driver::run([]);
     }
@@ -82,7 +82,7 @@ class DriverTest extends Test
     {
         $this->expectException(Exception::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('the defined driver does not exist');
+        $this->expectExceptionMessage('The defined driver does not exist');
 
         Driver::run([
             'default' => self::DATABASE_NAME_SECOND,

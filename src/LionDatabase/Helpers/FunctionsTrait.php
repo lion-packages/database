@@ -30,9 +30,12 @@ trait FunctionsTrait
         $size = count($rows) - 1;
 
         foreach ($rows as $key => $rowChild) {
+            /** @var array<int, string> $values */
+            $values = array_values($rowChild);
+
             $row = !self::$isSchema
                 ? self::addCharacter($rowChild)
-                : self::addColumns(array_values($rowChild), true, $addQuotes);
+                : self::addColumns($values, true, $addQuotes);
 
             $str = "({$row})";
 
@@ -129,6 +132,7 @@ trait FunctionsTrait
     {
         $stringColumns = '';
 
+        /** @var array<int, string> $newColumns */
         $newColumns = [];
 
         foreach ($columns as $column) {

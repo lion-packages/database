@@ -1,0 +1,18 @@
+parameters:
+    level: max
+
+    excludePaths:
+        - %currentWorkingDirectory%/src/LionDatabase/Drivers/Schema/MySQL.php
+        - %currentWorkingDirectory%/src/LionDatabase/Drivers/MySQL.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/Interfaces/ConnectionInterfaceTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/Interfaces/ExecuteInterfaceTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/Interfaces/GetAllInterfaceTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/Interfaces/GetInterfaceTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/Interfaces/QueryInterfaceTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/Interfaces/RunInterfaceTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/Interfaces/TransactionInterfaceTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/DriverTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/FunctionsTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Helpers/KeywordsTrait.php
+        - %currentWorkingDirectory%/src/LionDatabase/Connection.php
+        - %currentWorkingDirectory%/tests/Provider/CustomClassProvider.php

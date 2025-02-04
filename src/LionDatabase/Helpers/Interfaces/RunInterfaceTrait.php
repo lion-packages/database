@@ -9,7 +9,7 @@ use InvalidArgumentException;
 /**
  * Declare the run method of the interface
  *
- * @package Lion\Database\Helpers
+ * @package Lion\Database\Helpers\Interfaces
  */
 trait RunInterfaceTrait
 {

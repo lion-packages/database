@@ -62,8 +62,6 @@ class ConnectionTest extends Test
 
         $this->setPrivateProperty('dataInfo', []);
 
-        $this->setPrivateProperty('stmt', false);
-
         $this->setPrivateProperty('sql', '');
 
         $this->setPrivateProperty('listSql', []);
@@ -273,7 +271,7 @@ class ConnectionTest extends Test
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('the database connection type is not supported');
+        $this->expectExceptionMessage('The database connection type is not supported');
 
         $this->setPrivateProperty('connections', [
             'default' => DATABASE_NAME_CONNECTION,

@@ -14,8 +14,16 @@ interface ConnectionConfigInterface
     /**
      * Add a connection
      *
-     * @param string $connectionName [Connection name]
-     * @param array<string, string> $options [Connection configuration data]
+     * @param non-empty-string $connectionName [Connection name]
+     * @param array{
+     *     type: string,
+     *     host: string,
+     *     port: int,
+     *     dbname: string,
+     *     user: string,
+     *     password: string,
+     *     options?: array<int, int>
+     * } $options [Connection configuration data]
      *
      * @return void
      */
@@ -24,14 +32,22 @@ interface ConnectionConfigInterface
     /**
      * Gets all available connections
      *
-     * @return array<string, array<string, string>>
+     * @return array<non-empty-string, array{
+     *     type: string,
+     *     host: string,
+     *     port: int,
+     *     dbname: string,
+     *     user: string,
+     *     password: string,
+     *     options?: array<int, int>
+     * }>
      */
     public static function getConnections(): array;
 
     /**
      * Remove a connection
      *
-     * @param string $connectionName [Connection name]
+     * @param non-empty-string $connectionName [Connection name]
      *
      * @return void
      */

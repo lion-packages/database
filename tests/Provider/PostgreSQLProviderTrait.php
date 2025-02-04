@@ -85,6 +85,11 @@ trait PostgreSQLProviderTrait
         SELECT * FROM public.users WHERE id IN(?, ?);
     SQL;
 
+    /**
+     * @return array<int, array{
+     *     connections: array<string, array<int, int>|string|null>
+     * }>
+     */
     public static function runInterfaceWithoutConnectionsProvider(): array
     {
         return [
@@ -97,17 +102,25 @@ trait PostgreSQLProviderTrait
                 'connections' => [
                     'default' => 'lion_database',
                     'connections' => null,
-                ]
+                ],
             ],
             [
                 'connections' => [
                     'default' => 'lion_database',
                     'connections' => [],
-                ]
+                ],
             ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string,
+     *     selectSql: string
+     * }>
+     */
     public static function getProvider(): array
     {
         return [
@@ -126,6 +139,15 @@ trait PostgreSQLProviderTrait
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string,
+     *     selectSql: string,
+     *     capsule: DatabaseCapsuleInterface|IdInterface
+     * }>
+     */
     public static function getProviderWithFetchClass(): array
     {
         return [
@@ -208,6 +230,14 @@ trait PostgreSQLProviderTrait
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string,
+     *     selectSql: string
+     * }>
+     */
     public static function getAllProvider(): array
     {
         return [
@@ -222,10 +252,19 @@ trait PostgreSQLProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
                 'selectSql' => self::QUERY_SQL_SELECT_USERS,
-            ]
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string,
+     *     selectSql: string,
+     *     capsule: DatabaseCapsuleInterface|IdInterface
+     * }>
+     */
     public static function getAllProviderWithFetchClass(): array
     {
         return [
@@ -304,10 +343,19 @@ trait PostgreSQLProviderTrait
                         return $this->id;
                     }
                 },
-            ]
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string,
+     *     selectSql: string,
+     *     capsule: DatabaseCapsuleInterface|IdInterface
+     * }>
+     */
     public static function getAllProviderWithFetchClassAndNotDataAvailable(): array
     {
         return [
@@ -390,6 +438,13 @@ trait PostgreSQLProviderTrait
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string
+     * }>
+     */
     public static function executeInterfaceProvider(): array
     {
         return [
@@ -402,10 +457,18 @@ trait PostgreSQLProviderTrait
                 'dropSql' => self::QUERY_SQL_DROP_TABLE_USERS,
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
-            ]
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string,
+     *     selectSql: string
+     * }>
+     */
     public static function transactionInterfaceProvider(): array
     {
         return [
@@ -420,10 +483,18 @@ trait PostgreSQLProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
                 'selectSql' => self::QUERY_SQL_SELECT_USERS,
-            ]
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     dropSql: string,
+     *     tableSql: string,
+     *     insertSql: string,
+     *     selectSql: string
+     * }>
+     */
     public static function transactionInterfaceWithRollbackProvider(): array
     {
         return [
@@ -438,7 +509,7 @@ trait PostgreSQLProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS_ERR,
                 'selectSql' => self::QUERY_SQL_SELECT_USERS,
-            ]
+            ],
         ];
     }
 }

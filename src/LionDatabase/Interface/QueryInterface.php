@@ -18,5 +18,5 @@ interface QueryInterface
      *
      * @return QueryInterface
      */
-    public static function query(string $sql): self;
+    public static function query(string $sql): QueryInterface;
 }

@@ -8,6 +8,8 @@ namespace Lion\Database\Helpers\Constants;
  * Defines the MySQL word dictionary
  *
  * @package Lion\Database\Helpers\Constants
+ *
+ * @codeCoverageIgnore
  */
 class MySQLConstants
 {

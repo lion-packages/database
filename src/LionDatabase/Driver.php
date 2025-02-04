@@ -33,7 +33,15 @@ abstract class Driver
     /**
      * Initialize database connections
      *
-     * @param array $connections [List of defined connections]
+     * @param array<string, array<string, array{
+     *     type: string,
+     *     host: string,
+     *     port: int,
+     *     dbname: string,
+     *     user: string,
+     *     password: string,
+     *     options?: array<int, int>
+     * }>|string> $connections [List of defined connections]
      *
      * @return void
      *
@@ -43,15 +51,18 @@ abstract class Driver
     public static function run(array $connections): void
     {
         if (empty($connections['default'])) {
-            throw new InvalidArgumentException('no connection has been defined by default', 500);
+            throw new InvalidArgumentException('No connection has been defined by default', 500);
         }
 
-        $type = trim(strtolower($connections['connections'][$connections['default']]['type']));
+        if (!is_string($connections['default']) || !isset($connections['connections'][$connections['default']])) {
+            throw new InvalidArgumentException('Invalid default connection', 500);
+        }
+
+        $type = $connections['connections'][$connections['default']]['type'];
 
         switch ($type) {
             case self::MYSQL:
                 MySQL::run($connections);
-
                 SchemaMySQL::run($connections);
                 break;
 
@@ -60,7 +71,7 @@ abstract class Driver
                 break;
 
             default:
-                throw new InvalidArgumentException('the defined driver does not exist', 500);
+                throw new InvalidArgumentException('The defined driver does not exist', 500);
         }
     }
 }

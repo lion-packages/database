@@ -33,7 +33,7 @@ class CustomClassProvider implements
     {
         self::$connections = $connections;
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -42,9 +42,10 @@ class CustomClassProvider implements
     public static function connection(string $connectionName): DatabaseConfigInterface
     {
         self::$activeConnection = $connectionName;
+
         self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -54,7 +55,7 @@ class CustomClassProvider implements
     {
         self::$isTransaction = $isTransaction;
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -64,7 +65,7 @@ class CustomClassProvider implements
     {
         self::$isSchema = true;
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -74,7 +75,7 @@ class CustomClassProvider implements
     {
         self::$enableInsert = $enable;
 
-        return new static;
+        return new static();
     }
 
     /**

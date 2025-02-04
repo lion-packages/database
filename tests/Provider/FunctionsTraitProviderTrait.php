@@ -6,11 +6,19 @@ namespace Tests\Provider;
 
 trait FunctionsTraitProviderTrait
 {
-    const BULK_ROWS = [
+    private const array BULK_ROWS = [
         [1, 'Administrator'],
-        [2, 'Client']
+        [2, 'Client'],
     ];
 
+    /**
+     * @return array<int, array{
+     *     isSchema: bool,
+     *     enableInsert: bool,
+     *     addQuotes: bool,
+     *     return: string
+     * }>
+     */
     public static function addCharacterBulkProvider(): array
     {
         return [
@@ -18,33 +26,41 @@ trait FunctionsTraitProviderTrait
                 'isSchema' => false,
                 'enableInsert' => false,
                 'addQuotes' => false,
-                'return' => '(?, ?), (?, ?)'
+                'return' => '(?, ?), (?, ?)',
             ],
             [
                 'isSchema' => true,
                 'enableInsert' => true,
                 'addQuotes' => false,
-                'return' => "(1, Administrator), (2, Client)"
+                'return' => "(1, Administrator), (2, Client)",
             ],
             [
                 'isSchema' => true,
                 'enableInsert' => true,
                 'addQuotes' => true,
-                'return' => "('1', 'Administrator'), ('2', 'Client')"
-            ]
+                'return' => "('1', 'Administrator'), ('2', 'Client')",
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     columns: array<string, int|string>,
+     *     return: string,
+     *     isSchema: bool,
+     *     enableInsert: bool
+     * }>
+     */
     public static function addCharacterEqualToProvider(): array
     {
         return [
             [
                 'columns' => [
-                    'idroles' => 1
+                    'idroles' => 1,
                 ],
                 'return' => 'idroles = ?',
                 'isSchema' => false,
-                'enableInsert' => false
+                'enableInsert' => false,
             ],
             [
                 'columns' => [
@@ -53,7 +69,7 @@ trait FunctionsTraitProviderTrait
                 ],
                 'return' => 'idroles = ?, roles_name = ?',
                 'isSchema' => false,
-                'enableInsert' => false
+                'enableInsert' => false,
             ],
             [
                 'columns' => [
@@ -63,7 +79,7 @@ trait FunctionsTraitProviderTrait
                 ],
                 'return' => 'idroles = ?, roles_name = ?, roles_description = ?',
                 'isSchema' => false,
-                'enableInsert' => false
+                'enableInsert' => false,
             ],
             [
                 'columns' => [
@@ -71,7 +87,7 @@ trait FunctionsTraitProviderTrait
                 ],
                 'return' => 'idroles = _idroles',
                 'isSchema' => true,
-                'enableInsert' => true
+                'enableInsert' => true,
             ],
             [
                 'columns' => [
@@ -80,7 +96,7 @@ trait FunctionsTraitProviderTrait
                 ],
                 'return' => 'idroles = _idroles, roles_name = _roles_name',
                 'isSchema' => true,
-                'enableInsert' => true
+                'enableInsert' => true,
             ],
             [
                 'columns' => [
@@ -90,56 +106,87 @@ trait FunctionsTraitProviderTrait
                 ],
                 'return' => 'idroles = _idroles, roles_name = _roles_name, roles_description = _roles_description',
                 'isSchema' => true,
-                'enableInsert' => true
-            ]
+                'enableInsert' => true,
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     columns: array<string, int|string>,
+     *     return: string
+     * }>
+     */
     public static function addCharacterAssocProvider(): array
     {
         return [
             [
                 'columns' => [
-                    'idroles' => 1
-                ],
-                'return' => '?'
-            ],
-            [
-                'columns' => [
                     'idroles' => 1,
-                    'roles_name' => 'Administrator'
                 ],
-                'return' => '?, ?'
+                'return' => '?',
             ],
             [
                 'columns' => [
                     'idroles' => 1,
                     'roles_name' => 'Administrator',
-                    'roles_description' => 'role description'
                 ],
-                'return' => '?, ?, ?'
-            ]
+                'return' => '?, ?',
+            ],
+            [
+                'columns' => [
+                    'idroles' => 1,
+                    'roles_name' => 'Administrator',
+                    'roles_description' => 'role description',
+                ],
+                'return' => '?, ?, ?',
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     columns: array<int, int|string>,
+     *     return: string
+     * }>
+     */
     public static function addCharacterProvider(): array
     {
         return [
             [
-                'columns' => [1],
-                'return' => '?'
+                'columns' => [
+                    1,
+                ],
+                'return' => '?',
             ],
             [
-                'columns' => [1, 'Administrator'],
-                'return' => '?, ?'
+                'columns' => [
+                    1,
+                    'Administrator',
+                ],
+                'return' => '?, ?',
             ],
             [
-                'columns' => [1, 'Administrator', 'role description'],
-                'return' => '?, ?, ?'
-            ]
+                'columns' => [
+                    1,
+                    'Administrator',
+                    'role description',
+                ],
+                'return' => '?, ?, ?',
+            ],
         ];
     }
 
+    /**
+     * @return array<int, array{
+     *     isSchema: bool,
+     *     enableInsert: bool,
+     *     columns: array<int, string>,
+     *     spacing: bool,
+     *     addQuotes: bool,
+     *     return: string
+     * }>
+     */
     public static function addColumnsProvider(): array
     {
         return [
@@ -149,7 +196,7 @@ trait FunctionsTraitProviderTrait
                 'columns' => [],
                 'spacing' => true,
                 'addQuotes' => false,
-                'return' => '*'
+                'return' => '*',
             ],
             [
                 'isSchema' => false,
@@ -157,7 +204,7 @@ trait FunctionsTraitProviderTrait
                 'columns' => ['idroles'],
                 'spacing' => true,
                 'addQuotes' => false,
-                'return' => 'idroles'
+                'return' => 'idroles',
             ],
             [
                 'isSchema' => false,
@@ -165,7 +212,7 @@ trait FunctionsTraitProviderTrait
                 'columns' => ['idroles', 'roles_name'],
                 'spacing' => true,
                 'addQuotes' => false,
-                'return' => 'idroles, roles_name'
+                'return' => 'idroles, roles_name',
             ],
             [
                 'isSchema' => false,
@@ -173,8 +220,8 @@ trait FunctionsTraitProviderTrait
                 'columns' => ['idroles', 'roles_name', 'roles_description'],
                 'spacing' => true,
                 'addQuotes' => false,
-                'return' => 'idroles, roles_name, roles_description'
-            ]
+                'return' => 'idroles, roles_name, roles_description',
+            ],
         ];
     }
 }
