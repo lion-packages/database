@@ -8,6 +8,8 @@ use Exception;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\Test as Testing;
+use ReflectionException;
 
 class DriverTest extends Test
 {
@@ -44,6 +46,9 @@ class DriverTest extends Test
 
     private MySQL $mysql;
 
+    /**
+     * @throws ReflectionException
+     */
     protected function setUp(): void
     {
         $this->mysql = new MySQL();
@@ -51,6 +56,9 @@ class DriverTest extends Test
         $this->initReflection($this->mysql);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function tearDown(): void
     {
         $this->setPrivateProperty('connections', []);
@@ -60,7 +68,11 @@ class DriverTest extends Test
         $this->setPrivateProperty('dbname', '');
     }
 
-    public function testRun(): void
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function runDriver(): void
     {
         Driver::run(self::CONNECTIONS);
 
@@ -69,7 +81,8 @@ class DriverTest extends Test
         $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
     }
 
-    public function testRunWithoutDefault(): void
+    #[Testing]
+    public function runWithoutDefault(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionCode(500);
@@ -78,7 +91,35 @@ class DriverTest extends Test
         Driver::run([]);
     }
 
-    public function testRunOptionDefault(): void
+    #[Testing]
+    public function runWithDefaultIsNotValid(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(500);
+        $this->expectExceptionMessage('Invalid default connection');
+
+        Driver::run([
+            'default' => 1,
+        ]);
+    }
+
+    #[Testing]
+    public function runWithDefaultIsNotExistInConnections(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(500);
+        $this->expectExceptionMessage('Invalid default connection');
+
+        Driver::run([
+            'default' => self::DATABASE_NAME_SECOND,
+            'connections' => [
+                'example' => self::CONNECTION_DATA_SECOND,
+            ],
+        ]);
+    }
+
+    #[Testing]
+    public function runOptionDefault(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionCode(500);

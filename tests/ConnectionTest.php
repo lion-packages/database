@@ -6,7 +6,6 @@ namespace Tests;
 
 use InvalidArgumentException;
 use Lion\Database\Connection;
-use Lion\Database\Driver;
 use Lion\Test\Test;
 use PDO;
 use PDOException;
@@ -121,11 +120,16 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testPrepare(): void
+    #[Testing]
+    public function prepare(): void
     {
-        $this->getPrivateMethod('mysql', [fn (): stdClass => (object) self::RESPONSE]);
+        $this->getPrivateMethod('mysql', [
+            'callback' => fn (): stdClass => (object) self::RESPONSE,
+        ]);
 
-        $this->getPrivateMethod('prepare', ['SELECT * FROM users']);
+        $this->getPrivateMethod('prepare', [
+            'sql' => 'SELECT * FROM users',
+        ]);
 
         $this->assertInstanceOf(PDOStatement::class, $this->getPrivateProperty('stmt'));
     }
@@ -133,8 +137,9 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('getValueTypeProvider')]
-    public function testGetValueType(string $value, int $fetchMode): void
+    public function getValueType(string $value, int $fetchMode): void
     {
         $type = $this->getPrivateMethod('getValueType', [$value]);
 
@@ -145,8 +150,9 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('bindValueProvider')]
-    public function testBindValue(string $code, string $query, array $values): void
+    public function bindValue(string $code, string $query, array $values): void
     {
         $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
 
@@ -164,8 +170,9 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('getQueryStringProvider')]
-    public function testGetQueryString(string $query): void
+    public function getQueryString(string $query): void
     {
         $this->setPrivateProperty('sql', $query);
 
@@ -187,7 +194,8 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testAddConnection(): void
+    #[Testing]
+    public function addConnection(): void
     {
         $this->setPrivateProperty('connections', ['default' => DATABASE_NAME_SECOND_CONNECTION]);
 
@@ -208,7 +216,8 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testGetConnections(): void
+    #[Testing]
+    public function getConnections(): void
     {
         $this->setPrivateProperty('connections', [
             'default' => DATABASE_NAME_CONNECTION,
@@ -224,7 +233,8 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testRemoveConnection(): void
+    #[Testing]
+    public function removeConnection(): void
     {
         $this->setPrivateProperty('connections', [
             'default' => DATABASE_NAME_CONNECTION,

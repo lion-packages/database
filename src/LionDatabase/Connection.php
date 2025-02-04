@@ -186,11 +186,8 @@ abstract class Connection implements ConnectionConfigInterface
      */
     protected static function prepare(string $sql): void
     {
+        /** @var PDOStatement $stmt */
         $stmt = self::$conn->prepare(trim($sql));
-
-        if (!$stmt) {
-            throw new PDOException('Prepare failed');
-        }
 
         self::$stmt = $stmt;
     }
