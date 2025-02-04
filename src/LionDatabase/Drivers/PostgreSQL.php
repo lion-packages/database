@@ -62,6 +62,8 @@ class PostgreSQL extends Connection implements
      * set this value to define the connection type
      *
      * @var string $databaseMethod
+     *
+     * @phpstan-ignore-next-line
      */
     private static string $databaseMethod = Driver::POSTGRESQL;
 }

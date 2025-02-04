@@ -10,30 +10,6 @@ use Lion\Database\Helpers\Constants\MySQLConstants;
 /**
  * Defines the configuration methods to run Driver processes
  *
- * @property array<string, string|array<string, string>> $connections [List of
- * database connections]
- * @property string $dbname [Current database name]
- * @property string $activeConnection [Name of the currently active connection]
- * @property bool $isTransaction [Defines whether the process is a transaction]
- * @property bool $isSchema [Defines whether the process is a schema process]
- * @property bool $isProcedure [Defines whether the process is a stored
- * procedure]
- * @property bool $enableInsert [Defines whether the values integrated into
- * bindValue are concatenated]
- * @property array $listSql [List of statements separated by ';']
- * @property string $actualCode [Defines the current code to index values to the
- * bindValue function]
- * @property string $sql [Defines and is used to construct the SQL statement]
- * @property string $table [Defines and is used to select the current table]
- * @property string $view [Defines and is used to select the current view]
- * @property string $message [Defines the message of the current output]
- * @property array $dataInfo [Stores the information defined to add to the
- * bindValue function]
- * @property array $fetchMode [Defines the FETCH_MODE for the defined query]
- * @property array $columns [List of columns defined for the SQL query]
- * @property array $actualColumn [Define the name of the current column to
- * define its configuration in the schema]
- *
  * @package Lion\Database\Helpers
  */
 trait DriverTrait
@@ -210,13 +186,13 @@ trait DriverTrait
     /**
      * Initializes the current query with the defined parameters
      *
-     * @param array<int, string> $listQuery [List of defined parameters]
+     * @param array<int, string> $queryList [List of defined parameters]
      *
      * @return void
      */
-    protected static function addNewQueryList(array $listQuery): void
+    protected static function addNewQueryList(array $queryList): void
     {
-        foreach ($listQuery as $key => $query) {
+        foreach ($queryList as $key => $query) {
             if ($key === 0) {
                 self::$sql = $query;
             } else {
@@ -228,13 +204,13 @@ trait DriverTrait
     /**
      * Nests the defined parameters into the current query
      *
-     * @param array<int, string> $listQuery [List of defined parameters]
+     * @param array<int, string> $queryList [List of defined parameters]
      *
      * @return void
      */
-    protected static function addQueryList(array $listQuery): void
+    protected static function addQueryList(array $queryList): void
     {
-        foreach ($listQuery as $query) {
+        foreach ($queryList as $query) {
             self::$sql .= $query;
         }
     }

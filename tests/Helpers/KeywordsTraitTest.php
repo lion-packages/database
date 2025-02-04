@@ -26,6 +26,7 @@ class KeywordsTraitTest extends Test
     #[DataProvider('getKeyProvider')]
     public function testGetKey(string $type, string $key, ?string $return): void
     {
+        /** @phpstan-ignore-next-line */
         $this->assertSame($return, $this->customClass::getKey($type, $key));
     }
 }

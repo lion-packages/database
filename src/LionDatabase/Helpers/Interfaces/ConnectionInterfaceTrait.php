@@ -9,7 +9,7 @@ use InvalidArgumentException;
 /**
  * Declare the connection method of the interface
  *
- * @package Lion\Database\Helpers
+ * @package Lion\Database\Helpers\Interfaces
  */
 trait ConnectionInterfaceTrait
 {

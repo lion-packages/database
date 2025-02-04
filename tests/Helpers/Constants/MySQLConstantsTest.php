@@ -6,11 +6,13 @@ namespace Tests\Helpers\Constants;
 
 use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\Test as Testing;
 
 class MySQLConstantsTest extends Test
 {
-    public function testKeywords(): void
+    #[Testing]
+    public function construct(): void
     {
-        $this->assertIsArray(MySQLConstants::KEYWORDS);
+        $this->assertInstanceOf(MySQLConstants::class, new MySQLConstants());
     }
 }

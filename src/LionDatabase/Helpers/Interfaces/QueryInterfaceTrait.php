@@ -9,7 +9,7 @@ use PDO;
 /**
  * Declare the query method of the interface
  *
- * @package Lion\Database\Helpers
+ * @package Lion\Database\Helpers\Interfaces
  */
 trait QueryInterfaceTrait
 {

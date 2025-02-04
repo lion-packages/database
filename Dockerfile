@@ -9,8 +9,8 @@ RUN useradd -m lion && echo 'lion:lion' | chpasswd && usermod -aG sudo lion && u
 
 # Dependencies
 RUN apt-get update -y \
-    && apt-get install -y sudo nano zsh git default-mysql-client curl wget unzip cron sendmail golang-go \
-    && apt-get install -y libpng-dev libzip-dev zlib1g-dev libonig-dev supervisor libevent-dev libssl-dev libpq-dev \
+    && apt-get install -y sudo nano zsh git curl wget unzip cron golang-go \
+    && apt-get install -y libpng-dev libzip-dev zlib1g-dev libonig-dev libevent-dev libssl-dev libpq-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -66,6 +66,3 @@ RUN echo 'export NVM_DIR="$HOME/.nvm"' >> /home/lion/.zshrc \
 # ----------------------------------------------------------------------------------------------------------------------
 # Copy Data
 COPY . .
-# ----------------------------------------------------------------------------------------------------------------------
-# Init Project
-CMD php -S 0.0.0.0:8001 -t tests/build/coverage

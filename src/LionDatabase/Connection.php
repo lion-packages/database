@@ -9,7 +9,6 @@ use InvalidArgumentException;
 use Lion\Database\Helpers\FunctionsTrait;
 use Lion\Database\Interface\ConnectionConfigInterface;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
-use Lion\Database\Interface\DatabaseEngineInterface;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -19,14 +18,14 @@ use stdClass;
  * Class that manages the connection to databases on different drivers
  *
  * @property PDO $conn [PDO driver object to make connections to databases]
- * @property PDOStatement|bool $stmt [PDO declaration object to perform database
+ * @property PDOStatement $stmt [PDO declaration object to perform database
  * processes]
  * @property array<string, PDO> $databaseInstances [List of database
  * connections]
  *
  * @package Lion\Database
  */
-abstract class Connection implements ConnectionConfigInterface, DatabaseEngineInterface
+abstract class Connection implements ConnectionConfigInterface
 {
     use FunctionsTrait;
 
@@ -50,14 +49,14 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     /**
      * [PDO declaration object to perform database processes]
      *
-     * @var PDOStatement|bool $stmt
+     * @var PDOStatement $stmt
      */
-    protected static PDOStatement|bool $stmt;
+    protected static PDOStatement $stmt;
 
     /**
      * [List of database connections]
      *
-     * @var array<string, PDO> $databaseInstances
+     * @var array<non-empty-string, PDO> $databaseInstances
      */
     protected static array $databaseInstances;
 
@@ -86,7 +85,16 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     }
 
     /**
-     * {@inheritdoc}
+     * Initializes a MySQL database connection and runs a process
+     *
+     * @param Closure $callback [Function that is executed]
+     *
+     * phpcs:ignore Generic.Files.LineLength
+     * @return stdClass|array<int|string, stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>|DatabaseCapsuleInterface
+     *
+     * @throws PDOException [If the database process fails]
+     *
+     * @internal
      */
     public static function mysql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
     {
@@ -122,7 +130,16 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     }
 
     /**
-     * {@inheritdoc}
+     * Initializes a PostgreSQL database connection and runs a process
+     *
+     * @param Closure $callback [Function that is executed]
+     *
+     * phpcs:ignore Generic.Files.LineLength
+     * @return stdClass|array<int|string, stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>|DatabaseCapsuleInterface
+     *
+     * @throws PDOException [If the database process fails]
+     *
+     * @internal
      */
     public static function postgresql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
     {
@@ -163,10 +180,16 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
      * @param string $sql [Current sentence]
      *
      * @return void
+     *
+     * @throws PDOException [If something goes wrong when preparing the
+     * consultation]
      */
     protected static function prepare(string $sql): void
     {
-        self::$stmt = self::$conn->prepare(trim($sql));
+        /** @var PDOStatement $stmt */
+        $stmt = self::$conn->prepare(trim($sql));
+
+        self::$stmt = $stmt;
     }
 
     /**
@@ -278,7 +301,7 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
             } elseif (Driver::MYSQL === $connection['type']) {
                 self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceMySQL($connection);
             } else {
-                throw new InvalidArgumentException('the database connection type is not supported', 500);
+                throw new InvalidArgumentException('The database connection type is not supported', 500);
             }
         }
 
@@ -288,7 +311,15 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     /**
      * Gets a PDO instance for MySQL database connections
      *
-     * @param array<string, int|string> $connection [Database connection data]
+     * @param array{
+     *     type: string,
+     *     host: string,
+     *     port: int,
+     *     dbname: string,
+     *     user: string,
+     *     password: string,
+     *     options?: array<int, int>
+     * } $connection [Database connection data]
      *
      * @return PDO
      */
@@ -305,7 +336,15 @@ abstract class Connection implements ConnectionConfigInterface, DatabaseEngineIn
     /**
      * Gets a PDO instance for PostgreSQL database connections
      *
-     * @param array<string, int|string> $connection [Database connection data]
+     * @param array{
+     *     type: string,
+     *     host: string,
+     *     port: int,
+     *     dbname: string,
+     *     user: string,
+     *     password: string,
+     *     options?: array<int, int>
+     * } $connection [Database connection data]
      *
      * @return PDO
      */
