@@ -9,6 +9,7 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\TableInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
@@ -50,6 +51,7 @@ class MySQL extends Connection implements
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
     SchemaDriverInterface,
+    TableInterface,
     TransactionInterface
 {
     use ConnectionInterfaceTrait;
@@ -711,16 +713,9 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the TABLE statement in the current query
-     *
-     * @param string|bool $table [Nests the table in the current query or nests
-     * the TABLE statement in the current query]
-     * @param bool $withDatabase [Determines whether to nest the current
-     * database in the table]
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function table(string|bool $table = true, bool $withDatabase = true): MySQL
+    public static function table(string|bool $table = true, bool $withDatabase = true): static
     {
         if (is_string($table)) {
             self::$table = !$withDatabase ? $table : self::$dbname . ".{$table}";
