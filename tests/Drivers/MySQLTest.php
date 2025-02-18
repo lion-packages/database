@@ -809,6 +809,9 @@ class MySQLTest extends Test
         $this->assertMessage('Rows updated successfully');
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('insertProvider')]
     public function testInsert(string $table, array $params, string $return): void
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Provider;
 
+use Faker\Factory;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 
 trait PostgreSQLProviderTrait
@@ -509,6 +510,70 @@ trait PostgreSQLProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS_ERR,
                 'selectSql' => self::QUERY_SQL_SELECT_USERS,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{
+     *     table: bool,
+     *     withDatabase: bool,
+     *     return: string
+     * }>
+     */
+    public static function tableProvider(): array
+    {
+        return [
+            [
+                'table' => true,
+                'withDatabase' => true,
+                'return' => 'TABLE',
+            ],
+            [
+                'table' => false,
+                'withDatabase' => true,
+                'return' => '',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{
+     *     table: string,
+     *     params: array<string, string>,
+     *     return: string
+     * }>
+     */
+    public static function insertProvider(): array
+    {
+        $faker = Factory::create();
+
+        return [
+            [
+                'table' => 'users',
+                'params' => [
+                    'users_name' => $faker->name(),
+                    'users_last_name' => $faker->lastName(),
+                ],
+                'return' => 'INSERT INTO lion_database.users (users_name, users_last_name) VALUES (?, ?)',
+            ],
+            [
+                'table' => 'roles',
+                'params' => [
+                    'roles_name' => $faker->jobTitle(),
+                ],
+                'return' => 'INSERT INTO lion_database.roles (roles_name) VALUES (?)',
+            ],
+            [
+                'table' => 'tasks',
+                'params' => [
+                    'tasks_title' => $faker->company(),
+                    'tasks_description' => $faker->companySuffix(),
+                    'tasks_created_at' => $faker->date('Y-m-d H:i:s'),
+                ],
+                'return' => <<<SQL
+                INSERT INTO lion_database.tasks (tasks_title, tasks_description, tasks_created_at) VALUES (?, ?, ?)
+                SQL,
             ],
         ];
     }

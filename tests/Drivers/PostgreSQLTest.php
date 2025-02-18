@@ -39,6 +39,8 @@ class PostgreSQLTest extends Test
         $this->actualCode = uniqid();
 
         $this->initReflection($this->postgresql);
+
+        $this->setPrivateProperty('actualCode', $this->actualCode);
     }
 
     /**
@@ -953,5 +955,29 @@ class PostgreSQLTest extends Test
         ]);
 
         $this->assertSame($sql, $this->getPrivateProperty('sql'));
+    }
+
+    #[DataProvider('tableProvider')]
+    public function testTable(bool $table, bool $withDatabase, string $return): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table, $withDatabase));
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[DataProvider('insertProvider')]
+    public function testInsert(string $table, array $params, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->insert($params));
+
+        $rows = $this->getPrivateProperty('dataInfo');
+
+        $this->assertArrayHasKey($this->actualCode, $rows);
+        $this->assertSame(array_values($params), $rows[$this->actualCode]);
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
     }
 }
