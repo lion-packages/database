@@ -8,6 +8,7 @@ use Closure;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\Drivers\AndInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
@@ -54,6 +55,7 @@ use PDO;
  * @package Lion\Database\Drivers
  */
 class MySQL extends Connection implements
+    AndInterface,
     DatabaseConfigInterface,
     DeleteInterface,
     InsertInterface,
@@ -1320,14 +1322,9 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the AND statement in the current query
-     *
-     * @param Closure|string|bool $and [You can add a AND to the current
-     * statement, group by group, or return the AND statement]
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function and(Closure|string|bool $and = true): MySQL
+    public static function and(Closure|string|bool $and = true): static
     {
         if (is_callable($and)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
