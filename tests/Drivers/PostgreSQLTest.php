@@ -1072,4 +1072,27 @@ class PostgreSQLTest extends Test
 
         $this->assertSame('AND', $this->postgresql->getQueryString()->data->query);
     }
+
+    #[Testing]
+    public function orIsBool(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or());
+        $this->assertSame('OR', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function orIsString(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or('idusers'));
+        $this->assertSame('OR idusers', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function orWithCallback(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or(function (): void {
+        }));
+
+        $this->assertSame('OR', $this->postgresql->getQueryString()->data->query);
+    }
 }

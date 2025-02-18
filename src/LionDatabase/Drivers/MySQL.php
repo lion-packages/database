@@ -25,6 +25,7 @@ use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\AndInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
 use Lion\Database\Traits\Drivers\UpdateInterfaceTrait;
@@ -79,6 +80,7 @@ class MySQL extends Connection implements
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
     use InsertInterfaceTrait;
+    use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
     use SelectInterfaceTrait;
@@ -1319,33 +1321,6 @@ class MySQL extends Connection implements
                 " {$table}",
                 self::getKey(Driver::MYSQL, 'on'),
                 " {$valueFrom} = {$valueTo}"
-            ]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function or(bool|Closure|string $or = true): static
-    {
-        $orString = self::getKey(Driver::MYSQL, 'or');
-
-        if (is_callable($or)) {
-            self::addQueryList([
-                $orString,
-            ]);
-
-            $or();
-        } elseif (is_string($or)) {
-            self::addQueryList([
-                $orString,
-                " {$or}",
-            ]);
-        } elseif (is_bool($or) && $or) {
-            self::addQueryList([
-                $orString,
             ]);
         }
 

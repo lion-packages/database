@@ -8,7 +8,7 @@ use Closure;
 use Lion\Database\Driver;
 
 /**
- * Declare the select method of the interface
+ * Declare the where method of the interface
  *
  * @package Lion\Database\Traits\Drivers
  */
