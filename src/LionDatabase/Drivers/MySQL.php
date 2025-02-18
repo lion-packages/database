@@ -11,6 +11,7 @@ use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
 use Lion\Database\Interface\Drivers\UpdateInterface;
@@ -60,6 +61,7 @@ class MySQL extends Connection implements
     DatabaseConfigInterface,
     DeleteInterface,
     InsertInterface,
+    OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
@@ -1324,25 +1326,27 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the OR statement in the current query
-     *
-     * @param Closure|string|bool $or [You can add a OR to the current
-     * statement, group by group, or return the OR statement]
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function or(Closure|string|bool $or = true): MySQL
+    public static function or(bool|Closure|string $or = true): static
     {
+        $orString = self::getKey(Driver::MYSQL, 'or');
+
         if (is_callable($or)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'or')]);
+            self::addQueryList([
+                $orString,
+            ]);
 
             $or();
         } elseif (is_string($or)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'or'), " {$or}"]);
-        } else {
-            if ($or) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'or')]);
-            }
+            self::addQueryList([
+                $orString,
+                " {$or}",
+            ]);
+        } elseif (is_bool($or) && $or) {
+            self::addQueryList([
+                $orString,
+            ]);
         }
 
         return new static();
