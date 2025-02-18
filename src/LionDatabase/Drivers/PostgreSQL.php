@@ -8,12 +8,14 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\TableInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\TableInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
@@ -46,6 +48,7 @@ class PostgreSQL extends Connection implements
     QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
+    TableInterface,
     TransactionInterface
 {
     use ConnectionInterfaceTrait;
@@ -55,6 +58,7 @@ class PostgreSQL extends Connection implements
     use InsertInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use TableInterfaceTrait;
     use TransactionInterfaceTrait;
 
     /**

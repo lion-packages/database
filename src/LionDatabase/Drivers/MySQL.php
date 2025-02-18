@@ -17,6 +17,7 @@ use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\TableInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
@@ -61,6 +62,7 @@ class MySQL extends Connection implements
     use InsertInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use TableInterfaceTrait;
     use TransactionInterfaceTrait;
 
     /**
@@ -708,22 +710,6 @@ class MySQL extends Connection implements
         }
 
         self::addQueryList([self::getKey(Driver::MYSQL, 'with')]);
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function table(string|bool $table = true, bool $withDatabase = true): static
-    {
-        if (is_string($table)) {
-            self::$table = !$withDatabase ? $table : self::$dbname . ".{$table}";
-        } else {
-            if ($table) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'table')]);
-            }
-        }
 
         return new static();
     }
