@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Lion\Database\Helpers\Interfaces;
+namespace Lion\Database\Traits;
 
 use stdClass;
 

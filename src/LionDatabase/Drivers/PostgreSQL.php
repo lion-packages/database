@@ -6,18 +6,18 @@ namespace Lion\Database\Drivers;
 
 use Lion\Database\Connection;
 use Lion\Database\Driver;
-use Lion\Database\Helpers\Interfaces\ConnectionInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\ExecuteInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\GetAllInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\GetInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\QueryInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\TransactionInterface;
+use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\ExecuteInterfaceTrait;
+use Lion\Database\Traits\GetAllInterfaceTrait;
+use Lion\Database\Traits\GetInterfaceTrait;
+use Lion\Database\Traits\QueryInterfaceTrait;
+use Lion\Database\Traits\RunInterfaceTrait;
+use Lion\Database\Traits\TransactionInterfaceTrait;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
