@@ -25,6 +25,7 @@ use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
 use Lion\Database\Traits\Drivers\UpdateInterfaceTrait;
+use Lion\Database\Traits\Drivers\WhereInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
@@ -78,6 +79,7 @@ class MySQL extends Connection implements
     use TableInterfaceTrait;
     use TransactionInterfaceTrait;
     use UpdateInterfaceTrait;
+    use WhereInterfaceTrait;
 
     /**
      * Defines the database connection method to use
@@ -1312,26 +1314,6 @@ class MySQL extends Connection implements
                 self::getKey(Driver::MYSQL, 'on'),
                 " {$valueFrom} = {$valueTo}"
             ]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function where(Closure|string|bool $where = true): static
-    {
-        if (is_callable($where)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
-
-            $where();
-        } elseif (is_string($where)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'where'), " {$where}"]);
-        } else {
-            if ($where) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
-            }
         }
 
         return new static();

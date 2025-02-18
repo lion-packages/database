@@ -1026,4 +1026,27 @@ class PostgreSQLTest extends Test
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->delete());
         $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
     }
+
+    #[Testing]
+    public function whereIsBool(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where());
+        $this->assertSame('WHERE', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function whereIsString(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where('idusers'));
+        $this->assertSame('WHERE idusers', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function whereWithCallback(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where(function (): void {
+        }));
+
+        $this->assertSame('WHERE', $this->postgresql->getQueryString()->data->query);
+    }
 }
