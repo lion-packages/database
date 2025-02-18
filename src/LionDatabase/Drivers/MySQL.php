@@ -21,6 +21,7 @@ use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\Drivers\AndInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
@@ -69,6 +70,7 @@ class MySQL extends Connection implements
     UpdateInterface,
     WhereInterface
 {
+    use AndInterfaceTrait;
     use ConnectionInterfaceTrait;
     use DeleteInterfaceTrait;
     use ExecuteInterfaceTrait;
@@ -1316,26 +1318,6 @@ class MySQL extends Connection implements
                 self::getKey(Driver::MYSQL, 'on'),
                 " {$valueFrom} = {$valueTo}"
             ]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function and(Closure|string|bool $and = true): static
-    {
-        if (is_callable($and)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
-
-            $and();
-        } elseif (is_string($and)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'and'), " {$and}"]);
-        } else {
-            if ($and) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
-            }
         }
 
         return new static();
