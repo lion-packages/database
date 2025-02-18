@@ -8,6 +8,7 @@ use Closure;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
@@ -51,6 +52,7 @@ use PDO;
  */
 class MySQL extends Connection implements
     DatabaseConfigInterface,
+    DeleteInterface,
     InsertInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
@@ -1051,11 +1053,9 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the DELETE statement in the current query
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function delete(): MySQL
+    public static function delete(): static
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
