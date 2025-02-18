@@ -13,6 +13,7 @@ use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
 use Lion\Database\Interface\Drivers\UpdateInterface;
+use Lion\Database\Interface\Drivers\WhereInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
@@ -62,7 +63,8 @@ class MySQL extends Connection implements
     SelectInterface,
     TableInterface,
     TransactionInterface,
-    UpdateInterface
+    UpdateInterface,
+    WhereInterface
 {
     use ConnectionInterfaceTrait;
     use DeleteInterfaceTrait;
@@ -1316,14 +1318,9 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the WHERE statement in the current query
-     *
-     * @param Closure|string|bool $where [You can add a WHERE to the current
-     * statement, group by group, or return the WHERE statement]
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function where(Closure|string|bool $where = true): MySQL
+    public static function where(Closure|string|bool $where = true): static
     {
         if (is_callable($where)) {
             self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
