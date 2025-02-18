@@ -795,7 +795,6 @@ class MySQLTest extends Test
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->delete());
         $this->assertSame($return, $this->getQuery());
-        $this->assertMessage('Rows deleted successfully');
     }
 
     /**

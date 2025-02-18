@@ -650,4 +650,28 @@ trait PostgreSQLProviderTrait
             ],
         ];
     }
+
+    /**
+     * @return array<int, array{
+     *     table: string,
+     *     return: string
+     * }>
+     */
+    public static function deleteProvider(): array
+    {
+        return [
+            [
+                'table' => 'users',
+                'return' => 'DELETE FROM lion_database.users',
+            ],
+            [
+                'table' => 'roles',
+                'return' => 'DELETE FROM lion_database.roles',
+            ],
+            [
+                'table' => 'tasks',
+                'return' => 'DELETE FROM lion_database.tasks',
+            ],
+        ];
+    }
 }

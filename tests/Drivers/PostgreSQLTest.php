@@ -1016,4 +1016,14 @@ class PostgreSQLTest extends Test
         $this->assertSame(array_values($params), $rows[$this->actualCode]);
         $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
     }
+
+    #[Testing]
+    #[DataProvider('deleteProvider')]
+    public function delete(string $table, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->delete());
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
 }

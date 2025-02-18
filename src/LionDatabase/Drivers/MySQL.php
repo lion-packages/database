@@ -19,6 +19,7 @@ use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
@@ -64,6 +65,7 @@ class MySQL extends Connection implements
     UpdateInterface
 {
     use ConnectionInterfaceTrait;
+    use DeleteInterfaceTrait;
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
@@ -1047,27 +1049,6 @@ class MySQL extends Connection implements
             ".{$storedProcedure}(",
             self::addCharacter($rows),
             ")"
-        ]);
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function delete(): static
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::$message = 'Rows deleted successfully';
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'delete'),
-            self::getKey(Driver::MYSQL, 'from'),
-            ' ',
-            self::$table
         ]);
 
         return new static();
