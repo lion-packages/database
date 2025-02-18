@@ -7,19 +7,35 @@ namespace Lion\Database\Drivers;
 use Closure;
 use Lion\Database\Connection;
 use Lion\Database\Driver;
-use Lion\Database\Helpers\Interfaces\ConnectionInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\ExecuteInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\GetAllInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\GetInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\QueryInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\Drivers\AndInterface;
+use Lion\Database\Interface\Drivers\DeleteInterface;
+use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\OrInterface;
+use Lion\Database\Interface\Drivers\SelectInterface;
+use Lion\Database\Interface\Drivers\TableInterface;
+use Lion\Database\Interface\Drivers\UpdateInterface;
+use Lion\Database\Interface\Drivers\WhereInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
+use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\Drivers\AndInterfaceTrait;
+use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
+use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\OrInterfaceTrait;
+use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
+use Lion\Database\Traits\Drivers\TableInterfaceTrait;
+use Lion\Database\Traits\Drivers\UpdateInterfaceTrait;
+use Lion\Database\Traits\Drivers\WhereInterfaceTrait;
+use Lion\Database\Traits\ExecuteInterfaceTrait;
+use Lion\Database\Traits\GetAllInterfaceTrait;
+use Lion\Database\Traits\GetInterfaceTrait;
+use Lion\Database\Traits\QueryInterfaceTrait;
+use Lion\Database\Traits\RunInterfaceTrait;
+use Lion\Database\Traits\TransactionInterfaceTrait;
 use PDO;
 
 /**
@@ -42,20 +58,36 @@ use PDO;
  * @package Lion\Database\Drivers
  */
 class MySQL extends Connection implements
+    AndInterface,
     DatabaseConfigInterface,
+    DeleteInterface,
+    InsertInterface,
+    OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
     SchemaDriverInterface,
-    TransactionInterface
+    SelectInterface,
+    TableInterface,
+    TransactionInterface,
+    UpdateInterface,
+    WhereInterface
 {
+    use AndInterfaceTrait;
     use ConnectionInterfaceTrait;
+    use DeleteInterfaceTrait;
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
+    use InsertInterfaceTrait;
+    use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use SelectInterfaceTrait;
+    use TableInterfaceTrait;
     use TransactionInterfaceTrait;
+    use UpdateInterfaceTrait;
+    use WhereInterfaceTrait;
 
     /**
      * Defines the database connection method to use
@@ -707,29 +739,6 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the TABLE statement in the current query
-     *
-     * @param string|bool $table [Nests the table in the current query or nests
-     * the TABLE statement in the current query]
-     * @param bool $withDatabase [Determines whether to nest the current
-     * database in the table]
-     *
-     * @return MySQL
-     */
-    public static function table(string|bool $table = true, bool $withDatabase = true): MySQL
-    {
-        if (is_string($table)) {
-            self::$table = !$withDatabase ? $table : self::$dbname . ".{$table}";
-        } else {
-            if ($table) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'table')]);
-            }
-        }
-
-        return new static();
-    }
-
-    /**
      * Nests the VIEW statement in the current query
      *
      * @param string|bool $view [Nests the view in the current query or nests
@@ -1058,98 +1067,6 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the DELETE statement in the current query
-     *
-     * @return MySQL
-     */
-    public static function delete(): MySQL
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::$message = 'Rows deleted successfully';
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'delete'),
-            self::getKey(Driver::MYSQL, 'from'),
-            ' ',
-            self::$table
-        ]);
-
-        return new static();
-    }
-
-    /**
-     * Nests the UPDATE statement in the current query
-     *
-     * @param array<string, mixed> $rows [List of values]
-     *
-     * @return MySQL
-     */
-    public static function update(array $rows = []): MySQL
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::$message = 'Rows updated successfully';
-
-        self::addRows($rows);
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'update'),
-            ' ',
-            self::$table,
-            self::getKey(Driver::MYSQL, 'set'),
-            ' ',
-            self::addCharacterEqualTo($rows),
-        ]);
-
-        return new static();
-    }
-
-    /**
-     * Nests the INSERT statement in the current query
-     *
-     * @param array<string, mixed> $rows [List of values]
-     *
-     * @return MySQL
-     */
-    public static function insert(array $rows = []): MySQL
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::addRows($rows);
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'insert'),
-            self::getKey(Driver::MYSQL, 'into'),
-            ' ',
-            self::$table,
-            ' (',
-            self::addColumns(array_keys($rows)),
-            ')',
-            self::getKey(Driver::MYSQL, 'values'),
-            ' (',
-            (
-                !self::$isSchema
-                    ? self::addCharacterAssoc($rows)
-                    : self::addColumns(
-                        array_values($rows),
-                        true,
-                        !(self::$isSchema && self::$enableInsert && self::$isProcedure)
-                    )
-            ),
-            ')'
-        ]);
-
-        return new static();
-    }
-
-    /**
      * Nests the HAVING statement in the current query
      *
      * @return MySQL
@@ -1157,42 +1074,6 @@ class MySQL extends Connection implements
     public static function having(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'having')]);
-
-        return new static();
-    }
-
-    /**
-     * Nests the SELECT statement in the current query
-     *
-     * @return MySQL
-     */
-    public static function select(): MySQL
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
-
-        $stringColumns = self::addColumns(func_get_args());
-
-        if ('' === self::$table) {
-            self::addQueryList([
-                self::getKey(Driver::MYSQL, 'select'),
-                " {$stringColumns}",
-                self::getKey(Driver::MYSQL, 'from'),
-                ' ',
-                self::$view
-            ]);
-        } else {
-            self::addQueryList([
-                self::getKey(Driver::MYSQL, 'select'),
-                " {$stringColumns}",
-                self::getKey(Driver::MYSQL, 'from'),
-                ' ',
-                self::$table
-            ]);
-        }
 
         return new static();
     }
@@ -1441,81 +1322,6 @@ class MySQL extends Connection implements
                 self::getKey(Driver::MYSQL, 'on'),
                 " {$valueFrom} = {$valueTo}"
             ]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * Nests the WHERE statement in the current query
-     *
-     * @param Closure|string|bool $where [You can add a WHERE to the current
-     * statement, group by group, or return the WHERE statement]
-     *
-     * @return MySQL
-     */
-    public static function where(Closure|string|bool $where = true): MySQL
-    {
-        if (is_callable($where)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
-
-            $where();
-        } elseif (is_string($where)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'where'), " {$where}"]);
-        } else {
-            if ($where) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'where')]);
-            }
-        }
-
-        return new static();
-    }
-
-    /**
-     * Nests the AND statement in the current query
-     *
-     * @param Closure|string|bool $and [You can add a AND to the current
-     * statement, group by group, or return the AND statement]
-     *
-     * @return MySQL
-     */
-    public static function and(Closure|string|bool $and = true): MySQL
-    {
-        if (is_callable($and)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
-
-            $and();
-        } elseif (is_string($and)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'and'), " {$and}"]);
-        } else {
-            if ($and) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'and')]);
-            }
-        }
-
-        return new static();
-    }
-
-    /**
-     * Nests the OR statement in the current query
-     *
-     * @param Closure|string|bool $or [You can add a OR to the current
-     * statement, group by group, or return the OR statement]
-     *
-     * @return MySQL
-     */
-    public static function or(Closure|string|bool $or = true): MySQL
-    {
-        if (is_callable($or)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'or')]);
-
-            $or();
-        } elseif (is_string($or)) {
-            self::addQueryList([self::getKey(Driver::MYSQL, 'or'), " {$or}"]);
-        } else {
-            if ($or) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'or')]);
-            }
         }
 
         return new static();

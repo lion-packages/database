@@ -258,7 +258,15 @@ abstract class Connection implements ConnectionConfigInterface
     /**
      * Gets an object with the current statement
      *
-     * @return stdClass
+     * @return stdClass{
+     *     code: int,
+     *     status: string,
+     *     message: string,
+     *     data: stdClass{
+     *         query: string,
+     *         split: array<int, string>
+     *     }
+     * }
      */
     public static function getQueryString(): stdClass
     {

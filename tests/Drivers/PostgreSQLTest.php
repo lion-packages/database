@@ -39,6 +39,8 @@ class PostgreSQLTest extends Test
         $this->actualCode = uniqid();
 
         $this->initReflection($this->postgresql);
+
+        $this->setPrivateProperty('actualCode', $this->actualCode);
     }
 
     /**
@@ -550,7 +552,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->message);
         $this->assertSame('execution finished', $response->message);
 
-        /** @var array $response */
+        /** @var array<int, IdInterface> $response */
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
@@ -560,6 +562,7 @@ class PostgreSQLTest extends Test
         $this->assertIsArray($response);
         $this->assertCount(4, $response);
 
+        /** @var IdInterface $firstUser */
         $firstUser = reset($response);
 
         $this->assertIsObject($firstUser);
@@ -731,6 +734,9 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function executeInterfaceMultipleQueryAndParams(): void
     {
@@ -934,6 +940,9 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     #[TestWith(['sql' => self::QUERY_SQL_TABLE_ROLES])]
     #[TestWith(['sql' => self::QUERY_SQL_TABLE_USERS])]
@@ -946,5 +955,144 @@ class PostgreSQLTest extends Test
         ]);
 
         $this->assertSame($sql, $this->getPrivateProperty('sql'));
+    }
+
+    #[Testing]
+    #[DataProvider('tableProvider')]
+    public function table(bool $table, bool $withDatabase, string $return): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table, $withDatabase));
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('insertProvider')]
+    public function insert(string $table, array $params, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->insert($params));
+
+        $rows = $this->getPrivateProperty('dataInfo');
+
+        $this->assertArrayHasKey($this->actualCode, $rows);
+        $this->assertSame(array_values($params), $rows[$this->actualCode]);
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('selectProvider')]
+    public function selectWithTable(string $table, array $columns, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->select(...$columns));
+
+        $fetchMode = $this->getPrivateProperty('fetchMode');
+
+        $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$this->actualCode]);
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('updateProvider')]
+    public function update(string $table, array $params, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->update($params));
+
+        $rows = $this->getPrivateProperty('dataInfo');
+
+        $this->assertSame(array_values($params), $rows[$this->actualCode]);
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    #[DataProvider('deleteProvider')]
+    public function delete(string $table, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->delete());
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function whereIsBool(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where());
+        $this->assertSame('WHERE', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function whereIsString(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where('idusers'));
+        $this->assertSame('WHERE idusers', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function whereWithCallback(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where(function (): void {
+        }));
+
+        $this->assertSame('WHERE', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function andIsBool(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and());
+        $this->assertSame('AND', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function andIsString(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and('idusers'));
+        $this->assertSame('AND idusers', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function andWithCallback(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and(function (): void {
+        }));
+
+        $this->assertSame('AND', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function orIsBool(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or());
+        $this->assertSame('OR', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function orIsString(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or('idusers'));
+        $this->assertSame('OR idusers', $this->postgresql->getQueryString()->data->query);
+    }
+
+    #[Testing]
+    public function orWithCallback(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or(function (): void {
+        }));
+
+        $this->assertSame('OR', $this->postgresql->getQueryString()->data->query);
     }
 }

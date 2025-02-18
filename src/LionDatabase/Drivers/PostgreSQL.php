@@ -6,18 +6,34 @@ namespace Lion\Database\Drivers;
 
 use Lion\Database\Connection;
 use Lion\Database\Driver;
-use Lion\Database\Helpers\Interfaces\ConnectionInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\ExecuteInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\GetAllInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\GetInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\QueryInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\Drivers\AndInterface;
+use Lion\Database\Interface\Drivers\DeleteInterface;
+use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\OrInterface;
+use Lion\Database\Interface\Drivers\SelectInterface;
+use Lion\Database\Interface\Drivers\TableInterface;
+use Lion\Database\Interface\Drivers\UpdateInterface;
+use Lion\Database\Interface\Drivers\WhereInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\TransactionInterface;
+use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\Drivers\AndInterfaceTrait;
+use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
+use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\OrInterfaceTrait;
+use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
+use Lion\Database\Traits\Drivers\TableInterfaceTrait;
+use Lion\Database\Traits\Drivers\UpdateInterfaceTrait;
+use Lion\Database\Traits\Drivers\WhereInterfaceTrait;
+use Lion\Database\Traits\ExecuteInterfaceTrait;
+use Lion\Database\Traits\GetAllInterfaceTrait;
+use Lion\Database\Traits\GetInterfaceTrait;
+use Lion\Database\Traits\QueryInterfaceTrait;
+use Lion\Database\Traits\RunInterfaceTrait;
+use Lion\Database\Traits\TransactionInterfaceTrait;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
@@ -39,19 +55,35 @@ use Lion\Database\Interface\TransactionInterface;
  * @package Lion\Database\Drivers
  */
 class PostgreSQL extends Connection implements
+    AndInterface,
     DatabaseConfigInterface,
+    DeleteInterface,
+    InsertInterface,
+    OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
-    TransactionInterface
+    SelectInterface,
+    TableInterface,
+    TransactionInterface,
+    UpdateInterface,
+    WhereInterface
 {
+    use AndInterfaceTrait;
     use ConnectionInterfaceTrait;
+    use DeleteInterfaceTrait;
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
+    use InsertInterfaceTrait;
+    use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use SelectInterfaceTrait;
+    use TableInterfaceTrait;
     use TransactionInterfaceTrait;
+    use UpdateInterfaceTrait;
+    use WhereInterfaceTrait;
 
     /**
      * Defines the database connection method to use

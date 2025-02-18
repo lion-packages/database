@@ -9,10 +9,10 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL as DriverMySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
-use Lion\Database\Helpers\Interfaces\ConnectionInterfaceTrait;
-use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\RunInterfaceTrait;
 use stdClass;
 
 /**
