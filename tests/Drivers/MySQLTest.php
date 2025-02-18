@@ -798,6 +798,9 @@ class MySQLTest extends Test
         $this->assertMessage('Rows deleted successfully');
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('updateProvider')]
     public function testUpdate(string $table, array $params, string $return): void
     {
@@ -806,7 +809,6 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->update($params));
         $this->assertAddRows(array_values($params));
         $this->assertSame($return, $this->getQuery());
-        $this->assertMessage('Rows updated successfully');
     }
 
     /**

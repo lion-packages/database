@@ -21,6 +21,7 @@ use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
+use Lion\Database\Traits\Drivers\UpdateInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
@@ -70,6 +71,7 @@ class MySQL extends Connection implements
     use SelectInterfaceTrait;
     use TableInterfaceTrait;
     use TransactionInterfaceTrait;
+    use UpdateInterfaceTrait;
 
     /**
      * Defines the database connection method to use
@@ -1066,31 +1068,6 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'from'),
             ' ',
             self::$table
-        ]);
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function update(array $rows = []): static
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::$message = 'Rows updated successfully';
-
-        self::addRows($rows);
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'update'),
-            ' ',
-            self::$table,
-            self::getKey(Driver::MYSQL, 'set'),
-            ' ',
-            self::addCharacterEqualTo($rows),
         ]);
 
         return new static();

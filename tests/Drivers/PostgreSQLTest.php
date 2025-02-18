@@ -999,4 +999,21 @@ class PostgreSQLTest extends Test
         $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$this->actualCode]);
         $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
     }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('updateProvider')]
+    public function update(string $table, array $params, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->update($params));
+
+        $rows = $this->getPrivateProperty('dataInfo');
+
+        $this->assertSame(array_values($params), $rows[$this->actualCode]);
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
 }

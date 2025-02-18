@@ -609,4 +609,45 @@ trait PostgreSQLProviderTrait
             ],
         ];
     }
+
+    /**
+     * @return array<int, array{
+     *     table: string,
+     *     params: array<string, string>,
+     *     return: string
+     * }>
+     */
+    public static function updateProvider(): array
+    {
+        $faker = Factory::create();
+
+        return [
+            [
+                'table' => 'users',
+                'params' => [
+                    'users_name' => $faker->name(),
+                    'users_last_name' => $faker->lastName(),
+                ],
+                'return' => 'UPDATE lion_database.users SET users_name = ?, users_last_name = ?',
+            ],
+            [
+                'table' => 'roles',
+                'params' => [
+                    'roles_name' => $faker->jobTitle(),
+                ],
+                'return' => 'UPDATE lion_database.roles SET roles_name = ?',
+            ],
+            [
+                'table' => 'tasks',
+                'params' => [
+                    'tasks_title' => $faker->company(),
+                    'tasks_description' => $faker->companySuffix(),
+                    'tasks_created_at' => $faker->date('Y-m-d H:i:s'),
+                ],
+                'return' => <<<SQL
+                UPDATE lion_database.tasks SET tasks_title = ?, tasks_description = ?, tasks_created_at = ?
+                SQL,
+            ],
+        ];
+    }
 }
