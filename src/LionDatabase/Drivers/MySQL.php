@@ -18,6 +18,7 @@ use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
@@ -64,6 +65,7 @@ class MySQL extends Connection implements
     use InsertInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use SelectInterfaceTrait;
     use TableInterfaceTrait;
     use TransactionInterfaceTrait;
 
@@ -1104,40 +1106,6 @@ class MySQL extends Connection implements
     public static function having(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'having')]);
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function select(): static
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
-
-        $stringColumns = self::addColumns(func_get_args());
-
-        if ('' === self::$table) {
-            self::addQueryList([
-                self::getKey(Driver::MYSQL, 'select'),
-                " {$stringColumns}",
-                self::getKey(Driver::MYSQL, 'from'),
-                ' ',
-                self::$view
-            ]);
-        } else {
-            self::addQueryList([
-                self::getKey(Driver::MYSQL, 'select'),
-                " {$stringColumns}",
-                self::getKey(Driver::MYSQL, 'from'),
-                ' ',
-                self::$table
-            ]);
-        }
 
         return new static();
     }

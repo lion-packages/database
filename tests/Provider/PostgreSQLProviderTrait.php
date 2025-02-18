@@ -577,4 +577,36 @@ trait PostgreSQLProviderTrait
             ],
         ];
     }
+
+    /**
+     * @return array<int, array{
+     *     function: string,
+     *     value: string,
+     *     columns: array<int, string>,
+     *     return: string
+     * }>
+     */
+    public static function selectProvider(): array
+    {
+        return [
+            [
+                'table' => 'users',
+                'columns' => [
+                    'users_name',
+                    'users_last_name',
+                    'users_email',
+                ],
+                'return' => 'SELECT users_name, users_last_name, users_email FROM lion_database.users',
+            ],
+            [
+                'table' => 'read_users',
+                'columns' => [
+                    'users_name',
+                    'users_last_name',
+                    'users_email',
+                ],
+                'return' => 'SELECT users_name, users_last_name, users_email FROM lion_database.read_users',
+            ],
+        ];
+    }
 }

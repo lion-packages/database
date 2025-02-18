@@ -846,6 +846,9 @@ class MySQLTest extends Test
         $this->assertSame('HAVING', $this->getQuery());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[DataProvider('selectProvider')]
     public function testSelect(string $function, string $value, array $columns, string $return): void
     {

@@ -957,8 +957,9 @@ class PostgreSQLTest extends Test
         $this->assertSame($sql, $this->getPrivateProperty('sql'));
     }
 
+    #[Testing]
     #[DataProvider('tableProvider')]
-    public function testTable(bool $table, bool $withDatabase, string $return): void
+    public function table(bool $table, bool $withDatabase, string $return): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table, $withDatabase));
         $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
@@ -967,8 +968,9 @@ class PostgreSQLTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('insertProvider')]
-    public function testInsert(string $table, array $params, string $return): void
+    public function insert(string $table, array $params, string $return): void
     {
         $this->postgresql->run(CONNECTIONS_MYSQL);
 
@@ -978,6 +980,23 @@ class PostgreSQLTest extends Test
 
         $this->assertArrayHasKey($this->actualCode, $rows);
         $this->assertSame(array_values($params), $rows[$this->actualCode]);
+        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('selectProvider')]
+    public function selectWithTable(string $table, array $columns, string $return): void
+    {
+        $this->postgresql->run(CONNECTIONS_MYSQL);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->select(...$columns));
+
+        $fetchMode = $this->getPrivateProperty('fetchMode');
+
+        $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$this->actualCode]);
         $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
     }
 }
