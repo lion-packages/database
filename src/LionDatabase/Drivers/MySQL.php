@@ -11,6 +11,7 @@ use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
+use Lion\Database\Interface\Drivers\UpdateInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
@@ -56,7 +57,8 @@ class MySQL extends Connection implements
     SchemaDriverInterface,
     SelectInterface,
     TableInterface,
-    TransactionInterface
+    TransactionInterface,
+    UpdateInterface
 {
     use ConnectionInterfaceTrait;
     use ExecuteInterfaceTrait;
@@ -1070,13 +1072,9 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the UPDATE statement in the current query
-     *
-     * @param array<string, mixed> $rows [List of values]
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function update(array $rows = []): MySQL
+    public static function update(array $rows = []): static
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
