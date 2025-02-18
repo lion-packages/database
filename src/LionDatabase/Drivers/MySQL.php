@@ -15,6 +15,7 @@ use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
@@ -55,6 +56,7 @@ class MySQL extends Connection implements
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
+    use InsertInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
     use TransactionInterfaceTrait;
@@ -1106,42 +1108,6 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'set'),
             ' ',
             self::addCharacterEqualTo($rows),
-        ]);
-
-        return new static();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function insert(array $rows): MySQL
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        self::addRows($rows);
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'insert'),
-            self::getKey(Driver::MYSQL, 'into'),
-            ' ',
-            self::$table,
-            ' (',
-            self::addColumns(array_keys($rows)),
-            ')',
-            self::getKey(Driver::MYSQL, 'values'),
-            ' (',
-            (
-                !self::$isSchema
-                    ? self::addCharacterAssoc($rows)
-                    : self::addColumns(
-                        array_values($rows),
-                        true,
-                        !(self::$isSchema && self::$enableInsert && self::$isProcedure)
-                    )
-            ),
-            ')'
         ]);
 
         return new static();
