@@ -550,7 +550,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->message);
         $this->assertSame('execution finished', $response->message);
 
-        /** @var array $response */
+        /** @var array<int, IdInterface> $response */
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
             ->query($selectSql)
@@ -560,6 +560,7 @@ class PostgreSQLTest extends Test
         $this->assertIsArray($response);
         $this->assertCount(4, $response);
 
+        /** @var IdInterface $firstUser */
         $firstUser = reset($response);
 
         $this->assertIsObject($firstUser);
@@ -731,6 +732,9 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function executeInterfaceMultipleQueryAndParams(): void
     {
@@ -934,6 +938,9 @@ class PostgreSQLTest extends Test
         $this->assertSame('execution finished', $response->message);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     #[TestWith(['sql' => self::QUERY_SQL_TABLE_ROLES])]
     #[TestWith(['sql' => self::QUERY_SQL_TABLE_USERS])]

@@ -15,6 +15,7 @@ use Lion\Database\Helpers\Interfaces\QueryInterfaceTrait;
 use Lion\Database\Helpers\Interfaces\RunInterfaceTrait;
 use Lion\Database\Helpers\Interfaces\TransactionInterfaceTrait;
 use Lion\Database\Interface\DatabaseConfigInterface;
+use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
@@ -43,6 +44,7 @@ use PDO;
  */
 class MySQL extends Connection implements
     DatabaseConfigInterface,
+    InsertInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
@@ -1110,13 +1112,9 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the INSERT statement in the current query
-     *
-     * @param array<string, mixed> $rows [List of values]
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function insert(array $rows = []): MySQL
+    public static function insert(array $rows): MySQL
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
