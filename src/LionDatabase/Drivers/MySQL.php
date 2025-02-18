@@ -9,6 +9,7 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
@@ -52,6 +53,7 @@ class MySQL extends Connection implements
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
     SchemaDriverInterface,
+    SelectInterface,
     TableInterface,
     TransactionInterface
 {
@@ -1107,11 +1109,9 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the SELECT statement in the current query
-     *
-     * @return MySQL
+     * {@inheritDoc}
      */
-    public static function select(): MySQL
+    public static function select(): static
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
