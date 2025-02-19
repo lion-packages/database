@@ -19,11 +19,11 @@ trait RunInterfaceTrait
     public static function run(array $connections): self
     {
         if (empty($connections['default'])) {
-            throw new InvalidArgumentException('no default database defined', 500);
+            throw new InvalidArgumentException('No default database defined', 500);
         }
 
         if (empty($connections['connections'])) {
-            throw new InvalidArgumentException('no databases have been defined', 500);
+            throw new InvalidArgumentException('No databases have been defined', 500);
         }
 
         self::$connections = $connections;

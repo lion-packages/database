@@ -90,13 +90,13 @@ abstract class Connection implements ConnectionConfigInterface
      * @param Closure $callback [Function that is executed]
      *
      * phpcs:ignore Generic.Files.LineLength
-     * @return stdClass|array<int|string, stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>|DatabaseCapsuleInterface
+     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|stdClass
      *
      * @throws PDOException [If the database process fails]
      *
      * @internal
      */
-    public static function mysql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
+    public static function mysql(Closure $callback): array|DatabaseCapsuleInterface|stdClass
     {
         try {
             self::$conn = self::getDatabaseInstance();
@@ -135,13 +135,13 @@ abstract class Connection implements ConnectionConfigInterface
      * @param Closure $callback [Function that is executed]
      *
      * phpcs:ignore Generic.Files.LineLength
-     * @return stdClass|array<int|string, stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>|DatabaseCapsuleInterface
+     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|stdClass
      *
      * @throws PDOException [If the database process fails]
      *
      * @internal
      */
-    public static function postgresql(Closure $callback): stdClass|array|DatabaseCapsuleInterface
+    public static function postgresql(Closure $callback): array|DatabaseCapsuleInterface|stdClass
     {
         try {
             self::$conn = self::getDatabaseInstance();

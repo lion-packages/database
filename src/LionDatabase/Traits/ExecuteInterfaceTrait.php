@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Lion\Database\Traits;
 
+use Lion\Database\Interface\DatabaseCapsuleInterface;
+use PDOException;
 use stdClass;
 
 /**
@@ -20,7 +22,7 @@ trait ExecuteInterfaceTrait
     {
         $method = self::$databaseMethod;
 
-        return parent::{$method}(function (): stdClass {
+        return parent::{$method}(function (): array|DatabaseCapsuleInterface|stdClass {
             $dataInfoKeys = array_keys(self::$dataInfo);
 
             if (count($dataInfoKeys) > 0) {
@@ -36,7 +38,9 @@ trait ExecuteInterfaceTrait
                         self::bindValue($code);
                     }
 
-                    self::$stmt->execute();
+                    if (!self::$stmt->execute()) {
+                        throw new PDOException(self::$stmt->errorInfo()[2], 500);
+                    }
 
                     self::$stmt->closeCursor();
                 }
@@ -47,7 +51,9 @@ trait ExecuteInterfaceTrait
                     self::bindValue(self::$actualCode);
                 }
 
-                self::$stmt->execute();
+                if (!self::$stmt->execute()) {
+                    throw new PDOException(self::$stmt->errorInfo()[2], 500);
+                }
             }
 
             return (object) [

@@ -129,7 +129,7 @@ class MySQLTest extends Test
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('no default database defined');
+        $this->expectExceptionMessage('No default database defined');
 
         $this->mysql->run([]);
     }
@@ -139,7 +139,7 @@ class MySQLTest extends Test
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('no databases have been defined');
+        $this->expectExceptionMessage('No databases have been defined');
 
         $this->mysql->run(['default' => DATABASE_NAME_MYSQL]);
     }
@@ -169,7 +169,7 @@ class MySQLTest extends Test
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('the selected connection does not exist');
+        $this->expectExceptionMessage('The selected connection does not exist');
 
         $this->mysql->connection($connection);
     }

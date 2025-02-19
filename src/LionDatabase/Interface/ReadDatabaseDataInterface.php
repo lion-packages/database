@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Lion\Database\Interface;
 
-use Lion\Database\Interface\DatabaseCapsuleInterface;
+use PDOException;
 use stdClass;
 
 /**
@@ -17,14 +17,18 @@ interface ReadDatabaseDataInterface
     /**
      * Run and get an object from a row
      *
-     * @return stdClass|array<int|string, mixed>|DatabaseCapsuleInterface
+     * @return array<int|string, mixed>|DatabaseCapsuleInterface|stdClass
+     *
+     * @throws PDOException
      */
-    public static function get(): stdClass|array|DatabaseCapsuleInterface;
+    public static function get(): array|DatabaseCapsuleInterface|stdClass;
 
     /**
      * Run and get an array of objects
      *
-     * @return stdClass|array<stdClass|array<int|string, mixed>|DatabaseCapsuleInterface>
+     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>
+     *
+     * @throws PDOException
      */
-    public static function getAll(): stdClass|array;
+    public static function getAll(): array;
 }

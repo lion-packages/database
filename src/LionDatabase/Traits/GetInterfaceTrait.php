@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lion\Database\Traits;
 
 use Lion\Database\Interface\DatabaseCapsuleInterface;
+use PDOException;
 use stdClass;
 
 /**
@@ -17,11 +18,11 @@ trait GetInterfaceTrait
     /**
      * {@inheritdoc}
      */
-    public static function get(): stdClass|array|DatabaseCapsuleInterface
+    public static function get(): array|DatabaseCapsuleInterface|stdClass
     {
         $method = self::$databaseMethod;
 
-        return parent::{$method}(function (): stdClass|array|DatabaseCapsuleInterface {
+        return parent::{$method}(function (): array|DatabaseCapsuleInterface|stdClass {
             $responses = [];
 
             self::$listSql = array_map(
@@ -50,30 +51,16 @@ trait GetInterfaceTrait
                     }
                 }
 
-                self::$stmt->execute();
+                if (!self::$stmt->execute()) {
+                    throw new PDOException(self::$stmt->errorInfo()[2], 500);
+                }
 
-                $request = self::$stmt->fetch();
+                $data = self::$stmt->fetch();
 
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
+                if (count(self::$fetchMode) > 1) {
+                    $responses[] = !$data ? [] : $data;
                 } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
+                    $responses = !$data ? [] : $data;
                 }
             }
 
