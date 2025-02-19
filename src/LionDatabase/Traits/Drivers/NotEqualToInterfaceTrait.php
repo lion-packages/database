@@ -21,7 +21,7 @@ trait NotEqualToInterfaceTrait
                 ' ',
                 trim($column),
                 ' <> ',
-                trim($notEqualTo),
+                $notEqualTo,
             ]);
         } else {
             self::addRows([

@@ -1189,4 +1189,20 @@ class PostgreSQLTest extends Test
         $this->assertSame([self::USERS_ID], $rows[$this->actualCode]);
         $this->assertSame('idusers >= ?', $this->getQuery());
     }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function lessThanOrEqualTo(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->lessThanOrEqualTo('idusers', self::USERS_ID));
+
+        /** @var array<string, mixed> $rows */
+        $rows = $this->getPrivateProperty('dataInfo');
+
+        $this->assertArrayHasKey($this->actualCode, $rows);
+        $this->assertSame([self::USERS_ID], $rows[$this->actualCode]);
+        $this->assertSame('idusers <= ?', $this->getQuery());
+    }
 }

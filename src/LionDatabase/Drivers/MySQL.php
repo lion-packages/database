@@ -15,6 +15,7 @@ use Lion\Database\Interface\Drivers\GreaterThanInterface;
 use Lion\Database\Interface\Drivers\GreaterThanOrEqualToInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\LessThanInterface;
+use Lion\Database\Interface\Drivers\LessThanOrEqualToInterface;
 use Lion\Database\Interface\Drivers\NotEqualToInterface;
 use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
@@ -34,6 +35,7 @@ use Lion\Database\Traits\Drivers\GreaterThanInterfaceTrait;
 use Lion\Database\Traits\Drivers\GreaterThanOrEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\LessThanInterfaceTrait;
+use Lion\Database\Traits\Drivers\LessThanOrEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\NotEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
@@ -77,6 +79,7 @@ class MySQL extends Connection implements
     InsertInterface,
     NotEqualToInterface,
     LessThanInterface,
+    LessThanOrEqualToInterface,
     OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
@@ -100,6 +103,7 @@ class MySQL extends Connection implements
     use InsertInterfaceTrait;
     use NotEqualToInterfaceTrait;
     use LessThanInterfaceTrait;
+    use LessThanOrEqualToInterfaceTrait;
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
@@ -1373,27 +1377,6 @@ class MySQL extends Connection implements
     public static function column(string $column, string $table = ''): MySQL
     {
         self::addQueryList('' === $table ? [' ', trim($column)] : [' ', trim("{$table}.{$column}")]);
-
-        return new static();
-    }
-
-    /**
-     * Adds a "less than or equal to" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $lessThanOrEqualTo [Less than or equal to]
-     *
-     * @return MySQL
-     */
-    public static function lessThanOrEqualTo(string $column, mixed $lessThanOrEqualTo): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' <= ', trim($lessThanOrEqualTo)]);
-        } else {
-            self::addRows([$lessThanOrEqualTo]);
-
-            self::addQueryList([' ', trim($column . ' <= ?')]);
-        }
 
         return new static();
     }

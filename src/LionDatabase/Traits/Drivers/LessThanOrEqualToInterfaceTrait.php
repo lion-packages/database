@@ -5,32 +5,32 @@ declare(strict_types=1);
 namespace Lion\Database\Traits\Drivers;
 
 /**
- * Declare the greaterThan method of the interface
+ * Declare the lessThanOrEqualTo method of the interface
  *
  * @package Lion\Database\Traits\Drivers
  */
-trait GreaterThanInterfaceTrait
+trait LessThanOrEqualToInterfaceTrait
 {
     /**
      * {@inheritDoc}
      */
-    public static function greaterThan(string $column, mixed $greaterThan): static
+    public static function lessThanOrEqualTo(string $column, mixed $lessThanOrEqualTo): static
     {
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
                 ' ',
                 trim($column),
-                ' > ',
-                $greaterThan,
+                ' <= ',
+                $lessThanOrEqualTo,
             ]);
         } else {
             self::addRows([
-                $greaterThan,
+                $lessThanOrEqualTo,
             ]);
 
             self::addQueryList([
                 ' ',
-                trim($column . ' > ?'),
+                trim($column . ' <= ?'),
             ]);
         }
 
