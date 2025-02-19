@@ -13,6 +13,7 @@ use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\EqualToInterface;
 use Lion\Database\Interface\Drivers\GreaterThanInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\LessThanInterface;
 use Lion\Database\Interface\Drivers\NotEqualToInterface;
 use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
@@ -30,6 +31,7 @@ use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\GreaterThanInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\LessThanInterfaceTrait;
 use Lion\Database\Traits\Drivers\NotEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
@@ -71,6 +73,7 @@ class MySQL extends Connection implements
     GreaterThanInterface,
     InsertInterface,
     NotEqualToInterface,
+    LessThanInterface,
     OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
@@ -92,6 +95,7 @@ class MySQL extends Connection implements
     use GreaterThanInterfaceTrait;
     use InsertInterfaceTrait;
     use NotEqualToInterfaceTrait;
+    use LessThanInterfaceTrait;
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
@@ -1365,27 +1369,6 @@ class MySQL extends Connection implements
     public static function column(string $column, string $table = ''): MySQL
     {
         self::addQueryList('' === $table ? [' ', trim($column)] : [' ', trim("{$table}.{$column}")]);
-
-        return new static();
-    }
-
-    /**
-     * Adds a "less than" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $lessThan [Less than]
-     *
-     * @return MySQL
-     */
-    public static function lessThan(string $column, mixed $lessThan): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' < ', trim($lessThan)]);
-        } else {
-            self::addRows([$lessThan]);
-
-            self::addQueryList([' ', trim($column . ' < ?')]);
-        }
 
         return new static();
     }
