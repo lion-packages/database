@@ -13,6 +13,7 @@ use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
+use PDOException;
 use stdClass;
 
 /**
@@ -61,7 +62,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
         return parent::mysql(function (): stdClass {
             self::prepare(self::$sql);
 
-            self::$stmt->execute();
+            if (!self::$stmt->execute()) {
+                throw new PDOException(self::$stmt->errorInfo()[2], 500);
+            }
 
             self::clean();
 

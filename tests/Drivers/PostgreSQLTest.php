@@ -136,7 +136,7 @@ class PostgreSQLTest extends Test
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('no default database defined');
+        $this->expectExceptionMessage('No default database defined');
 
         $this->postgresql->run([]);
     }
@@ -147,7 +147,7 @@ class PostgreSQLTest extends Test
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('no databases have been defined');
+        $this->expectExceptionMessage('No databases have been defined');
 
         $this->postgresql->run($connections);
     }
@@ -183,7 +183,7 @@ class PostgreSQLTest extends Test
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('the selected connection does not exist');
+        $this->expectExceptionMessage('The selected connection does not exist');
 
         $this->postgresql->connection($connection);
     }
@@ -269,17 +269,8 @@ class PostgreSQLTest extends Test
             ->query($selectSql)
             ->get();
 
-        $this->assertIsObject($response);
-        $this->assertInstanceOf(stdClass::class, $response);
-        $this->assertObjectHasProperty('code', $response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertIsInt($response->code);
-        $this->assertSame(200, $response->code);
-        $this->assertIsString($response->status);
-        $this->assertSame('success', $response->status);
-        $this->assertIsString($response->message);
-        $this->assertSame('no data available', $response->message);
+        $this->assertIsArray($response);
+        $this->assertEmpty($response);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -419,17 +410,8 @@ class PostgreSQLTest extends Test
 
         $secondUser = end($response);
 
-        $this->assertIsObject($secondUser);
-        $this->assertInstanceOf(stdClass::class, $secondUser);
-        $this->assertObjectHasProperty('code', $secondUser);
-        $this->assertObjectHasProperty('status', $secondUser);
-        $this->assertObjectHasProperty('message', $secondUser);
-        $this->assertIsInt($secondUser->code);
-        $this->assertSame(200, $secondUser->code);
-        $this->assertIsString($secondUser->status);
-        $this->assertSame('success', $secondUser->status);
-        $this->assertIsString($secondUser->message);
-        $this->assertSame('no data available', $secondUser->message);
+        $this->assertIsArray($secondUser);
+        $this->assertEmpty($secondUser);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -535,17 +517,8 @@ class PostgreSQLTest extends Test
             ->query($selectSql)
             ->getAll();
 
-        $this->assertIsObject($response);
-        $this->assertInstanceOf(stdClass::class, $response);
-        $this->assertObjectHasProperty('code', $response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertIsInt($response->code);
-        $this->assertSame(200, $response->code);
-        $this->assertIsString($response->status);
-        $this->assertSame('success', $response->status);
-        $this->assertIsString($response->message);
-        $this->assertSame('no data available', $response->message);
+        $this->assertIsArray($response);
+        $this->assertEmpty($response);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -695,17 +668,8 @@ class PostgreSQLTest extends Test
 
         $secondList = end($response);
 
-        $this->assertIsObject($secondList);
-        $this->assertInstanceOf(stdClass::class, $secondList);
-        $this->assertObjectHasProperty('code', $secondList);
-        $this->assertObjectHasProperty('status', $secondList);
-        $this->assertObjectHasProperty('message', $secondList);
-        $this->assertIsInt($secondList->code);
-        $this->assertSame(200, $secondList->code);
-        $this->assertIsString($secondList->status);
-        $this->assertSame('success', $secondList->status);
-        $this->assertIsString($secondList->message);
-        $this->assertSame('no data available', $secondList->message);
+        $this->assertIsArray($secondList);
+        $this->assertEmpty($secondList);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -951,17 +915,8 @@ class PostgreSQLTest extends Test
             ->query($selectSql)
             ->getAll();
 
-        $this->assertIsObject($data);
-        $this->assertInstanceOf(stdClass::class, $data);
-        $this->assertObjectHasProperty('code', $data);
-        $this->assertObjectHasProperty('status', $data);
-        $this->assertObjectHasProperty('message', $data);
-        $this->assertIsInt($data->code);
-        $this->assertSame(200, $data->code);
-        $this->assertIsString($data->status);
-        $this->assertSame('success', $data->status);
-        $this->assertIsString($data->message);
-        $this->assertSame('no data available', $data->message);
+        $this->assertIsArray($data);
+        $this->assertEmpty($data);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)

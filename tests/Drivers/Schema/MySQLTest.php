@@ -223,7 +223,8 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
+        $driversMysql = new DriversMySQL()
+            ->run(CONNECTIONS_MYSQL);
 
         foreach ($driversMysql->show()->tables()->getAll() as $table) {
             $this->assertContains($table->Tables_in_lion_database, ['users_lion', 'roles_lion']);
@@ -231,13 +232,13 @@ class MySQLTest extends Test
 
         $this->assertResponse($this->mysql->dropTables()->execute());
 
-        $readTables = $driversMysql->show()->tables()->getAll();
+        $readTables = $driversMysql
+            ->show()
+            ->tables()
+            ->getAll();
 
-        $this->assertIsObject($readTables);
-        $this->assertObjectHasProperty('status', $readTables);
-        $this->assertObjectHasProperty('message', $readTables);
-        $this->assertSame('success', $readTables->status);
-        $this->assertSame('no data available', $readTables->message);
+        $this->assertIsArray($readTables);
+        $this->assertEmpty($readTables);
     }
 
     #[DataProvider('truncateTableProvider')]
@@ -254,12 +255,17 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
+        $driversMysql = new DriversMySQL()->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse($driversMysql->table($table)->insert(['num' => 1])->execute());
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
         $this->assertResponse($this->mysql->truncateTable($table, $enableForeignKeyChecks)->execute());
-        $this->assertResponse($driversMysql->table($table)->select()->getAll(), 'no data available');
+
+        $response = $driversMysql->table($table)->select()->getAll();
+
+        $this->assertIsArray($response);
+        $this->assertEmpty($response);
+
         $this->assertResponse($this->mysql->dropTable($table)->execute());
     }
 

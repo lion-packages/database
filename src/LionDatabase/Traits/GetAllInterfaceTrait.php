@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Lion\Database\Traits;
 
+use Lion\Database\Interface\DatabaseCapsuleInterface;
+use PDOException;
 use stdClass;
 
 /**
@@ -16,11 +18,11 @@ trait GetAllInterfaceTrait
     /**
      * {@inheritdoc}
      */
-    public static function getAll(): stdClass|array
+    public static function getAll(): array
     {
         $method = self::$databaseMethod;
 
-        return parent::{$method}(function (): stdClass|array {
+        return parent::{$method}(function (): array|DatabaseCapsuleInterface|stdClass {
             $responses = [];
 
             self::$listSql = array_map(
@@ -49,30 +51,14 @@ trait GetAllInterfaceTrait
                     }
                 }
 
-                self::$stmt->execute();
+                if (!self::$stmt->execute()) {
+                    throw new PDOException(self::$stmt->errorInfo()[2], 500);
+                }
 
-                $request = self::$stmt->fetchAll();
-
-                if (!$request) {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    } else {
-                        $responses = (object) [
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'no data available',
-                        ];
-                    }
+                if (count(self::$fetchMode) > 1) {
+                    $responses[] = self::$stmt->fetchAll();
                 } else {
-                    if (count(self::$fetchMode) > 1) {
-                        $responses[] = $request;
-                    } else {
-                        $responses = $request;
-                    }
+                    $responses = self::$stmt->fetchAll();
                 }
             }
 

@@ -19,7 +19,7 @@ trait ConnectionInterfaceTrait
     public static function connection(string $connectionName): self
     {
         if (empty(self::$connections['connections'][$connectionName])) {
-            throw new InvalidArgumentException('the selected connection does not exist', 500);
+            throw new InvalidArgumentException('The selected connection does not exist', 500);
         }
 
         self::$activeConnection = $connectionName;
