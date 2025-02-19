@@ -89,6 +89,34 @@ class PostgreSQLTest extends Test
     }
 
     /**
+     * @param array<int, string> $columns
+     * @param array<int, array<int, string>> $rows
+     *
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('bulkProvider')]
+    public function bulk(bool $enable, string $table, array $columns, array $rows, string $return): void
+    {
+        $this->setPrivateProperty('isSchema', $enable);
+
+        $this->postgresql
+            ->run(CONNECTIONS_MYSQL)
+            ->enableInsert($enable)
+            ->table($table)
+            ->bulk($columns, $rows);
+
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql);
+
+        /** @var array<string, string> $rowsDataInfo */
+        $rowsDataInfo = $this->getPrivateProperty('dataInfo');
+
+        $this->assertArrayHasKey($this->actualCode, $rowsDataInfo);
+        $this->assertSame(array_merge(...$rows), $rowsDataInfo[$this->actualCode]);
+        $this->assertSame($return, $this->getQuery());
+    }
+
+    /**
      * @throws ReflectionException
      */
     #[Testing]

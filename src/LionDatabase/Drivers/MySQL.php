@@ -9,6 +9,7 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
+use Lion\Database\Interface\Drivers\BulkInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\EqualToInterface;
 use Lion\Database\Interface\Drivers\GreaterThanInterface;
@@ -29,6 +30,7 @@ use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\AndInterfaceTrait;
+use Lion\Database\Traits\Drivers\BulkInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\GreaterThanInterfaceTrait;
@@ -47,6 +49,7 @@ use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
 use Lion\Database\Traits\QueryInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
+use Lion\Database\Traits\SchemaDriverInterfaceTrait;
 use Lion\Database\Traits\TransactionInterfaceTrait;
 use PDO;
 
@@ -71,6 +74,7 @@ use PDO;
  */
 class MySQL extends Connection implements
     AndInterface,
+    BulkInterface,
     DatabaseConfigInterface,
     DeleteInterface,
     EqualToInterface,
@@ -92,6 +96,7 @@ class MySQL extends Connection implements
     WhereInterface
 {
     use AndInterfaceTrait;
+    use BulkInterfaceTrait;
     use ConnectionInterfaceTrait;
     use DeleteInterfaceTrait;
     use EqualToInterfaceTrait;
@@ -107,6 +112,7 @@ class MySQL extends Connection implements
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use SchemaDriverInterfaceTrait;
     use SelectInterfaceTrait;
     use TableInterfaceTrait;
     use TransactionInterfaceTrait;
@@ -126,26 +132,6 @@ class MySQL extends Connection implements
      * @phpstan-ignore-next-line
      */
     private static string $databaseMethod = Driver::MYSQL;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function isSchema(): MySQL
-    {
-        self::$isSchema = true;
-
-        return new static();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function enableInsert(bool $enable = false): MySQL
-    {
-        self::$enableInsert = $enable;
-
-        return new static();
-    }
 
     /**
      * Nests the DATABASE statement in the current query
@@ -1004,40 +990,6 @@ class MySQL extends Connection implements
     public static function columns(): MySQL
     {
         self::addQueryList([self::getKey(Driver::MYSQL, 'columns')]);
-
-        return new static();
-    }
-
-    /**
-     * Nesting multiple values in an insert run
-     *
-     * @param array<int, string> $columns [List of columns]
-     * @param array<int, array<string, mixed>> $rows [Insertion rows]
-     *
-     * @return MySQL
-     */
-    public static function bulk(array $columns, array $rows): MySQL
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        foreach ($rows as $row) {
-            self::addRows($row);
-        }
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'insert'),
-            self::getKey(Driver::MYSQL, 'into'),
-            ' ',
-            self::$table,
-            ' (',
-            self::addColumns($columns),
-            ')',
-            self::getKey(Driver::MYSQL, 'values'),
-            ' ',
-            self::addCharacterBulk($rows, (self::$isSchema && self::$enableInsert))
-        ]);
 
         return new static();
     }

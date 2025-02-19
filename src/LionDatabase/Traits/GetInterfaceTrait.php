@@ -10,7 +10,7 @@ use stdClass;
 /**
  * Declare the get method of the interface
  *
- * @package Lion\Database\Helpers\Interfaces
+ * @package Lion\Database\Traits
  */
 trait GetInterfaceTrait
 {

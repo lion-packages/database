@@ -15,9 +15,9 @@ interface SchemaDriverInterface
      * Activate the configuration to run a process at the Schema level in the
      * service
      *
-     * @return SchemaDriverInterface
+     * @return static
      */
-    public static function isSchema(): SchemaDriverInterface;
+    public static function isSchema(): static;
 
     /**
      * Enable the setting for nesting insert statements
@@ -25,7 +25,7 @@ interface SchemaDriverInterface
      * @param bool $enable [Defines whether the values integrated into bindValue
      * are concatenated]
      *
-     * @return SchemaDriverInterface
+     * @return static
      */
-    public static function enableInsert(bool $enable = false): SchemaDriverInterface;
+    public static function enableInsert(bool $enable = false): static;
 }

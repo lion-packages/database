@@ -8,6 +8,7 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
+use Lion\Database\Interface\Drivers\BulkInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\EqualToInterface;
 use Lion\Database\Interface\Drivers\GreaterThanInterface;
@@ -24,9 +25,11 @@ use Lion\Database\Interface\Drivers\WhereInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\AndInterfaceTrait;
+use Lion\Database\Traits\Drivers\BulkInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\GreaterThanInterfaceTrait;
@@ -45,6 +48,7 @@ use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
 use Lion\Database\Traits\QueryInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
+use Lion\Database\Traits\SchemaDriverInterfaceTrait;
 use Lion\Database\Traits\TransactionInterfaceTrait;
 
 /**
@@ -68,6 +72,7 @@ use Lion\Database\Traits\TransactionInterfaceTrait;
  */
 class PostgreSQL extends Connection implements
     AndInterface,
+    BulkInterface,
     DatabaseConfigInterface,
     DeleteInterface,
     EqualToInterface,
@@ -81,6 +86,7 @@ class PostgreSQL extends Connection implements
     QueryInterface,
     ReadDatabaseDataInterface,
     RunDatabaseProcessesInterface,
+    SchemaDriverInterface,
     SelectInterface,
     TableInterface,
     TransactionInterface,
@@ -88,6 +94,7 @@ class PostgreSQL extends Connection implements
     WhereInterface
 {
     use AndInterfaceTrait;
+    use BulkInterfaceTrait;
     use ConnectionInterfaceTrait;
     use DeleteInterfaceTrait;
     use EqualToInterfaceTrait;
@@ -103,6 +110,7 @@ class PostgreSQL extends Connection implements
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use SchemaDriverInterfaceTrait;
     use SelectInterfaceTrait;
     use TableInterfaceTrait;
     use TransactionInterfaceTrait;

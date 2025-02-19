@@ -9,7 +9,7 @@ use stdClass;
 /**
  * Declare the getAll method of the interface
  *
- * @package Lion\Database\Helpers\Interfaces
+ * @package Lion\Database\Traits
  */
 trait GetAllInterfaceTrait
 {
