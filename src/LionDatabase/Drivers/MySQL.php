@@ -9,8 +9,15 @@ use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
+use Lion\Database\Interface\Drivers\BulkInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
+use Lion\Database\Interface\Drivers\EqualToInterface;
+use Lion\Database\Interface\Drivers\GreaterThanInterface;
+use Lion\Database\Interface\Drivers\GreaterThanOrEqualToInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\LessThanInterface;
+use Lion\Database\Interface\Drivers\LessThanOrEqualToInterface;
+use Lion\Database\Interface\Drivers\NotEqualToInterface;
 use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
@@ -23,8 +30,15 @@ use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\AndInterfaceTrait;
+use Lion\Database\Traits\Drivers\BulkInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
+use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
+use Lion\Database\Traits\Drivers\GreaterThanInterfaceTrait;
+use Lion\Database\Traits\Drivers\GreaterThanOrEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\LessThanInterfaceTrait;
+use Lion\Database\Traits\Drivers\LessThanOrEqualToInterfaceTrait;
+use Lion\Database\Traits\Drivers\NotEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
@@ -35,6 +49,7 @@ use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
 use Lion\Database\Traits\QueryInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
+use Lion\Database\Traits\SchemaDriverInterfaceTrait;
 use Lion\Database\Traits\TransactionInterfaceTrait;
 use PDO;
 
@@ -59,9 +74,16 @@ use PDO;
  */
 class MySQL extends Connection implements
     AndInterface,
+    BulkInterface,
     DatabaseConfigInterface,
     DeleteInterface,
+    EqualToInterface,
+    GreaterThanInterface,
+    GreaterThanOrEqualToInterface,
     InsertInterface,
+    NotEqualToInterface,
+    LessThanInterface,
+    LessThanOrEqualToInterface,
     OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
@@ -74,15 +96,23 @@ class MySQL extends Connection implements
     WhereInterface
 {
     use AndInterfaceTrait;
+    use BulkInterfaceTrait;
     use ConnectionInterfaceTrait;
     use DeleteInterfaceTrait;
+    use EqualToInterfaceTrait;
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
+    use GreaterThanInterfaceTrait;
+    use GreaterThanOrEqualToInterfaceTrait;
     use InsertInterfaceTrait;
+    use NotEqualToInterfaceTrait;
+    use LessThanInterfaceTrait;
+    use LessThanOrEqualToInterfaceTrait;
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
+    use SchemaDriverInterfaceTrait;
     use SelectInterfaceTrait;
     use TableInterfaceTrait;
     use TransactionInterfaceTrait;
@@ -98,28 +128,10 @@ class MySQL extends Connection implements
      * set this value to define the connection type
      *
      * @var string $databaseMethod
+     *
+     * @phpstan-ignore-next-line
      */
     private static string $databaseMethod = Driver::MYSQL;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function isSchema(): MySQL
-    {
-        self::$isSchema = true;
-
-        return new static();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function enableInsert(bool $enable = false): MySQL
-    {
-        self::$enableInsert = $enable;
-
-        return new static();
-    }
 
     /**
      * Nests the DATABASE statement in the current query
@@ -983,40 +995,6 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nesting multiple values in an insert run
-     *
-     * @param array<int, string> $columns [List of columns]
-     * @param array<int, array<string, mixed>> $rows [Insertion rows]
-     *
-     * @return MySQL
-     */
-    public static function bulk(array $columns, array $rows): MySQL
-    {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
-
-        foreach ($rows as $row) {
-            self::addRows($row);
-        }
-
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'insert'),
-            self::getKey(Driver::MYSQL, 'into'),
-            ' ',
-            self::$table,
-            ' (',
-            self::addColumns($columns),
-            ')',
-            self::getKey(Driver::MYSQL, 'values'),
-            ' ',
-            self::addCharacterBulk($rows, (self::$isSchema && self::$enableInsert))
-        ]);
-
-        return new static();
-    }
-
-    /**
      * Nests the IN statement in the current query
      *
      * @param array|null $values [List of values]
@@ -1351,132 +1329,6 @@ class MySQL extends Connection implements
     public static function column(string $column, string $table = ''): MySQL
     {
         self::addQueryList('' === $table ? [' ', trim($column)] : [' ', trim("{$table}.{$column}")]);
-
-        return new static();
-    }
-
-    /**
-     * Adds an "equals to" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $equalTo [Equal to]
-     *
-     * @return MySQL
-     */
-    public static function equalTo(string $column, mixed $equalTo): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' = ', trim($equalTo)]);
-        } else {
-            self::addRows([$equalTo]);
-
-            self::addQueryList([' ', trim($column . ' = ?')]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * Adds a "not equal to" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $notEqualTo [Not equal to]
-     *
-     * @return MySQL
-     */
-    public static function notEqualTo(string $column, mixed $notEqualTo): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' <> ', trim($notEqualTo)]);
-        } else {
-            self::addRows([$notEqualTo]);
-
-            self::addQueryList([' ', trim($column . ' <> ?')]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * Adds a "greater than" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $greaterThan [Greather than]
-     *
-     * @return MySQL
-     */
-    public static function greaterThan(string $column, mixed $greaterThan): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' > ', trim($greaterThan)]);
-        } else {
-            self::addRows([$greaterThan]);
-
-            self::addQueryList([' ', trim($column . ' > ?')]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * Adds a "less than" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $lessThan [Less than]
-     *
-     * @return MySQL
-     */
-    public static function lessThan(string $column, mixed $lessThan): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' < ', trim($lessThan)]);
-        } else {
-            self::addRows([$lessThan]);
-
-            self::addQueryList([' ', trim($column . ' < ?')]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * Adds a "greater than or equal to" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $greaterThanOrEqualTo [Greater than or equal to]
-     *
-     * @return MySQL
-     */
-    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' >= ', trim($greaterThanOrEqualTo)]);
-        } else {
-            self::addRows([$greaterThanOrEqualTo]);
-
-            self::addQueryList([' ', trim($column . ' >= ?')]);
-        }
-
-        return new static();
-    }
-
-    /**
-     * Adds a "less than or equal to" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $lessThanOrEqualTo [Less than or equal to]
-     *
-     * @return MySQL
-     */
-    public static function lessThanOrEqualTo(string $column, mixed $lessThanOrEqualTo): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' <= ', trim($lessThanOrEqualTo)]);
-        } else {
-            self::addRows([$lessThanOrEqualTo]);
-
-            self::addQueryList([' ', trim($column . ' <= ?')]);
-        }
 
         return new static();
     }

@@ -7,7 +7,7 @@ namespace Lion\Database\Traits;
 /**
  * Declare the transaction method of the interface
  *
- * @package Lion\Database\Helpers\Interfaces
+ * @package Lion\Database\Traits
  */
 trait TransactionInterfaceTrait
 {

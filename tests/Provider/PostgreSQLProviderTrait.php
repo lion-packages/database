@@ -88,6 +88,71 @@ trait PostgreSQLProviderTrait
 
     /**
      * @return array<int, array{
+     *     enable: bool,
+     *     table: string,
+     *     columns: array<int, string>,
+     *     rows: array<int, array<int, string>>,
+     *     return: string
+     * }>
+     */
+    public static function bulkProvider(): array
+    {
+        $faker = Factory::create();
+
+        return [
+            [
+                'enable' => false,
+                'table' => 'users',
+                'columns' => [
+                    'users_name',
+                    'users_last_name',
+                ],
+                'rows' => [
+                    [
+                        $faker->name(),
+                        $faker->lastName(),
+                    ],
+                    [
+                        $faker->name(),
+                        $faker->lastName(),
+                    ],
+                    [
+                        $faker->name(),
+                        $faker->lastName(),
+                    ],
+                ],
+                'return' => <<<SQL
+                INSERT INTO lion_database.users (users_name, users_last_name) VALUES (?, ?), (?, ?), (?, ?)
+                SQL,
+            ],
+            [
+                'enable' => true,
+                'table' => 'users',
+                'columns' => [
+                    'users_name',
+                    'users_last_name',
+                ],
+                'rows' => [
+                    [
+                        'lion #1',
+                        'database',
+                    ],
+                    [
+                        'lion #2',
+                        'database',
+                    ],
+                    [
+                        'lion #3',
+                        'database',
+                    ],
+                ],
+                'return' => "INSERT INTO lion_database.users (users_name, users_last_name) VALUES ('lion #1', 'database'), ('lion #2', 'database'), ('lion #3', 'database')", /** phpcs:ignore Generic.Files.LineLength */
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{
      *     connections: array<string, array<int, int>|string|null>
      * }>
      */

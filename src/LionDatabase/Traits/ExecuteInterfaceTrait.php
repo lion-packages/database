@@ -9,7 +9,7 @@ use stdClass;
 /**
  * Declare the execute method of the interface
  *
- * @package Lion\Database\Helpers\Interfaces
+ * @package Lion\Database\Traits
  */
 trait ExecuteInterfaceTrait
 {
