@@ -12,6 +12,7 @@ use Lion\Database\Interface\Drivers\AndInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\EqualToInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
+use Lion\Database\Interface\Drivers\NotEqualToInterface;
 use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
@@ -27,6 +28,7 @@ use Lion\Database\Traits\Drivers\AndInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
+use Lion\Database\Traits\Drivers\NotEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
@@ -65,6 +67,7 @@ class MySQL extends Connection implements
     DeleteInterface,
     EqualToInterface,
     InsertInterface,
+    NotEqualToInterface,
     OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
@@ -84,6 +87,7 @@ class MySQL extends Connection implements
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
     use InsertInterfaceTrait;
+    use NotEqualToInterfaceTrait;
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
@@ -1357,27 +1361,6 @@ class MySQL extends Connection implements
     public static function column(string $column, string $table = ''): MySQL
     {
         self::addQueryList('' === $table ? [' ', trim($column)] : [' ', trim("{$table}.{$column}")]);
-
-        return new static();
-    }
-
-    /**
-     * Adds a "not equal to" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $notEqualTo [Not equal to]
-     *
-     * @return MySQL
-     */
-    public static function notEqualTo(string $column, mixed $notEqualTo): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' <> ', trim($notEqualTo)]);
-        } else {
-            self::addRows([$notEqualTo]);
-
-            self::addQueryList([' ', trim($column . ' <> ?')]);
-        }
 
         return new static();
     }

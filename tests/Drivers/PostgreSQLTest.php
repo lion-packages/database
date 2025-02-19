@@ -315,7 +315,7 @@ class PostgreSQLTest extends Test
         ]);
 
         $this->assertIsInt($response->getId());
-        $this->assertSame(1, $response->getId());
+        $this->assertSame(self::USERS_ID, $response->getId());
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -1116,13 +1116,29 @@ class PostgreSQLTest extends Test
     #[Testing]
     public function equalToTest(): void
     {
-        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->equalTo('idusers', 1));
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->equalTo('idusers', self::USERS_ID));
 
         /** @var array<string, mixed> $rows */
         $rows = $this->getPrivateProperty('dataInfo');
 
         $this->assertArrayHasKey($this->actualCode, $rows);
-        $this->assertSame([1], $rows[$this->actualCode]);
+        $this->assertSame([self::USERS_ID], $rows[$this->actualCode]);
         $this->assertSame('idusers = ?', $this->getQuery());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function notEqualTo(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->notEqualTo('idusers', self::USERS_ID));
+
+        /** @var array<string, mixed> $rows */
+        $rows = $this->getPrivateProperty('dataInfo');
+
+        $this->assertArrayHasKey($this->actualCode, $rows);
+        $this->assertSame([self::USERS_ID], $rows[$this->actualCode]);
+        $this->assertSame('idusers <> ?', $this->getQuery());
     }
 }
