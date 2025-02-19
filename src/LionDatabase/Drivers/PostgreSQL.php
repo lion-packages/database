@@ -9,6 +9,7 @@ use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
+use Lion\Database\Interface\Drivers\EqualToInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
@@ -22,6 +23,7 @@ use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\AndInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
+use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
@@ -58,6 +60,7 @@ class PostgreSQL extends Connection implements
     AndInterface,
     DatabaseConfigInterface,
     DeleteInterface,
+    EqualToInterface,
     InsertInterface,
     OrInterface,
     QueryInterface,
@@ -72,6 +75,7 @@ class PostgreSQL extends Connection implements
     use AndInterfaceTrait;
     use ConnectionInterfaceTrait;
     use DeleteInterfaceTrait;
+    use EqualToInterfaceTrait;
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;

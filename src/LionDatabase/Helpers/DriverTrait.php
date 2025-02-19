@@ -204,7 +204,7 @@ trait DriverTrait
     /**
      * Nests the defined parameters into the current query
      *
-     * @param array<int, string> $queryList [List of defined parameters]
+     * @param array<int, mixed> $queryList [List of defined parameters]
      *
      * @return void
      */

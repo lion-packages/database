@@ -75,6 +75,19 @@ class PostgreSQLTest extends Test
         $this->setPrivateProperty('databaseInstances', []);
     }
 
+    private function getQuery(): string
+    {
+        $queryString = $this->postgresql->getQueryString();
+
+        /** @var stdClass $data */
+        $data = $queryString->data;
+
+        /** @var string $query */
+        $query = $data->query;
+
+        return $query;
+    }
+
     /**
      * @throws ReflectionException
      */
@@ -962,7 +975,7 @@ class PostgreSQLTest extends Test
     public function table(bool $table, bool $withDatabase, string $return): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table, $withDatabase));
-        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+        $this->assertSame($return, $this->getQuery());
     }
 
     /**
@@ -980,7 +993,7 @@ class PostgreSQLTest extends Test
 
         $this->assertArrayHasKey($this->actualCode, $rows);
         $this->assertSame(array_values($params), $rows[$this->actualCode]);
-        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+        $this->assertSame($return, $this->getQuery());
     }
 
     /**
@@ -997,7 +1010,7 @@ class PostgreSQLTest extends Test
         $fetchMode = $this->getPrivateProperty('fetchMode');
 
         $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$this->actualCode]);
-        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+        $this->assertSame($return, $this->getQuery());
     }
 
     /**
@@ -1011,10 +1024,11 @@ class PostgreSQLTest extends Test
 
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->update($params));
 
+        /** @var array<string, mixed> $rows */
         $rows = $this->getPrivateProperty('dataInfo');
 
         $this->assertSame(array_values($params), $rows[$this->actualCode]);
-        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+        $this->assertSame($return, $this->getQuery());
     }
 
     #[Testing]
@@ -1024,21 +1038,21 @@ class PostgreSQLTest extends Test
         $this->postgresql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->delete());
-        $this->assertSame($return, $this->postgresql->getQueryString()->data->query);
+        $this->assertSame($return, $this->getQuery());
     }
 
     #[Testing]
     public function whereIsBool(): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where());
-        $this->assertSame('WHERE', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('WHERE', $this->getQuery());
     }
 
     #[Testing]
     public function whereIsString(): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where('idusers'));
-        $this->assertSame('WHERE idusers', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('WHERE idusers', $this->getQuery());
     }
 
     #[Testing]
@@ -1047,21 +1061,21 @@ class PostgreSQLTest extends Test
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->where(function (): void {
         }));
 
-        $this->assertSame('WHERE', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('WHERE', $this->getQuery());
     }
 
     #[Testing]
     public function andIsBool(): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and());
-        $this->assertSame('AND', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('AND', $this->getQuery());
     }
 
     #[Testing]
     public function andIsString(): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and('idusers'));
-        $this->assertSame('AND idusers', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('AND idusers', $this->getQuery());
     }
 
     #[Testing]
@@ -1070,21 +1084,21 @@ class PostgreSQLTest extends Test
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and(function (): void {
         }));
 
-        $this->assertSame('AND', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('AND', $this->getQuery());
     }
 
     #[Testing]
     public function orIsBool(): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or());
-        $this->assertSame('OR', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('OR', $this->getQuery());
     }
 
     #[Testing]
     public function orIsString(): void
     {
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or('idusers'));
-        $this->assertSame('OR idusers', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('OR idusers', $this->getQuery());
     }
 
     #[Testing]
@@ -1093,6 +1107,22 @@ class PostgreSQLTest extends Test
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->or(function (): void {
         }));
 
-        $this->assertSame('OR', $this->postgresql->getQueryString()->data->query);
+        $this->assertSame('OR', $this->getQuery());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function equalToTest(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->equalTo('idusers', 1));
+
+        /** @var array<string, mixed> $rows */
+        $rows = $this->getPrivateProperty('dataInfo');
+
+        $this->assertArrayHasKey($this->actualCode, $rows);
+        $this->assertSame([1], $rows[$this->actualCode]);
+        $this->assertSame('idusers = ?', $this->getQuery());
     }
 }

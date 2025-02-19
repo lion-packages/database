@@ -10,6 +10,7 @@ use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
+use Lion\Database\Interface\Drivers\EqualToInterface;
 use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
@@ -24,6 +25,7 @@ use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\AndInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
+use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
@@ -61,6 +63,7 @@ class MySQL extends Connection implements
     AndInterface,
     DatabaseConfigInterface,
     DeleteInterface,
+    EqualToInterface,
     InsertInterface,
     OrInterface,
     QueryInterface,
@@ -76,6 +79,7 @@ class MySQL extends Connection implements
     use AndInterfaceTrait;
     use ConnectionInterfaceTrait;
     use DeleteInterfaceTrait;
+    use EqualToInterfaceTrait;
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
@@ -98,6 +102,8 @@ class MySQL extends Connection implements
      * set this value to define the connection type
      *
      * @var string $databaseMethod
+     *
+     * @phpstan-ignore-next-line
      */
     private static string $databaseMethod = Driver::MYSQL;
 
@@ -1351,27 +1357,6 @@ class MySQL extends Connection implements
     public static function column(string $column, string $table = ''): MySQL
     {
         self::addQueryList('' === $table ? [' ', trim($column)] : [' ', trim("{$table}.{$column}")]);
-
-        return new static();
-    }
-
-    /**
-     * Adds an "equals to" to the current statement
-     *
-     * @param string $column [Column name]
-     * @param mixed $equalTo [Equal to]
-     *
-     * @return MySQL
-     */
-    public static function equalTo(string $column, mixed $equalTo): MySQL
-    {
-        if (self::$isSchema && self::$enableInsert) {
-            self::addQueryList([' ', trim($column), ' = ', trim($equalTo)]);
-        } else {
-            self::addRows([$equalTo]);
-
-            self::addQueryList([' ', trim($column . ' = ?')]);
-        }
 
         return new static();
     }
