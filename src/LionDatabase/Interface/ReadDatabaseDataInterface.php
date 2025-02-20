@@ -26,9 +26,9 @@ interface ReadDatabaseDataInterface
     /**
      * Run and get an array of objects
      *
-     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>
+     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|stdClass
      *
      * @throws PDOException
      */
-    public static function getAll(): array;
+    public static function getAll(): array|stdClass;
 }

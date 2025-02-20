@@ -18,7 +18,7 @@ trait GetAllInterfaceTrait
     /**
      * {@inheritdoc}
      */
-    public static function getAll(): array
+    public static function getAll(): array|stdClass
     {
         $method = self::$databaseMethod;
 
