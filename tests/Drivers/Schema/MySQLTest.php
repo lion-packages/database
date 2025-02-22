@@ -7,10 +7,12 @@ namespace Tests\Drivers\Schema;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL as DriversMySQL;
 use Lion\Database\Drivers\Schema\MySQL;
+use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Test\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test as Testing;
 use ReflectionException;
 use Tests\Provider\MySQLSchemaProviderTrait;
 
@@ -319,7 +321,7 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
+        $driversMysql = new DriversMySQL()->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse($driversMysql->call($storeProcedure, [1, 1])->execute());
         $this->assertResponse($driversMysql->call("update_{$storeProcedure}", [1, 1])->execute());
@@ -409,7 +411,7 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
+        $driversMysql = new DriversMySQL()->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse(
             $driversMysql->table($parentTable)->insert(['description' => 'roles_description'])->execute()
@@ -449,7 +451,7 @@ class MySQLTest extends Test
                 ->execute()
         );
 
-        $driversMysql = (new DriversMySQL())->run(CONNECTIONS_MYSQL);
+        $driversMysql = new DriversMySQL()->run(CONNECTIONS_MYSQL);
 
         $this->assertResponse($driversMysql->table($table)->insert(['num' => 1])->execute());
         $this->assertCount(1, $driversMysql->table($table)->select()->getAll());
@@ -926,5 +928,11 @@ class MySQLTest extends Test
         $this->assertIntances($this->mysql->dateTime($column));
         $this->assertSame($column, $this->getPrivateProperty('actualColumn'));
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
+    }
+
+    #[Testing]
+    public function onUpdate(): void
+    {
+        $this->assertSame(' ON UPDATE CURRENT_TIMESTAMP', $this->mysql->onUpdate(MySQLConstants::CURRENT_TIMESTAMP));
     }
 }

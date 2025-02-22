@@ -18,6 +18,7 @@ use Lion\Database\Interface\Drivers\InsertInterface;
 use Lion\Database\Interface\Drivers\LessThanInterface;
 use Lion\Database\Interface\Drivers\LessThanOrEqualToInterface;
 use Lion\Database\Interface\Drivers\NotEqualToInterface;
+use Lion\Database\Interface\Drivers\OnUpdateInterface;
 use Lion\Database\Interface\Drivers\OrInterface;
 use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
@@ -39,6 +40,7 @@ use Lion\Database\Traits\Drivers\InsertInterfaceTrait;
 use Lion\Database\Traits\Drivers\LessThanInterfaceTrait;
 use Lion\Database\Traits\Drivers\LessThanOrEqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\NotEqualToInterfaceTrait;
+use Lion\Database\Traits\Drivers\OnUpdateInterfaceTrait;
 use Lion\Database\Traits\Drivers\OrInterfaceTrait;
 use Lion\Database\Traits\Drivers\SelectInterfaceTrait;
 use Lion\Database\Traits\Drivers\TableInterfaceTrait;
@@ -84,6 +86,7 @@ class MySQL extends Connection implements
     NotEqualToInterface,
     LessThanInterface,
     LessThanOrEqualToInterface,
+    OnUpdateInterface,
     OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
@@ -109,6 +112,7 @@ class MySQL extends Connection implements
     use NotEqualToInterfaceTrait;
     use LessThanInterfaceTrait;
     use LessThanOrEqualToInterfaceTrait;
+    use OnUpdateInterfaceTrait;
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
     use RunInterfaceTrait;
@@ -227,21 +231,6 @@ class MySQL extends Connection implements
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'on'),
             self::getKey(Driver::MYSQL, 'delete')
-        ]);
-
-        return new static();
-    }
-
-    /**
-     * Nests the ON UPDATE statement in the current query
-     *
-     * @return MySQL
-     */
-    public static function onUpdate(): MySQL
-    {
-        self::addQueryList([
-            self::getKey(Driver::MYSQL, 'on'),
-            self::getKey(Driver::MYSQL, 'update')
         ]);
 
         return new static();
@@ -1020,7 +1009,7 @@ class MySQL extends Connection implements
      * Nests the CALL statement in the current query
      *
      * @param string $storedProcedure [Stored Procedure Name]
-     * @param array<string, mixed> $rows [List of values]
+     * @param array<int, mixed> $rows [List of values]
      *
      * @return MySQL
      */

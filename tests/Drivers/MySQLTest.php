@@ -368,10 +368,18 @@ class MySQLTest extends Test
         $this->assertSame('ON DELETE', $this->getQuery());
     }
 
-    public function testOnUpdate(): void
+    #[Testing]
+    public function onUpdateIsNull(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->onUpdate());
         $this->assertSame('ON UPDATE', $this->getQuery());
+    }
+
+    #[Testing]
+    public function onUpdateIsString(): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->onUpdate(MySQLConstants::CURRENT_TIMESTAMP));
+        $this->assertSame('ON UPDATE CURRENT_TIMESTAMP', $this->getQuery());
     }
 
     public function testOn(): void
