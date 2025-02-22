@@ -722,7 +722,9 @@ trait MySQLSchemaProviderTrait
                     'users' => [
                         'idusers' => [
                             'default' => true,
-                            'default-value' => null,
+                            'default-value' => [
+                                null,
+                            ],
                         ],
                     ],
                 ],
@@ -735,7 +737,9 @@ trait MySQLSchemaProviderTrait
                     'users' => [
                         'idusers' => [
                             'default' => true,
-                            'default-value' => 1,
+                            'default-value' => [
+                                1,
+                            ],
                         ],
                     ],
                 ],
@@ -748,7 +752,9 @@ trait MySQLSchemaProviderTrait
                     'users' => [
                         'users_name' => [
                             'default' => true,
-                            'default-value' => 'root',
+                            'default-value' => [
+                                'root',
+                            ],
                         ],
                     ],
                 ],

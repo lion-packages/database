@@ -21,6 +21,7 @@ trait DriverTrait
      */
     private const array IGNORED_ELEMENTS = [
         MySQLConstants::CURRENT_TIMESTAMP,
+        'ON UPDATE ' . MySQLConstants::CURRENT_TIMESTAMP,
     ];
 
     /**
@@ -326,11 +327,17 @@ trait DriverTrait
                     $strColumns .= self::getKey(Driver::MYSQL, 'auto-increment');
                 }
 
-                if ($config['default']) {
-                    if (in_array($config['default-value'], self::IGNORED_ELEMENTS, true)) {
-                        $strColumns .= self::getKey(Driver::MYSQL, 'default') . " {$config['default-value']}";
-                    } else {
-                        $strColumns .= self::getKey(Driver::MYSQL, 'default') . " '{$config['default-value']}'";
+                if ($config['default'] && !empty($config['default-value'])) {
+                    for ($i = 0; $i < count($config['default-value']); $i++) {
+                        if (0 === $i) {
+                            $strColumns .= self::getKey(Driver::MYSQL, 'default');
+                        }
+
+                        if (in_array($config['default-value'][$i], self::IGNORED_ELEMENTS, true)) {
+                            $strColumns .= " {$config['default-value'][$i]}";
+                        } else {
+                            $strColumns .= " '{$config['default-value'][$i]}'";
+                        }
                     }
                 }
 
