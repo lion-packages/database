@@ -1471,4 +1471,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
 
         return new static();
     }
+
+    public static function onUpdate(): static
+    {
+        return new static();
+    }
 }

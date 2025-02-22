@@ -7,6 +7,7 @@ namespace Tests\Drivers;
 use InvalidArgumentException;
 use Lion\Database\Connection;
 use Lion\Database\Drivers\PostgreSQL;
+use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Test\Test;
@@ -1187,5 +1188,19 @@ class PostgreSQLTest extends Test
         $this->assertArrayHasKey($this->actualCode, $rows);
         $this->assertSame([self::USERS_ID], $rows[$this->actualCode]);
         $this->assertSame('idusers <= ?', $this->getQuery());
+    }
+
+    #[Testing]
+    public function onUpdateIsNull(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->onUpdate());
+        $this->assertSame('ON UPDATE', $this->getQuery());
+    }
+
+    #[Testing]
+    public function onUpdateIsString(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->onUpdate(MySQLConstants::CURRENT_TIMESTAMP));
+        $this->assertSame('ON UPDATE CURRENT_TIMESTAMP', $this->getQuery());
     }
 }
