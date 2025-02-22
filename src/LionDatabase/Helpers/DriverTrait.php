@@ -22,6 +22,7 @@ trait DriverTrait
     private const array IGNORED_ELEMENTS = [
         MySQLConstants::CURRENT_TIMESTAMP,
         'ON UPDATE ' . MySQLConstants::CURRENT_TIMESTAMP,
+        ' ON UPDATE ' . MySQLConstants::CURRENT_TIMESTAMP,
     ];
 
     /**
