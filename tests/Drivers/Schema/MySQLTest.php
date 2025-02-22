@@ -553,8 +553,9 @@ class MySQLTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('defaultProvider')]
-    public function testDefault(string $table, string $column, mixed $default, array $configColumn): void
+    public function default(string $table, string $column, mixed $default, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
         $this->setPrivateProperty('actualColumn', $column);

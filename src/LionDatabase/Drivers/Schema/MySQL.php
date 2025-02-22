@@ -464,9 +464,11 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
      */
     public static function default(mixed $default = null): MySQL
     {
-        self::$columns[self::$table][self::$actualColumn]['default'] = true;
+        if (!isset(self::$columns[self::$table][self::$actualColumn]['default'])) {
+            self::$columns[self::$table][self::$actualColumn]['default'] = true;
+        }
 
-        self::$columns[self::$table][self::$actualColumn]['default-value'] = $default;
+        self::$columns[self::$table][self::$actualColumn]['default-value'][] = $default;
 
         return new static();
     }
