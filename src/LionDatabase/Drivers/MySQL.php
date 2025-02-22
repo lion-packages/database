@@ -1009,7 +1009,7 @@ class MySQL extends Connection implements
      * Nests the CALL statement in the current query
      *
      * @param string $storedProcedure [Stored Procedure Name]
-     * @param array<string, mixed> $rows [List of values]
+     * @param array<int, mixed> $rows [List of values]
      *
      * @return MySQL
      */

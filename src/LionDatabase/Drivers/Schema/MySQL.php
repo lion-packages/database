@@ -1472,8 +1472,15 @@ class MySQL extends Connection implements DatabaseConfigInterface, RunDatabasePr
         return new static();
     }
 
-    public static function onUpdate(): static
+    /**
+     * Nests the ON UPDATE statement in the current query
+     *
+     * @param string $onUpdate [Nested parameter in ON UPDATE]
+     *
+     * @return string
+     */
+    public static function onUpdate(string $onUpdate): string
     {
-        return new static();
+        return self::getKey(Driver::MYSQL, 'on') . self::getKey(Driver::MYSQL, 'update') . ' ' . $onUpdate;
     }
 }
