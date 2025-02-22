@@ -241,7 +241,31 @@ trait DriverTraitProviderTrait
                             'column' => 'users_create_at TIMESTAMP',
                             'default-value' => [
                                 MySQLConstants::CURRENT_TIMESTAMP,
-                                'ON UPDATE ' . MySQLConstants::CURRENT_TIMESTAMP,
+                                ' ON UPDATE ' . MySQLConstants::CURRENT_TIMESTAMP,
+                            ],
+                        ],
+                    ],
+                ],
+                'return' => "(users_create_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP  ON UPDATE CURRENT_TIMESTAMP); ",
+            ],
+            [
+                'table' => 'users',
+                'actualColumn' => 'users_create_at',
+                'row' => [
+                    'users' => [
+                        'users_create_at' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => true,
+                            'null' => true,
+                            'in' => false,
+                            'type' => 'TIMESTAMP',
+                            'column' => 'users_create_at TIMESTAMP',
+                            'default-value' => [
+                                MySQLConstants::CURRENT_TIMESTAMP,
+                                'ON UPDATE CURRENT_TIMESTAMP',
                             ],
                         ],
                     ],
