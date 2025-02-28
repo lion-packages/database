@@ -54,6 +54,13 @@ trait DriverTrait
     protected static bool $isTransaction = false;
 
     /**
+     * [Defines whether the process returns a number to count the affected rows]
+     *
+     * @var bool $withRowCount
+     */
+    protected static bool $withRowCount = false;
+
+    /**
      * [Defines whether the process is a schema process]
      *
      * @var bool $isSchema
@@ -114,7 +121,7 @@ trait DriverTrait
      *
      * @var string $message
      */
-    protected static string $message = 'execution finished';
+    protected static string $message = 'Execution finished';
 
     /**
      * [Stores the information defined to add to the bindValue function]
@@ -158,6 +165,8 @@ trait DriverTrait
 
         self::$isTransaction = false;
 
+        self::$withRowCount = false;
+
         self::$isSchema = false;
 
         self::$isProcedure = false;
@@ -174,7 +183,7 @@ trait DriverTrait
 
         self::$view = '';
 
-        self::$message = 'execution finished';
+        self::$message = 'Execution finished';
 
         self::$dataInfo = [];
 

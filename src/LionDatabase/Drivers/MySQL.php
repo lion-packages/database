@@ -26,6 +26,7 @@ use Lion\Database\Interface\Drivers\UpdateInterface;
 use Lion\Database\Interface\Drivers\WhereInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
+use Lion\Database\Interface\RowCountInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
@@ -50,6 +51,7 @@ use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
 use Lion\Database\Traits\QueryInterfaceTrait;
+use Lion\Database\Traits\RowCountInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
 use Lion\Database\Traits\SchemaDriverInterfaceTrait;
 use Lion\Database\Traits\TransactionInterfaceTrait;
@@ -69,9 +71,6 @@ use PDO;
  * * Optimization for MySQL: Designed specifically to work with MySQL,
  * guaranteeing compatibility and optimization with this DBMS
  *
- * @property string $databaseMethod [Defines the database connection method to
- * use]
- *
  * @package Lion\Database\Drivers
  */
 class MySQL extends Connection implements
@@ -90,6 +89,7 @@ class MySQL extends Connection implements
     OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
+    RowCountInterface,
     RunDatabaseProcessesInterface,
     SchemaDriverInterface,
     SelectInterface,
@@ -115,6 +115,7 @@ class MySQL extends Connection implements
     use OnUpdateInterfaceTrait;
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
+    use RowCountInterfaceTrait;
     use RunInterfaceTrait;
     use SchemaDriverInterfaceTrait;
     use SelectInterfaceTrait;

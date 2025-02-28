@@ -90,13 +90,13 @@ abstract class Connection implements ConnectionConfigInterface
      * @param Closure $callback [Function that is executed]
      *
      * phpcs:ignore Generic.Files.LineLength
-     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|stdClass
+     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|int|stdClass
      *
      * @throws PDOException [If the database process fails]
      *
      * @internal
      */
-    public static function mysql(Closure $callback): array|DatabaseCapsuleInterface|stdClass
+    public static function mysql(Closure $callback): array|DatabaseCapsuleInterface|int|stdClass
     {
         try {
             self::$conn = self::getDatabaseInstance();
@@ -135,13 +135,13 @@ abstract class Connection implements ConnectionConfigInterface
      * @param Closure $callback [Function that is executed]
      *
      * phpcs:ignore Generic.Files.LineLength
-     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|stdClass
+     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|int|stdClass
      *
      * @throws PDOException [If the database process fails]
      *
      * @internal
      */
-    public static function postgresql(Closure $callback): array|DatabaseCapsuleInterface|stdClass
+    public static function postgresql(Closure $callback): array|DatabaseCapsuleInterface|int|stdClass
     {
         try {
             self::$conn = self::getDatabaseInstance();
@@ -258,15 +258,7 @@ abstract class Connection implements ConnectionConfigInterface
     /**
      * Gets an object with the current statement
      *
-     * @return stdClass{
-     *     code: int,
-     *     status: string,
-     *     message: string,
-     *     data: stdClass{
-     *         query: string,
-     *         split: array<int, string>
-     *     }
-     * }
+     * @return stdClass
      */
     public static function getQueryString(): stdClass
     {

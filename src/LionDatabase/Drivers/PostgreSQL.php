@@ -25,6 +25,7 @@ use Lion\Database\Interface\Drivers\UpdateInterface;
 use Lion\Database\Interface\Drivers\WhereInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
+use Lion\Database\Interface\RowCountInterface;
 use Lion\Database\Interface\RunDatabaseProcessesInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
@@ -49,6 +50,7 @@ use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
 use Lion\Database\Traits\QueryInterfaceTrait;
+use Lion\Database\Traits\RowCountInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
 use Lion\Database\Traits\SchemaDriverInterfaceTrait;
 use Lion\Database\Traits\TransactionInterfaceTrait;
@@ -88,6 +90,7 @@ class PostgreSQL extends Connection implements
     OrInterface,
     QueryInterface,
     ReadDatabaseDataInterface,
+    RowCountInterface,
     RunDatabaseProcessesInterface,
     SchemaDriverInterface,
     SelectInterface,
@@ -113,6 +116,7 @@ class PostgreSQL extends Connection implements
     use OnUpdateInterfaceTrait;
     use OrInterfaceTrait;
     use QueryInterfaceTrait;
+    use RowCountInterfaceTrait;
     use RunInterfaceTrait;
     use SchemaDriverInterfaceTrait;
     use SelectInterfaceTrait;
