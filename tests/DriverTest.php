@@ -92,33 +92,6 @@ class DriverTest extends Test
     }
 
     #[Testing]
-    public function runWithDefaultIsNotValid(): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('Invalid default connection');
-
-        Driver::run([
-            'default' => 1,
-        ]);
-    }
-
-    #[Testing]
-    public function runWithDefaultIsNotExistInConnections(): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('Invalid default connection');
-
-        Driver::run([
-            'default' => self::DATABASE_NAME_SECOND,
-            'connections' => [
-                'example' => self::CONNECTION_DATA_SECOND,
-            ],
-        ]);
-    }
-
-    #[Testing]
     public function runOptionDefault(): void
     {
         $this->expectException(Exception::class);

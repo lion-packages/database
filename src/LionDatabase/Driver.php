@@ -57,10 +57,6 @@ abstract class Driver
             throw new InvalidArgumentException('No connection has been defined by default', 500);
         }
 
-        if (!is_string($connections['default']) || !isset($connections['connections'][$connections['default']])) {
-            throw new InvalidArgumentException('Invalid default connection', 500);
-        }
-
         $type = $connections['connections'][$connections['default']]['type'];
 
         switch ($type) {
