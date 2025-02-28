@@ -12,9 +12,9 @@ namespace Lion\Database\Interface;
 interface DatabaseCapsuleInterface
 {
     /**
-     * Returns the name of the entity.
+     * Returns the name of the entity
      *
      * @return string
      */
-    public function getTableName(): string;
+    public static function getTableName(): string;
 }
