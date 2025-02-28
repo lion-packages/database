@@ -26,7 +26,7 @@ use Lion\Database\Interface\Drivers\WhereInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RowCountInterface;
-use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use Lion\Database\Interface\ExecuteInterface;
 use Lion\Database\Interface\SchemaDriverInterface;
 use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
@@ -91,7 +91,7 @@ class PostgreSQL extends Connection implements
     QueryInterface,
     ReadDatabaseDataInterface,
     RowCountInterface,
-    RunDatabaseProcessesInterface,
+    ExecuteInterface,
     SchemaDriverInterface,
     SelectInterface,
     TableInterface,
