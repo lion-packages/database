@@ -71,7 +71,7 @@ class PostgreSQLTest extends Test
 
         $this->setPrivateProperty('fetchMode', []);
 
-        $this->setPrivateProperty('message', 'execution finished');
+        $this->setPrivateProperty('message', 'Execution finished');
 
         $this->setPrivateProperty('databaseInstances', []);
     }
@@ -102,7 +102,7 @@ class PostgreSQLTest extends Test
         $this->setPrivateProperty('isSchema', $enable);
 
         $this->postgresql
-            ->run(CONNECTIONS_MYSQL)
+            ->run(CONNECTIONS_POSTGRESQL)
             ->enableInsert($enable)
             ->table($table)
             ->bulk($columns, $rows);
@@ -210,7 +210,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -236,7 +236,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -263,7 +263,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -288,7 +288,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -317,7 +317,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         /** @var DatabaseCapsuleInterface|IdInterface $response */
         $response = $this->postgresql
@@ -352,7 +352,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -381,7 +381,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         /** @var array<int, array<int, DatabaseCapsuleInterface|IdInterface>> $response */
         $response = $this->postgresql
@@ -429,7 +429,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -453,7 +453,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -484,7 +484,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -511,7 +511,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -536,7 +536,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -565,7 +565,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         /** @var array<int, IdInterface> $response */
         $response = $this->postgresql
@@ -605,7 +605,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -634,7 +634,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         /** @var array<int, array<int, DatabaseCapsuleInterface|IdInterface>> $response */
         $response = $this->postgresql
@@ -687,7 +687,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -712,7 +712,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -737,7 +737,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     /**
@@ -762,7 +762,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $this->postgresql
             ->query(self::QUERY_SQL_INSERT_ROLES_WITH_PARAMS);
@@ -782,7 +782,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $response = $this->postgresql
             ->query(self::QUERY_SQL_DROP_TABLE_ROLES)
@@ -798,7 +798,70 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
+    }
+
+    #[Testing]
+    public function executeWithRowCount(): void
+    {
+        $createTableResponse = $this->postgresql
+            ->run(CONNECTIONS_POSTGRESQL)
+            ->query(
+                <<<SQL
+                DROP TABLE IF EXISTS roles;
+                SQL
+            )
+            ->query(
+                <<<SQL
+                CREATE TABLE public.roles (
+                    idroles SERIAL PRIMARY KEY,
+                    roles_name VARCHAR(25) NOT NULL
+                );
+                SQL
+            )
+            ->execute();
+
+        $this->assertInstanceOf(stdclass::class, $createTableResponse);
+        $this->assertObjectHasProperty('code', $createTableResponse);
+        $this->assertObjectHasProperty('status', $createTableResponse);
+        $this->assertObjectHasProperty('message', $createTableResponse);
+        $this->assertIsInt($createTableResponse->code);
+        $this->assertIsString($createTableResponse->status);
+        $this->assertIsString($createTableResponse->message);
+        $this->assertSame(200, $createTableResponse->code);
+        $this->assertSame('success', $createTableResponse->status);
+        $this->assertSame('Execution finished', $createTableResponse->message);
+
+        $insertResponse = $this->postgresql
+            ->run(CONNECTIONS_POSTGRESQL)
+            ->table('public.roles', false)
+            ->insert([
+                'roles_name' => 'Role test'
+            ])
+            ->rowCount()
+            ->execute();
+
+        $this->assertSame(1, $insertResponse);
+
+        $dropTableResponse = $this->postgresql
+            ->run(CONNECTIONS_POSTGRESQL)
+            ->query(
+                <<<SQL
+                DROP TABLE IF EXISTS roles;
+                SQL
+            )
+            ->execute();
+
+        $this->assertInstanceOf(stdclass::class, $dropTableResponse);
+        $this->assertObjectHasProperty('code', $dropTableResponse);
+        $this->assertObjectHasProperty('status', $dropTableResponse);
+        $this->assertObjectHasProperty('message', $dropTableResponse);
+        $this->assertIsInt($dropTableResponse->code);
+        $this->assertIsString($dropTableResponse->status);
+        $this->assertIsString($dropTableResponse->message);
+        $this->assertSame(200, $dropTableResponse->code);
+        $this->assertSame('success', $dropTableResponse->status);
+        $this->assertSame('Execution finished', $dropTableResponse->message);
     }
 
     #[Testing]
@@ -821,7 +884,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -839,7 +902,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $data = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -864,7 +927,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     #[Testing]
@@ -892,7 +955,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
 
         $response = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
@@ -934,7 +997,7 @@ class PostgreSQLTest extends Test
         $this->assertIsString($response->status);
         $this->assertSame('success', $response->status);
         $this->assertIsString($response->message);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
     }
 
     /**
@@ -969,7 +1032,7 @@ class PostgreSQLTest extends Test
     #[DataProvider('insertProvider')]
     public function insert(string $table, array $params, string $return): void
     {
-        $this->postgresql->run(CONNECTIONS_MYSQL);
+        $this->postgresql->run(CONNECTIONS_POSTGRESQL);
 
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->insert($params));
 
@@ -987,7 +1050,7 @@ class PostgreSQLTest extends Test
     #[DataProvider('selectProvider')]
     public function selectWithTable(string $table, array $columns, string $return): void
     {
-        $this->postgresql->run(CONNECTIONS_MYSQL);
+        $this->postgresql->run(CONNECTIONS_POSTGRESQL);
 
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->select(...$columns));
 
@@ -1004,7 +1067,7 @@ class PostgreSQLTest extends Test
     #[DataProvider('updateProvider')]
     public function update(string $table, array $params, string $return): void
     {
-        $this->postgresql->run(CONNECTIONS_MYSQL);
+        $this->postgresql->run(CONNECTIONS_POSTGRESQL);
 
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->update($params));
 
@@ -1019,7 +1082,7 @@ class PostgreSQLTest extends Test
     #[DataProvider('deleteProvider')]
     public function delete(string $table, string $return): void
     {
-        $this->postgresql->run(CONNECTIONS_MYSQL);
+        $this->postgresql->run(CONNECTIONS_POSTGRESQL);
 
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->delete());
         $this->assertSame($return, $this->getQuery());
