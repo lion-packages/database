@@ -235,7 +235,7 @@ trait PostgreSQLProviderTrait
                     /**
                      * {@inheritdoc}
                      */
-                    public function getTableName(): string
+                    public static function getTableName(): string
                     {
                         return 'roles';
                     }
@@ -279,7 +279,7 @@ trait PostgreSQLProviderTrait
                     /**
                      * {@inheritdoc}
                      */
-                    public function getTableName(): string
+                    public static function getTableName(): string
                     {
                         return 'users';
                     }
@@ -352,7 +352,7 @@ trait PostgreSQLProviderTrait
                     /**
                      * {@inheritdoc}
                      */
-                    public function getTableName(): string
+                    public static function getTableName(): string
                     {
                         return 'roles';
                     }
@@ -396,7 +396,7 @@ trait PostgreSQLProviderTrait
                     /**
                      * {@inheritdoc}
                      */
-                    public function getTableName(): string
+                    public static function getTableName(): string
                     {
                         return 'users';
                     }
@@ -443,7 +443,7 @@ trait PostgreSQLProviderTrait
                     /**
                      * {@inheritdoc}
                      */
-                    public function getTableName(): string
+                    public static function getTableName(): string
                     {
                         return 'roles';
                     }
@@ -487,7 +487,7 @@ trait PostgreSQLProviderTrait
                     /**
                      * {@inheritdoc}
                      */
-                    public function getTableName(): string
+                    public static function getTableName(): string
                     {
                         return 'users';
                     }
