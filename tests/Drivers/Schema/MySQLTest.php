@@ -9,7 +9,7 @@ use Lion\Database\Drivers\MySQL as DriversMySQL;
 use Lion\Database\Drivers\Schema\MySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseConfigInterface;
-use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use Lion\Database\Interface\ExecuteInterface;
 use Lion\Test\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
@@ -93,7 +93,7 @@ class MySQLTest extends Test
     {
         $this->assertInstanceOf(MySQL::class, $obj);
         $this->assertInstanceOf(DatabaseConfigInterface::class, $obj);
-        $this->assertInstanceOf(RunDatabaseProcessesInterface::class, $obj);
+        $this->assertInstanceOf(ExecuteInterface::class, $obj);
     }
 
     private function assertResponse(object $response, string $message = 'Execution finished'): void

@@ -10,7 +10,7 @@ use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL as DriverMySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseConfigInterface;
-use Lion\Database\Interface\RunDatabaseProcessesInterface;
+use Lion\Database\Interface\ExecuteInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
 use PDOException;
@@ -41,7 +41,7 @@ use stdClass;
  *
  * @package Lion\Database\Drivers\Schema
  */
-class MySQL extends Connection implements DatabaseConfigInterface, RunDatabaseProcessesInterface
+class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterface
 {
     use ConnectionInterfaceTrait;
     use RunInterfaceTrait;

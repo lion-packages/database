@@ -12,7 +12,7 @@ use stdClass;
  *
  * @package Lion\Database\Interface
  */
-interface RunDatabaseProcessesInterface
+interface ExecuteInterface
 {
     /**
      * Execute the current query
