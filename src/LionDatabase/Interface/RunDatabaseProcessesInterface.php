@@ -17,9 +17,9 @@ interface RunDatabaseProcessesInterface
     /**
      * Execute the current query
      *
-     * @return stdClass
+     * @return int|stdClass
      *
      * @throws PDOException [If the executed process fails]
      */
-    public static function execute(): stdClass;
+    public static function execute(): int|stdClass;
 }

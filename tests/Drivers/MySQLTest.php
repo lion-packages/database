@@ -66,7 +66,7 @@ class MySQLTest extends Test
 
         $this->setPrivateProperty('fetchMode', []);
 
-        $this->setPrivateProperty('message', 'execution finished');
+        $this->setPrivateProperty('message', 'Execution finished');
 
         $this->setPrivateProperty('databaseInstances', []);
     }
@@ -178,7 +178,9 @@ class MySQLTest extends Test
     public function execute(): void
     {
         $createTableResponse = $this->mysql
-            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->run(CONNECTIONS_MYSQL)
+            ->isSchema()
+            ->enableInsert(true)
             ->use(DATABASE_NAME_MYSQL)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
@@ -198,14 +200,16 @@ class MySQLTest extends Test
         $this->assertObjectHasProperty('status', $createTableResponse);
         $this->assertObjectHasProperty('message', $createTableResponse);
         $this->assertSame('success', $createTableResponse->status);
-        $this->assertSame('execution finished', $createTableResponse->message);
+        $this->assertSame('Execution finished', $createTableResponse->message);
     }
 
     #[Testing]
     public function executeInsert(): void
     {
         $this->mysql
-            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->run(CONNECTIONS_MYSQL)
+            ->isSchema()
+            ->enableInsert(true)
             ->use(DATABASE_NAME_MYSQL)->closeQuery()
             ->drop()->table()->ifExists('roles')->closeQuery()
             ->create()->table()->addQuery('roles')
@@ -221,13 +225,86 @@ class MySQLTest extends Test
             ->closeQuery()
             ->execute();
 
-        $response = $this->mysql->table('roles')->insert(['roles_name' => ADMINISTRATOR_MYSQL])->execute();
+        $response = $this->mysql
+            ->table('roles')
+            ->insert([
+                'roles_name' => ADMINISTRATOR_MYSQL,
+            ])
+            ->execute();
 
-        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
+        $this->assertSame(200, $response->code);
         $this->assertSame('success', $response->status);
-        $this->assertSame('execution finished', $response->message);
+        $this->assertSame('Execution finished', $response->message);
+    }
+
+    #[Testing]
+    public function executeRowCount(): void
+    {
+        $createTableResponse = $this->mysql
+            ->run(CONNECTIONS_MYSQL)
+            ->isSchema()
+            ->enableInsert(true)
+            ->use(DATABASE_NAME_MYSQL)->closeQuery()
+            ->drop()->table()->ifExists('roles')->closeQuery()
+            ->create()->table()->addQuery('roles')
+            ->groupQuery(function (): void {
+                $this->mysql
+                    ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
+                    ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
+                    ->primaryKey('idroles');
+            })
+            ->engine('INNODB')
+            ->default()->character()->set(MySQLConstants::UTF8MB4)
+            ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
+            ->closeQuery()
+            ->execute();
+
+        $this->assertInstanceOf(stdclass::class, $createTableResponse);
+        $this->assertObjectHasProperty('code', $createTableResponse);
+        $this->assertObjectHasProperty('status', $createTableResponse);
+        $this->assertObjectHasProperty('message', $createTableResponse);
+        $this->assertIsInt($createTableResponse->code);
+        $this->assertIsString($createTableResponse->status);
+        $this->assertIsString($createTableResponse->message);
+        $this->assertSame(200, $createTableResponse->code);
+        $this->assertSame('success', $createTableResponse->status);
+        $this->assertSame('Execution finished', $createTableResponse->message);
+
+        $insertResponse = $this->mysql
+            ->run(CONNECTIONS_MYSQL)
+            ->table('roles')
+            ->insert([
+                'roles_name' => 'Role test'
+            ])
+            ->rowCount()
+            ->execute();
+
+        $this->assertIsInt($insertResponse);
+        $this->assertSame(1, $insertResponse);
+
+        $dropTableResponse = $this->mysql
+            ->run(CONNECTIONS_MYSQL)
+            ->query(
+                <<<SQL
+                DROP TABLE IF EXISTS roles;
+                SQL
+            )
+            ->execute();
+
+        $this->assertInstanceOf(stdclass::class, $dropTableResponse);
+        $this->assertObjectHasProperty('code', $dropTableResponse);
+        $this->assertObjectHasProperty('status', $dropTableResponse);
+        $this->assertObjectHasProperty('message', $dropTableResponse);
+        $this->assertIsInt($dropTableResponse->code);
+        $this->assertIsString($dropTableResponse->status);
+        $this->assertIsString($dropTableResponse->message);
+        $this->assertSame(200, $dropTableResponse->code);
+        $this->assertSame('success', $dropTableResponse->status);
+        $this->assertSame('Execution finished', $dropTableResponse->message);
     }
 
     #[Testing]
@@ -758,7 +835,7 @@ class MySQLTest extends Test
     public function testQuery(string $query): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->query($query));
-        $this->assertMessage('execution finished');
+        $this->assertMessage('Execution finished');
         $this->assertSame($query, $this->getQuery());
     }
 
@@ -776,7 +853,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql);
         $this->assertAddRows(array_merge(...$rows));
         $this->assertSame($return, $this->getQuery());
-        $this->assertMessage('execution finished');
+        $this->assertMessage('Execution finished');
     }
 
     #[DataProvider('inProvider')]
@@ -793,7 +870,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql->call('store_procedure', [1, 2, 3]));
         $this->assertAddRows([1, 2, 3]);
         $this->assertSame('CALL lion_database.store_procedure(?, ?, ?)', $this->getQuery());
-        $this->assertMessage('execution finished');
+        $this->assertMessage('Execution finished');
     }
 
     #[DataProvider('deleteProvider')]
@@ -829,7 +906,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql->table($table)->insert($params));
         $this->assertAddRows(array_values($params));
         $this->assertSame($return, $this->getQuery());
-        $this->assertMessage('execution finished');
+        $this->assertMessage('Execution finished');
     }
 
     public function testInsertIsSchema(): void
@@ -845,7 +922,7 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $mysql);
         $this->assertAddRows(array_values($params));
         $this->assertSame($sql, $this->getQuery());
-        $this->assertMessage('execution finished');
+        $this->assertMessage('Execution finished');
         $this->assertTrue($this->getPrivateProperty('isSchema'));
     }
 

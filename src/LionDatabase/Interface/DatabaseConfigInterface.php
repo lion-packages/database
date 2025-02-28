@@ -16,15 +16,18 @@ interface DatabaseConfigInterface
     /**
      * initialize the connection data to use the service
      *
-     * @param array<string, array<string, array{
-     *      type: string,
-     *      host: string,
-     *      port: int,
-     *      dbname: string,
-     *      user: string,
-     *      password: string,
-     *      options?: array<int, int>
-     *  }>|string> $connections [List of available databases]
+     * @param array{
+     *     default: string,
+     *     connections: array<string, array{
+     *          type: string,
+     *          host: string,
+     *          port: int,
+     *          dbname: string,
+     *          user: string,
+     *          password: string,
+     *          options?: array<int, int>
+     *     }>
+     * } $connections [List of available databases]
      *
      * @return DatabaseConfigInterface
      *

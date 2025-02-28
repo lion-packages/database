@@ -18,11 +18,11 @@ trait ExecuteInterfaceTrait
     /**
      * {@inheritdoc}
      */
-    public static function execute(): stdClass
+    public static function execute(): int|stdClass
     {
         $method = self::$databaseMethod;
 
-        return parent::{$method}(function (): array|DatabaseCapsuleInterface|stdClass {
+        return parent::{$method}(function (): array|DatabaseCapsuleInterface|int|stdClass {
             $dataInfoKeys = array_keys(self::$dataInfo);
 
             if (count($dataInfoKeys) > 0) {
@@ -54,6 +54,10 @@ trait ExecuteInterfaceTrait
                 if (!self::$stmt->execute()) {
                     throw new PDOException(self::$stmt->errorInfo()[2], 500);
                 }
+            }
+
+            if (self::$withRowCount) {
+                return self::$stmt->rowCount();
             }
 
             return (object) [

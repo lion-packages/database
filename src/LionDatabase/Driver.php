@@ -33,15 +33,18 @@ abstract class Driver
     /**
      * Initialize database connections
      *
-     * @param array<string, array<string, array{
-     *     type: string,
-     *     host: string,
-     *     port: int,
-     *     dbname: string,
-     *     user: string,
-     *     password: string,
-     *     options?: array<int, int>
-     * }>|string> $connections [List of defined connections]
+     * @param array{
+     *      default: string,
+     *      connections: array<string, array{
+     *          type: string,
+     *          host: string,
+     *          port: int,
+     *          dbname: string,
+     *          user: string,
+     *          password: string,
+     *          options?: array<int, int>
+     *      }>
+     * } $connections [List of defined connections]
      *
      * @return void
      *
@@ -52,10 +55,6 @@ abstract class Driver
     {
         if (empty($connections['default'])) {
             throw new InvalidArgumentException('No connection has been defined by default', 500);
-        }
-
-        if (!is_string($connections['default']) || !isset($connections['connections'][$connections['default']])) {
-            throw new InvalidArgumentException('Invalid default connection', 500);
         }
 
         $type = $connections['connections'][$connections['default']]['type'];

@@ -14,7 +14,7 @@ interface ConnectionConfigInterface
     /**
      * Add a connection
      *
-     * @param non-empty-string $connectionName [Connection name]
+     * @param string $connectionName [Connection name]
      * @param array{
      *     type: string,
      *     host: string,
@@ -30,9 +30,18 @@ interface ConnectionConfigInterface
     public static function addConnection(string $connectionName, array $options): void;
 
     /**
+     * Remove a connection
+     *
+     * @param string $connectionName [Connection name]
+     *
+     * @return void
+     */
+    public static function removeConnection(string $connectionName): void;
+
+    /**
      * Gets all available connections
      *
-     * @return array<non-empty-string, array{
+     * @return array<string, array{
      *     type: string,
      *     host: string,
      *     port: int,
@@ -43,13 +52,4 @@ interface ConnectionConfigInterface
      * }>
      */
     public static function getConnections(): array;
-
-    /**
-     * Remove a connection
-     *
-     * @param non-empty-string $connectionName [Connection name]
-     *
-     * @return void
-     */
-    public static function removeConnection(string $connectionName): void;
 }
