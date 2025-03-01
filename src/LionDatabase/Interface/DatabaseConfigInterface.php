@@ -20,11 +20,11 @@ interface DatabaseConfigInterface
      *     default: string,
      *     connections: array<string, array{
      *          type: string,
-     *          host: string,
-     *          port: int,
+     *          host?: string,
+     *          port?: int,
      *          dbname: string,
-     *          user: string,
-     *          password: string,
+     *          user?: string,
+     *          password?: string,
      *          options?: array<int, int>
      *     }>
      * } $connections [List of available databases]

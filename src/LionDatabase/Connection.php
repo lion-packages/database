@@ -300,6 +300,8 @@ abstract class Connection implements ConnectionConfigInterface
                 self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstancePostgreSQL($connection);
             } elseif (Driver::MYSQL === $connection['type']) {
                 self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceMySQL($connection);
+            } elseif (Driver::SQLITE === $connection['type']) {
+                self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceSQLite($connection);
             } else {
                 throw new InvalidArgumentException('The database connection type is not supported', 500);
             }
@@ -354,6 +356,27 @@ abstract class Connection implements ConnectionConfigInterface
             "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
             $connection['user'],
             $connection['password'],
+            ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
+        );
+    }
+
+    /**
+     * Gets a PDO instance for SQLite database connections
+     *
+     * @param array{
+     *     type: string,
+     *     dbname: string,
+     *     options?: array<int, int>
+     * } $connection [Database connection data]
+     *
+     * @return PDO
+     */
+    private static function getDatabaseInstanceSQLite(array $connection): PDO
+    {
+        return new PDO(
+            "sqlite:{$connection['dbname']}",
+            null,
+            null,
             ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
         );
     }

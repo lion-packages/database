@@ -6,6 +6,7 @@ namespace Tests;
 
 use InvalidArgumentException;
 use Lion\Database\Connection;
+use Lion\Database\Driver;
 use Lion\Test\Test;
 use PDO;
 use PDOException;
@@ -23,7 +24,7 @@ class ConnectionTest extends Test
 
     private const array RESPONSE = [
         'status' => 'success',
-        'message' => 'TEST-OK'
+        'message' => 'TEST-OK',
     ];
 
     private Connection $customClass;
@@ -39,8 +40,10 @@ class ConnectionTest extends Test
 
         $this->initReflection($this->customClass);
 
+        /** @phpstan-ignore-next-line */
         $this->setPrivateProperty('connections', CONNECTIONS_CONNECTION);
 
+        /** @phpstan-ignore-next-line */
         $this->setPrivateProperty('activeConnection', DATABASE_NAME_CONNECTION);
 
         $this->setPrivateProperty('isTransaction', false);
@@ -71,7 +74,8 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testMysql(): void
+    #[Testing]
+    public function mysql(): void
     {
         $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
 
@@ -87,13 +91,15 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testMysqlIsTransactionTrue(): void
+    #[Testing]
+    public function mysqlIsTransactionTrue(): void
     {
         $this->setPrivateProperty('isTransaction', true);
 
         $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
 
         $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
         $this->assertSame(self::RESPONSE['status'], $response->status);
@@ -104,13 +110,16 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testMysqlWithException(): void
+
+    #[Testing]
+    public function mysqlWithException(): void
     {
         $response = $this->getPrivateMethod('mysql', [function (): void {
             throw new PDOException('Connection failed');
         }]);
 
         $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
         $this->assertSame('database-error', $response->status);
@@ -197,6 +206,7 @@ class ConnectionTest extends Test
     #[Testing]
     public function addConnection(): void
     {
+        /** @phpstan-ignore-next-line */
         $this->setPrivateProperty('connections', ['default' => DATABASE_NAME_SECOND_CONNECTION]);
 
         $this->customClass->addConnection(DATABASE_NAME_SECOND_CONNECTION, CONNECTION_DATA_SECOND_CONNECTION);
@@ -308,7 +318,10 @@ class ConnectionTest extends Test
     #[Testing]
     public function getDatabaseInstanceMySQL(): void
     {
-        $conn = $this->getPrivateMethod('getDatabaseInstanceMySQL', [CONNECTION_DATA_CONNECTION]);
+        $conn = $this->getPrivateMethod('getDatabaseInstanceMySQL', [
+            /** @phpstan-ignore-next-line */
+            'connection' => CONNECTION_DATA_CONNECTION,
+        ]);
 
         $this->assertIsObject($conn);
         $this->assertInstanceOf(PDO::class, $conn);
@@ -321,10 +334,45 @@ class ConnectionTest extends Test
     #[Testing]
     public function getDatabaseInstancePostgreSQL(): void
     {
-        $conn = $this->getPrivateMethod('getDatabaseInstancePostgreSQL', [CONNECTION_DATA_THIRD_CONNECTION]);
+        $conn = $this->getPrivateMethod('getDatabaseInstancePostgreSQL', [
+            /** @phpstan-ignore-next-line */
+            'connection' => CONNECTION_DATA_THIRD_CONNECTION,
+        ]);
 
         $this->assertIsObject($conn);
         $this->assertInstanceOf(PDO::class, $conn);
         $this->assertSame('pgsql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function getDatabaseInstanceSQLite(): void
+    {
+        $this->createDirectory(__DIR__ . '/Provider/copy/');
+
+        $this->assertDirectoryExists(__DIR__ . '/Provider/copy/');
+
+        $copyDatabase = __DIR__ . '/Provider/copy/lion_database.sqlite';
+
+        copy(__DIR__ . '/Provider/lion_database.sqlite', $copyDatabase);
+
+        $this->assertFileExists($copyDatabase);
+
+        $conn = $this->getPrivateMethod('getDatabaseInstanceSQLite', [
+            'connection' => [
+                'type' => Driver::SQLITE,
+                'dbname' => $copyDatabase,
+            ],
+        ]);
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame('sqlite', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+
+        $this->rmdirRecursively(__DIR__ . '/Provider/copy/');
+
+        $this->assertDirectoryDoesNotExist(__DIR__ . '/Provider/copy/');
     }
 }

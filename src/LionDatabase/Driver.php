@@ -31,17 +31,24 @@ abstract class Driver
     public const string POSTGRESQL = 'postgresql';
 
     /**
+     * [Defines the SQLite driver]
+     *
+     * @const POSTGRESQL
+     */
+    public const string SQLITE = 'sqlite';
+
+    /**
      * Initialize database connections
      *
      * @param array{
      *      default: string,
      *      connections: array<string, array{
      *          type: string,
-     *          host: string,
-     *          port: int,
+     *          host?: string,
+     *          port?: int,
      *          dbname: string,
-     *          user: string,
-     *          password: string,
+     *          user?: string,
+     *          password?: string,
      *          options?: array<int, int>
      *      }>
      * } $connections [List of defined connections]
@@ -62,11 +69,14 @@ abstract class Driver
         switch ($type) {
             case self::MYSQL:
                 MySQL::run($connections);
+
                 SchemaMySQL::run($connections);
+
                 break;
 
             case self::POSTGRESQL:
                 PostgreSQL::run($connections);
+
                 break;
 
             default:

@@ -130,6 +130,10 @@ const CONNECTION_DATA_THIRD_CONNECTION = [
     'user' => DATABASE_USER_POSTGRESQL,
     'password' => DATABASE_PASSWORD_POSTGRESQL,
 ];
+const CONNECTION_DATA_QUARTER_CONNECTION = [
+    'type' => Driver::SQLITE,
+    'dbname' => DATABASE_NAME_POSTGRESQL . '.sqlite',
+];
 const CONNECTIONS_CONNECTION = [
     'default' => DATABASE_NAME_CONNECTION,
     'connections' => [
