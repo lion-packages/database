@@ -7,44 +7,17 @@ namespace Tests;
 use Exception;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL;
+use Lion\Database\Drivers\PostgreSQL;
+use Lion\Database\Drivers\SQLite;
 use Lion\Test\Test;
 use PHPUnit\Framework\Attributes\Test as Testing;
 use ReflectionException;
 
 class DriverTest extends Test
 {
-    private const string DATABASE_TYPE = 'mysql';
-    private const string DATABASE_HOST = 'mysql';
-    private const int DATABASE_PORT = 3306;
-    private const string DATABASE_NAME = 'lion_database';
-    private const string DATABASE_NAME_SECOND = 'lion_database_second';
-    private const string DATABASE_USER = 'root';
-    private const string DATABASE_PASSWORD = 'lion';
-    private const array CONNECTION_DATA = [
-        'type' => self::DATABASE_TYPE,
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD,
-    ];
-    private const array CONNECTION_DATA_SECOND = [
-        'type' => self::DATABASE_TYPE . '-type',
-        'host' => self::DATABASE_HOST,
-        'port' => self::DATABASE_PORT,
-        'dbname' => self::DATABASE_NAME_SECOND,
-        'user' => self::DATABASE_USER,
-        'password' => self::DATABASE_PASSWORD,
-    ];
-    private const array CONNECTIONS = [
-        'default' => self::DATABASE_NAME,
-        'connections' => [
-            self::DATABASE_NAME => self::CONNECTION_DATA,
-            self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
-        ],
-    ];
-
     private MySQL $mysql;
+    private PostgreSQL $postgreSQL;
+    private SQLite $SQLite;
 
     /**
      * @throws ReflectionException
@@ -53,14 +26,39 @@ class DriverTest extends Test
     {
         $this->mysql = new MySQL();
 
-        $this->initReflection($this->mysql);
+        $this->postgreSQL = new PostgreSQL();
+
+        $this->SQLite = new SQLite();
     }
 
     /**
      * @throws ReflectionException
      */
-    protected function tearDown(): void
+    #[Testing]
+    public function runDriverForMySQL(): void
     {
+        $this->initReflection($this->mysql);
+
+        $connections = [
+            'default' => DATABASE_NAME_MYSQL,
+            'connections' => [
+                DATABASE_NAME_MYSQL => [
+                    'type' => DATABASE_TYPE_MYSQL,
+                    'host' => DATABASE_HOST_MYSQL,
+                    'port' => DATABASE_PORT_MYSQL,
+                    'dbname' => DATABASE_NAME_MYSQL,
+                    'user' => DATABASE_USER_MYSQL,
+                    'password' => DATABASE_PASSWORD_MYSQL,
+                ],
+            ],
+        ];
+
+        Driver::run($connections);
+
+        $this->assertSame($connections, $this->getPrivateProperty('connections'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('dbname'));
+
         $this->setPrivateProperty('connections', []);
 
         $this->setPrivateProperty('activeConnection', '');
@@ -72,13 +70,63 @@ class DriverTest extends Test
      * @throws ReflectionException
      */
     #[Testing]
-    public function runDriver(): void
+    public function runDriverForPostgreSQL(): void
     {
-        Driver::run(self::CONNECTIONS);
+        $this->initReflection($this->postgreSQL);
 
-        $this->assertSame(self::CONNECTIONS, $this->getPrivateProperty('connections'));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('activeConnection'));
-        $this->assertSame(self::DATABASE_NAME, $this->getPrivateProperty('dbname'));
+        $connections = [
+            'default' => DATABASE_NAME_POSTGRESQL,
+            'connections' => [
+                DATABASE_NAME_POSTGRESQL => [
+                    'type' => DATABASE_TYPE_POSTGRESQL,
+                    'host' => DATABASE_HOST_POSTGRESQL,
+                    'port' => DATABASE_PORT_POSTGRESQL,
+                    'dbname' => DATABASE_NAME_POSTGRESQL,
+                    'user' => DATABASE_USER_POSTGRESQL,
+                    'password' => DATABASE_PASSWORD_POSTGRESQL,
+                ],
+            ],
+        ];
+
+        Driver::run($connections);
+
+        $this->assertSame($connections, $this->getPrivateProperty('connections'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('dbname'));
+
+        $this->setPrivateProperty('connections', []);
+
+        $this->setPrivateProperty('activeConnection', '');
+
+        $this->setPrivateProperty('dbname', '');
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function runDriverForSQLite(): void
+    {
+        $this->initReflection($this->SQLite);
+
+        $connections = [
+            'default' => DATABASE_NAME_SQLITE,
+            'connections' => [
+                DATABASE_NAME_SQLITE => CONNECTION_DATA_SQLITE,
+            ],
+        ];
+
+        Driver::run($connections);
+
+        $this->assertSame($connections, $this->getPrivateProperty('connections'));
+        $this->assertSame(DATABASE_NAME_SQLITE, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame(DATABASE_NAME_SQLITE, $this->getPrivateProperty('dbname'));
+
+        $this->setPrivateProperty('connections', []);
+
+        $this->setPrivateProperty('activeConnection', '');
+
+        $this->setPrivateProperty('dbname', '');
     }
 
     #[Testing]
@@ -99,9 +147,12 @@ class DriverTest extends Test
         $this->expectExceptionMessage('The defined driver does not exist');
 
         Driver::run([
-            'default' => self::DATABASE_NAME_SECOND,
+            'default' => DATABASE_NAME_CONNECTION,
             'connections' => [
-                self::DATABASE_NAME_SECOND => self::CONNECTION_DATA_SECOND,
+                DATABASE_NAME_CONNECTION => [
+                    'type' => 'test',
+                    'dbname' => DATABASE_NAME_SQLITE,
+                ],
             ],
         ]);
     }

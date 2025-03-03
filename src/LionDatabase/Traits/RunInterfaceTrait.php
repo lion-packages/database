@@ -14,7 +14,7 @@ use InvalidArgumentException;
 trait RunInterfaceTrait
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function run(array $connections): self
     {

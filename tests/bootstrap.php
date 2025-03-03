@@ -100,6 +100,23 @@ const CONNECTIONS_POSTGRESQL = [
 ];
 
 /**
+ * Defining constants for SQLite
+ */
+
+const DATABASE_TYPE_SQLITE = 'sqlite';
+const DATABASE_NAME_SQLITE = __DIR__ . '/Provider/copy/lion_database.sqlite';
+const CONNECTION_DATA_SQLITE = [
+    'type' => DATABASE_TYPE_SQLITE,
+    'dbname' => DATABASE_NAME_SQLITE,
+];
+const CONNECTIONS_SQLITE = [
+    'default' => DATABASE_NAME_SQLITE,
+    'connections' => [
+        DATABASE_NAME_SQLITE => CONNECTION_DATA_SQLITE,
+    ],
+];
+
+/**
  * Defining constants for ConnectionTest
  */
 
@@ -130,10 +147,16 @@ const CONNECTION_DATA_THIRD_CONNECTION = [
     'user' => DATABASE_USER_POSTGRESQL,
     'password' => DATABASE_PASSWORD_POSTGRESQL,
 ];
+const CONNECTION_DATA_QUARTER_CONNECTION = [
+    'type' => DATABASE_TYPE_SQLITE,
+    'dbname' => DATABASE_NAME_SQLITE,
+];
 const CONNECTIONS_CONNECTION = [
     'default' => DATABASE_NAME_CONNECTION,
     'connections' => [
         DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
         DATABASE_NAME_SECOND_CONNECTION => CONNECTION_DATA_SECOND_CONNECTION,
+        DATABASE_NAME_CONNECTION . '_postgresql' => CONNECTION_DATA_THIRD_CONNECTION,
+        DATABASE_NAME_CONNECTION . '_sqlite' => CONNECTION_DATA_QUARTER_CONNECTION,
     ],
 ];

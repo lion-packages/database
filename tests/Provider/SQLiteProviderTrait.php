@@ -7,149 +7,85 @@ namespace Tests\Provider;
 use Faker\Factory;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 
-trait PostgreSQLProviderTrait
+trait SQLiteProviderTrait
 {
-    private const string QUERY_SQL_DROP_TABLE_ROLES = <<<SQL
-        DROP TABLE IF EXISTS public.roles CASCADE;
+    private const QUERY_SQL_DROP_TABLE_ROLES = <<<SQL
+        DROP TABLE IF EXISTS roles;
     SQL;
-    private const string QUERY_SQL_DROP_TABLE_USERS = <<<SQL
-        DROP TABLE IF EXISTS public.users CASCADE;
+    private const QUERY_SQL_DROP_TABLE_USERS = <<<SQL
+        DROP TABLE IF EXISTS users;
     SQL;
-    private const string QUERY_SQL_TABLE_ROLES = <<<SQL
-        CREATE TABLE public.roles (
-            id SERIAL PRIMARY KEY,
-            roles_name VARCHAR(50) NOT NULL UNIQUE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    private const QUERY_SQL_TABLE_ROLES = <<<SQL
+        CREATE TABLE roles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            roles_name TEXT NOT NULL UNIQUE,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
     SQL;
-    private const string QUERY_SQL_TABLE_USERS = <<<SQL
-        CREATE TABLE public.users (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(50) NOT NULL UNIQUE,
-            email VARCHAR(100) NOT NULL UNIQUE,
-            password_hash VARCHAR(255) NOT NULL,
-            first_name VARCHAR(50),
-            last_name VARCHAR(50),
-            date_of_birth DATE,
-            role_id INT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    private const QUERY_SQL_TABLE_USERS = <<<SQL
+        CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            first_name TEXT,
+            last_name TEXT,
+            date_of_birth TEXT, -- Almacenado en formato YYYY-MM-DD
+            role_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
         );
     SQL;
-    private const string QUERY_SQL_INSERT_ROLES = <<<SQL
-        INSERT INTO public.roles (roles_name) VALUES ('Admin'), ('User'), ('Editor'), ('Moderator');
+    private const QUERY_SQL_INSERT_ROLES = <<<SQL
+        INSERT INTO roles (roles_name) VALUES ('Admin'), ('User'), ('Editor'), ('Moderator');
     SQL;
-    private const string QUERY_SQL_INSERT_ROLES_ERR = <<<SQL
-        INSERT INTO public.roles (roles_name) VALUES (null), ('Admin');
-    SQL;
-    private const string QUERY_SQL_INSERT_USERS = <<<SQL
-        INSERT INTO public.users (username, email, password_hash, first_name, last_name, date_of_birth, role_id) VALUES
+    private const QUERY_SQL_INSERT_USERS = <<<SQL
+        INSERT INTO users (username, email, password_hash, first_name, last_name, date_of_birth, role_id) VALUES
             ('john_doe', 'john.doe@example.com', 'hashed_password1', 'John', 'Doe', '1990-01-15', 1),
             ('jane_smith', 'jane.smith@example.com', 'hashed_password2', 'Jane', 'Smith', '1985-05-22', 2),
             ('alice_jones', 'alice.jones@example.com', 'hashed_password3', 'Alice', 'Jones', '1992-12-01', 3),
             ('bob_brown', 'bob.brown@example.com', 'hashed_password4', 'Bob', 'Brown', '1988-07-30', 4);
     SQL;
+    private const string QUERY_SQL_NESTED_INSERT_ROLES = <<<SQL
+        INSERT INTO roles (roles_name) VALUES (?);
+    SQL;
+    private const string QUERY_SQL_INSERT_ROLES_WITH_PARAMS = <<<SQL
+        INSERT INTO roles (roles_name) VALUES ('Example');
+    SQL;
+    private const string QUERY_SQL_SELECT_ROLES = <<<SQL
+        SELECT * FROM roles;
+    SQL;
+    private const string QUERY_SQL_SELECT_USERS = <<<SQL
+        SELECT * FROM users;
+    SQL;
+    private const QUERY_SQL_SELECT_ROLES_BY_ID = <<<SQL
+        SELECT * FROM roles WHERE id = 1;
+    SQL;
+    private const QUERY_SQL_SELECT_USERS_BY_ID = <<<SQL
+        SELECT * FROM users WHERE id = 1;
+    SQL;
+    private const string QUERY_SQL_NESTED_SELECT_ROLES_BY_ID = <<<SQL
+        SELECT * FROM roles WHERE id = ?;
+    SQL;
+    private const string QUERY_SQL_NESTED_SELECT_USERS_BY_ID = <<<SQL
+        SELECT * FROM users WHERE id = ?;
+    SQL;
+    private const string QUERY_SQL_NESTED_SELECT_ROLES_BY_MULTIPLE_ID = <<<SQL
+        SELECT * FROM roles WHERE id IN(?, ?);
+    SQL;
+    private const string QUERY_SQL_NESTED_SELECT_USERS_BY_MULTIPLE_ID = <<<SQL
+        SELECT * FROM users WHERE id IN(?, ?);
+    SQL;
+    private const string QUERY_SQL_INSERT_ROLES_ERR = <<<SQL
+        INSERT INTO roles (roles_name) VALUES (null), ('Admin');
+    SQL;
     private const string QUERY_SQL_INSERT_USERS_ERR = <<<SQL
-        INSERT INTO public.users (username, email, password_hash, first_name, last_name, date_of_birth, role_id) VALUES
+        INSERT INTO users (username, email, password_hash, first_name, last_name, date_of_birth, role_id) VALUES
             (null, 'john.doe@example.com', 'hashed_password1', 'John', 'Doe', '1990-01-15', 1),
             ('jane_smith', 'jane.smith@example.com', 'hashed_password2', 'Jane', 'Smith', '1985-05-22', 2);
     SQL;
-    private const string QUERY_SQL_NESTED_INSERT_ROLES = <<<SQL
-        INSERT INTO public.roles (roles_name) VALUES (?);
-    SQL;
-    private const string QUERY_SQL_INSERT_ROLES_WITH_PARAMS = <<<SQL
-        INSERT INTO public.roles (roles_name) VALUES ('Example');
-    SQL;
-    private const string QUERY_SQL_SELECT_ROLES = <<<SQL
-        SELECT * FROM public.roles;
-    SQL;
-    private const string QUERY_SQL_SELECT_USERS = <<<SQL
-        SELECT * FROM public.users;
-    SQL;
-    private const string QUERY_SQL_SELECT_ROLES_BY_ID = <<<SQL
-        SELECT * FROM public.roles WHERE id = 1;
-    SQL;
-    private const string QUERY_SQL_SELECT_USERS_BY_ID = <<<SQL
-        SELECT * FROM public.users WHERE id = 1;
-    SQL;
-    private const string QUERY_SQL_NESTED_SELECT_ROLES_BY_ID = <<<SQL
-        SELECT * FROM public.roles WHERE id = ?;
-    SQL;
-    private const string QUERY_SQL_NESTED_SELECT_USERS_BY_ID = <<<SQL
-        SELECT * FROM public.users WHERE id = ?;
-    SQL;
-    private const string QUERY_SQL_NESTED_SELECT_ROLES_BY_MULTIPLE_ID = <<<SQL
-        SELECT * FROM public.roles WHERE id IN(?, ?);
-    SQL;
-    private const string QUERY_SQL_NESTED_SELECT_USERS_BY_MULTIPLE_ID = <<<SQL
-        SELECT * FROM public.users WHERE id IN(?, ?);
-    SQL;
-
-    /**
-     * @return array<int, array{
-     *     enable: bool,
-     *     table: string,
-     *     columns: array<int, string>,
-     *     rows: array<int, array<int, string>>,
-     *     return: string
-     * }>
-     */
-    public static function bulkProvider(): array
-    {
-        $faker = Factory::create();
-
-        return [
-            [
-                'enable' => false,
-                'table' => 'users',
-                'columns' => [
-                    'users_name',
-                    'users_last_name',
-                ],
-                'rows' => [
-                    [
-                        $faker->name(),
-                        $faker->lastName(),
-                    ],
-                    [
-                        $faker->name(),
-                        $faker->lastName(),
-                    ],
-                    [
-                        $faker->name(),
-                        $faker->lastName(),
-                    ],
-                ],
-                'return' => <<<SQL
-                INSERT INTO lion_database.users (users_name, users_last_name) VALUES (?, ?), (?, ?), (?, ?)
-                SQL,
-            ],
-            [
-                'enable' => true,
-                'table' => 'users',
-                'columns' => [
-                    'users_name',
-                    'users_last_name',
-                ],
-                'rows' => [
-                    [
-                        'lion #1',
-                        'database',
-                    ],
-                    [
-                        'lion #2',
-                        'database',
-                    ],
-                    [
-                        'lion #3',
-                        'database',
-                    ],
-                ],
-                'return' => "INSERT INTO lion_database.users (users_name, users_last_name) VALUES ('lion #1', 'database'), ('lion #2', 'database'), ('lion #3', 'database')", /** phpcs:ignore Generic.Files.LineLength */
-            ],
-        ];
-    }
 
     /**
      * @return array<int, array{
@@ -620,14 +556,14 @@ trait PostgreSQLProviderTrait
                     'users_name' => $faker->name(),
                     'users_last_name' => $faker->lastName(),
                 ],
-                'return' => 'INSERT INTO lion_database.users (users_name, users_last_name) VALUES (?, ?)',
+                'return' => 'INSERT INTO users (users_name, users_last_name) VALUES (?, ?)',
             ],
             [
                 'table' => 'roles',
                 'params' => [
                     'roles_name' => $faker->jobTitle(),
                 ],
-                'return' => 'INSERT INTO lion_database.roles (roles_name) VALUES (?)',
+                'return' => 'INSERT INTO roles (roles_name) VALUES (?)',
             ],
             [
                 'table' => 'tasks',
@@ -637,7 +573,7 @@ trait PostgreSQLProviderTrait
                     'tasks_created_at' => $faker->date('Y-m-d H:i:s'),
                 ],
                 'return' => <<<SQL
-                INSERT INTO lion_database.tasks (tasks_title, tasks_description, tasks_created_at) VALUES (?, ?, ?)
+                INSERT INTO tasks (tasks_title, tasks_description, tasks_created_at) VALUES (?, ?, ?)
                 SQL,
             ],
         ];
@@ -645,32 +581,89 @@ trait PostgreSQLProviderTrait
 
     /**
      * @return array<int, array{
-     *     function: string,
-     *     value: string,
+     *     enable: bool,
+     *     table: string,
      *     columns: array<int, string>,
+     *     rows: array<int, array<int, string>>,
      *     return: string
      * }>
      */
-    public static function selectProvider(): array
+    public static function bulkProvider(): array
     {
+        $faker = Factory::create();
+
         return [
             [
+                'enable' => false,
                 'table' => 'users',
                 'columns' => [
                     'users_name',
                     'users_last_name',
-                    'users_email',
                 ],
-                'return' => 'SELECT users_name, users_last_name, users_email FROM lion_database.users',
+                'rows' => [
+                    [
+                        $faker->name(),
+                        $faker->lastName(),
+                    ],
+                    [
+                        $faker->name(),
+                        $faker->lastName(),
+                    ],
+                    [
+                        $faker->name(),
+                        $faker->lastName(),
+                    ],
+                ],
+                'return' => <<<SQL
+                INSERT INTO users (users_name, users_last_name) VALUES (?, ?), (?, ?), (?, ?)
+                SQL,
             ],
             [
-                'table' => 'read_users',
+                'enable' => true,
+                'table' => 'users',
                 'columns' => [
                     'users_name',
                     'users_last_name',
-                    'users_email',
                 ],
-                'return' => 'SELECT users_name, users_last_name, users_email FROM lion_database.read_users',
+                'rows' => [
+                    [
+                        'lion #1',
+                        'database',
+                    ],
+                    [
+                        'lion #2',
+                        'database',
+                    ],
+                    [
+                        'lion #3',
+                        'database',
+                    ],
+                ],
+                'return' => "INSERT INTO users (users_name, users_last_name) VALUES ('lion #1', 'database'), ('lion #2', 'database'), ('lion #3', 'database')", /** phpcs:ignore Generic.Files.LineLength */
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{
+     *     table: string,
+     *     return: string
+     * }>
+     */
+    public static function deleteProvider(): array
+    {
+        return [
+            [
+                'table' => 'users',
+                'return' => 'DELETE FROM users',
+            ],
+            [
+                'table' => 'roles',
+                'return' => 'DELETE FROM roles',
+            ],
+            [
+                'table' => 'tasks',
+                'return' => 'DELETE FROM tasks',
             ],
         ];
     }
@@ -693,14 +686,14 @@ trait PostgreSQLProviderTrait
                     'users_name' => $faker->name(),
                     'users_last_name' => $faker->lastName(),
                 ],
-                'return' => 'UPDATE lion_database.users SET users_name = ?, users_last_name = ?',
+                'return' => 'UPDATE users SET users_name = ?, users_last_name = ?',
             ],
             [
                 'table' => 'roles',
                 'params' => [
                     'roles_name' => $faker->jobTitle(),
                 ],
-                'return' => 'UPDATE lion_database.roles SET roles_name = ?',
+                'return' => 'UPDATE roles SET roles_name = ?',
             ],
             [
                 'table' => 'tasks',
@@ -710,32 +703,8 @@ trait PostgreSQLProviderTrait
                     'tasks_created_at' => $faker->date('Y-m-d H:i:s'),
                 ],
                 'return' => <<<SQL
-                UPDATE lion_database.tasks SET tasks_title = ?, tasks_description = ?, tasks_created_at = ?
+                UPDATE tasks SET tasks_title = ?, tasks_description = ?, tasks_created_at = ?
                 SQL,
-            ],
-        ];
-    }
-
-    /**
-     * @return array<int, array{
-     *     table: string,
-     *     return: string
-     * }>
-     */
-    public static function deleteProvider(): array
-    {
-        return [
-            [
-                'table' => 'users',
-                'return' => 'DELETE FROM lion_database.users',
-            ],
-            [
-                'table' => 'roles',
-                'return' => 'DELETE FROM lion_database.roles',
-            ],
-            [
-                'table' => 'tasks',
-                'return' => 'DELETE FROM lion_database.tasks',
             ],
         ];
     }
