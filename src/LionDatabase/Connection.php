@@ -175,6 +175,51 @@ abstract class Connection implements ConnectionConfigInterface
     }
 
     /**
+     * Initializes a SQLite database connection and runs a process
+     *
+     * @param Closure $callback [Function that is executed]
+     *
+     * phpcs:ignore Generic.Files.LineLength
+     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|int|stdClass
+     *
+     * @throws PDOException [If the database process fails]
+     *
+     * @internal
+     */
+    public static function sqlite(Closure $callback): array|DatabaseCapsuleInterface|int|stdClass
+    {
+        try {
+            self::$conn = self::getDatabaseInstance();
+
+            if (self::$isTransaction) {
+                self::$conn->beginTransaction();
+            }
+
+            $response = $callback();
+
+            if (self::$isTransaction) {
+                self::$conn->commit();
+            }
+
+            self::clean();
+
+            return $response;
+        } catch (PDOException $e) {
+            if (self::$isTransaction) {
+                self::$conn->rollBack();
+            }
+
+            self::clean();
+
+            return (object) [
+                'code' => $e->getCode(),
+                'status' => 'database-error',
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Prepare the current sentence
      *
      * @param string $sql [Current sentence]

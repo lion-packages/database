@@ -11,7 +11,7 @@ RUN useradd -m lion && echo 'lion:lion' | chpasswd && usermod -aG sudo lion && u
 RUN apt-get update -y \
     && apt-get install -y sudo nano zsh git curl wget unzip cron golang-go \
     && apt-get install -y libpng-dev libzip-dev zlib1g-dev libonig-dev libevent-dev libssl-dev libpq-dev \
-    && apt-get install -y libsqlite3-dev \
+    && apt-get install -y sqlite3 libsqlite3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

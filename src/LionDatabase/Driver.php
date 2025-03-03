@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Lion\Database\Drivers\MySQL;
 use Lion\Database\Drivers\PostgreSQL;
 use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
+use Lion\Database\Drivers\SQLite;
 
 /**
  * Initialize base configuration for database connection
@@ -76,6 +77,11 @@ abstract class Driver
 
             case self::POSTGRESQL:
                 PostgreSQL::run($connections);
+
+                break;
+
+            case self::SQLITE:
+                SQLite::run($connections);
 
                 break;
 

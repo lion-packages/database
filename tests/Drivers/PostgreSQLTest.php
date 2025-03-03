@@ -49,6 +49,8 @@ class PostgreSQLTest extends Test
      */
     protected function tearDown(): void
     {
+        $this->setPrivateProperty('withRowCount', false);
+
         $this->setPrivateProperty('connections', []);
 
         $this->setPrivateProperty('activeConnection', '');
@@ -806,19 +808,8 @@ class PostgreSQLTest extends Test
     {
         $createTableResponse = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
-            ->query(
-                <<<SQL
-                DROP TABLE IF EXISTS roles;
-                SQL
-            )
-            ->query(
-                <<<SQL
-                CREATE TABLE public.roles (
-                    idroles SERIAL PRIMARY KEY,
-                    roles_name VARCHAR(25) NOT NULL
-                );
-                SQL
-            )
+            ->query(self::QUERY_SQL_DROP_TABLE_ROLES)
+            ->query(self::QUERY_SQL_TABLE_ROLES)
             ->execute();
 
         $this->assertInstanceOf(stdclass::class, $createTableResponse);
@@ -845,11 +836,7 @@ class PostgreSQLTest extends Test
 
         $dropTableResponse = $this->postgresql
             ->run(CONNECTIONS_POSTGRESQL)
-            ->query(
-                <<<SQL
-                DROP TABLE IF EXISTS roles;
-                SQL
-            )
+            ->query(self::QUERY_SQL_DROP_TABLE_ROLES)
             ->execute();
 
         $this->assertInstanceOf(stdclass::class, $dropTableResponse);

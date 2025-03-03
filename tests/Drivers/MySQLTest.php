@@ -44,6 +44,8 @@ class MySQLTest extends Test
      */
     protected function tearDown(): void
     {
+        $this->setPrivateProperty('withRowCount', false);
+
         $this->setPrivateProperty('connections', []);
 
         $this->setPrivateProperty('activeConnection', '');

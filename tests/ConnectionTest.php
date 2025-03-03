@@ -6,7 +6,6 @@ namespace Tests;
 
 use InvalidArgumentException;
 use Lion\Database\Connection;
-use Lion\Database\Driver;
 use Lion\Test\Test;
 use PDO;
 use PDOException;
@@ -110,11 +109,64 @@ class ConnectionTest extends Test
     /**
      * @throws ReflectionException
      */
-
     #[Testing]
     public function mysqlWithException(): void
     {
         $response = $this->getPrivateMethod('mysql', [function (): void {
+            throw new PDOException('Connection failed');
+        }]);
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertSame('database-error', $response->status);
+        $this->assertSame('Connection failed', $response->message);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function sqlite(): void
+    {
+        $response = $this->getPrivateMethod('sqlite', [fn () => (object) self::RESPONSE]);
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertSame(self::RESPONSE['status'], $response->status);
+        $this->assertSame(self::RESPONSE['message'], $response->message);
+        $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function sqliteIsTransactionTrue(): void
+    {
+        $this->setPrivateProperty('isTransaction', true);
+
+        $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
+
+        $this->assertIsObject($response);
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertSame(self::RESPONSE['status'], $response->status);
+        $this->assertSame('TEST-OK', $response->message);
+        $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function sqliteWithException(): void
+    {
+        $response = $this->getPrivateMethod('sqlite', [function (): void {
             throw new PDOException('Connection failed');
         }]);
 
@@ -229,13 +281,7 @@ class ConnectionTest extends Test
     #[Testing]
     public function getConnections(): void
     {
-        $this->setPrivateProperty('connections', [
-            'default' => DATABASE_NAME_CONNECTION,
-            'connections' => [
-                DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
-                DATABASE_NAME_SECOND_CONNECTION => CONNECTION_DATA_SECOND_CONNECTION,
-            ],
-        ]);
+        $this->setPrivateProperty('connections', CONNECTIONS_CONNECTION);
 
         $this->assertSame(CONNECTIONS_CONNECTION['connections'], $this->customClass::getConnections());
     }
@@ -350,21 +396,22 @@ class ConnectionTest extends Test
     #[Testing]
     public function getDatabaseInstanceSQLite(): void
     {
-        $this->createDirectory(__DIR__ . '/Provider/copy/');
+        $copyDir = __DIR__ . '/Provider/copy/';
 
-        $this->assertDirectoryExists(__DIR__ . '/Provider/copy/');
+        $copyFile = $copyDir . 'lion_database.sqlite';
 
-        $copyDatabase = __DIR__ . '/Provider/copy/lion_database.sqlite';
+        if (!is_dir($copyDir)) {
+            mkdir($copyDir, 0777, true);
+        }
 
-        copy(__DIR__ . '/Provider/lion_database.sqlite', $copyDatabase);
+        copy(__DIR__ . '/Provider/lion_database.sqlite', $copyFile);
 
-        $this->assertFileExists($copyDatabase);
+        chmod($copyFile, 0666);
+
+        $this->assertFileExists($copyFile);
 
         $conn = $this->getPrivateMethod('getDatabaseInstanceSQLite', [
-            'connection' => [
-                'type' => Driver::SQLITE,
-                'dbname' => $copyDatabase,
-            ],
+            'connection' => CONNECTION_DATA_QUARTER_CONNECTION,
         ]);
 
         $this->assertIsObject($conn);
