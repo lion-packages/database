@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Provider;
 
+use Lion\Database\Driver;
 use PDO;
 
 trait ConnectionProviderTrait
