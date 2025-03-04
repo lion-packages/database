@@ -362,7 +362,7 @@ abstract class Connection implements ConnectionConfigInterface
      *     type: string,
      *     host: string,
      *     port: int,
-     *     dbname: string,
+     *     dbname?: string,
      *     user: string,
      *     password: string,
      *     options?: array<int, int>
@@ -372,8 +372,10 @@ abstract class Connection implements ConnectionConfigInterface
      */
     private static function getDatabaseInstanceMySQL(array $connection): PDO
     {
+        $dbName = !empty($connection['dbname']) ? ";dbname={$connection['dbname']}" : '';
+
         return new PDO(
-            "mysql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+            "mysql:host={$connection['host']};port={$connection['port']}{$dbName}",
             $connection['user'],
             $connection['password'],
             ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
@@ -397,8 +399,10 @@ abstract class Connection implements ConnectionConfigInterface
      */
     private static function getDatabaseInstancePostgreSQL(array $connection): PDO
     {
+        $dbName = !empty($connection['dbname']) ? $connection['dbname'] : 'postgres';
+
         return new PDO(
-            "pgsql:host={$connection['host']};port={$connection['port']};dbname={$connection['dbname']}",
+            "pgsql:host={$connection['host']};port={$connection['port']};dbname={$dbName}",
             $connection['user'],
             $connection['password'],
             ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
@@ -418,8 +422,10 @@ abstract class Connection implements ConnectionConfigInterface
      */
     private static function getDatabaseInstanceSQLite(array $connection): PDO
     {
+        $dbName = !empty($connection['dbname']) ? $connection['dbname'] : 'memory';
+
         return new PDO(
-            "sqlite:{$connection['dbname']}",
+            "sqlite:{$dbName}",
             null,
             null,
             ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
