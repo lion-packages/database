@@ -6,6 +6,7 @@ namespace Tests;
 
 use InvalidArgumentException;
 use Lion\Database\Connection;
+use Lion\Database\Driver;
 use Lion\Test\Test;
 use PDO;
 use PDOException;
@@ -26,18 +27,18 @@ class ConnectionTest extends Test
         'message' => 'TEST-OK',
     ];
 
-    private Connection $customClass;
+    private Connection $connection;
 
     /**
      * @throws ReflectionException
      */
     protected function setUp(): void
     {
-        $this->customClass = new class extends Connection
+        $this->connection = new class extends Connection
         {
         };
 
-        $this->initReflection($this->customClass);
+        $this->initReflection($this->connection);
 
         /** @phpstan-ignore-next-line */
         $this->setPrivateProperty('connections', CONNECTIONS_CONNECTION);
@@ -237,7 +238,7 @@ class ConnectionTest extends Test
     {
         $this->setPrivateProperty('sql', $query);
 
-        $response = $this->customClass->getQueryString();
+        $response = $this->connection->getQueryString();
 
         $this->assertIsObject($response);
         $this->assertInstanceOf(stdClass::class, $response);
@@ -261,7 +262,7 @@ class ConnectionTest extends Test
         /** @phpstan-ignore-next-line */
         $this->setPrivateProperty('connections', ['default' => DATABASE_NAME_SECOND_CONNECTION]);
 
-        $this->customClass->addConnection(DATABASE_NAME_SECOND_CONNECTION, CONNECTION_DATA_SECOND_CONNECTION);
+        $this->connection->addConnection(DATABASE_NAME_SECOND_CONNECTION, CONNECTION_DATA_SECOND_CONNECTION);
 
         $connections = $this->getPrivateProperty('connections');
 
@@ -283,7 +284,7 @@ class ConnectionTest extends Test
     {
         $this->setPrivateProperty('connections', CONNECTIONS_CONNECTION);
 
-        $this->assertSame(CONNECTIONS_CONNECTION['connections'], $this->customClass::getConnections());
+        $this->assertSame(CONNECTIONS_CONNECTION['connections'], $this->connection::getConnections());
     }
 
     /**
@@ -299,9 +300,9 @@ class ConnectionTest extends Test
             ],
         ]);
 
-        $this->customClass->removeConnection(DATABASE_NAME_CONNECTION);
+        $this->connection->removeConnection(DATABASE_NAME_CONNECTION);
 
-        $this->assertSame([], $this->customClass::getConnections());
+        $this->assertSame([], $this->connection::getConnections());
     }
 
     /**
@@ -378,11 +379,52 @@ class ConnectionTest extends Test
      * @throws ReflectionException
      */
     #[Testing]
+    public function getDatabaseInstanceMySQLNoDatabase(): void
+    {
+        $conn = $this->getPrivateMethod('getDatabaseInstanceMySQL', [
+            'connection' => [
+                'type' => Driver::MYSQL,
+                'host' => DATABASE_HOST_MYSQL,
+                'port' => DATABASE_PORT_MYSQL,
+                'user' => DATABASE_USER_MYSQL,
+                'password' => DATABASE_PASSWORD_MYSQL
+            ],
+        ]);
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame('mysql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
     public function getDatabaseInstancePostgreSQL(): void
     {
         $conn = $this->getPrivateMethod('getDatabaseInstancePostgreSQL', [
-            /** @phpstan-ignore-next-line */
             'connection' => CONNECTION_DATA_THIRD_CONNECTION,
+        ]);
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame('pgsql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function getDatabaseInstancePostgreSQLNoDatabase(): void
+    {
+        $conn = $this->getPrivateMethod('getDatabaseInstancePostgreSQL', [
+            'connection' => [
+                'type' => Driver::POSTGRESQL,
+                'host' => DATABASE_HOST_POSTGRESQL,
+                'port' => DATABASE_PORT_POSTGRESQL,
+                'user' => DATABASE_USER_POSTGRESQL,
+                'password' => DATABASE_PASSWORD_POSTGRESQL,
+            ],
         ]);
 
         $this->assertIsObject($conn);
@@ -421,5 +463,22 @@ class ConnectionTest extends Test
         $this->rmdirRecursively(__DIR__ . '/Provider/copy/');
 
         $this->assertDirectoryDoesNotExist(__DIR__ . '/Provider/copy/');
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function getDatabaseInstanceSQLiteNoDatabase(): void
+    {
+        $conn = $this->getPrivateMethod('getDatabaseInstanceSQLite', [
+            'connection' => [
+                'type' => Driver::SQLITE,
+            ],
+        ]);
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame('sqlite', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
     }
 }

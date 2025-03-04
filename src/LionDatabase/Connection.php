@@ -389,7 +389,7 @@ abstract class Connection implements ConnectionConfigInterface
      *     type: string,
      *     host: string,
      *     port: int,
-     *     dbname: string,
+     *     dbname?: string,
      *     user: string,
      *     password: string,
      *     options?: array<int, int>
@@ -414,7 +414,7 @@ abstract class Connection implements ConnectionConfigInterface
      *
      * @param array{
      *     type: string,
-     *     dbname: string,
+     *     dbname?: string,
      *     options?: array<int, int>
      * } $connection [Database connection data]
      *
@@ -422,7 +422,7 @@ abstract class Connection implements ConnectionConfigInterface
      */
     private static function getDatabaseInstanceSQLite(array $connection): PDO
     {
-        $dbName = !empty($connection['dbname']) ? $connection['dbname'] : 'memory';
+        $dbName = !empty($connection['dbname']) ? $connection['dbname'] : ':memory:';
 
         return new PDO(
             "sqlite:{$dbName}",
