@@ -260,7 +260,9 @@ class ConnectionTest extends Test
     public function addConnection(): void
     {
         /** @phpstan-ignore-next-line */
-        $this->setPrivateProperty('connections', ['default' => DATABASE_NAME_SECOND_CONNECTION]);
+        $this->setPrivateProperty('connections', [
+            'default' => DATABASE_NAME_SECOND_CONNECTION,
+        ]);
 
         $this->connection->addConnection(DATABASE_NAME_SECOND_CONNECTION, CONNECTION_DATA_SECOND_CONNECTION);
 
