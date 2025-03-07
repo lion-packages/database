@@ -24,7 +24,9 @@ trait ConnectionInterfaceTrait
 
         self::$activeConnection = $connectionName;
 
-        self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
+        if (!empty(self::$connections['connections'][$connectionName]['dbname'])) {
+            self::$dbname = self::$connections['connections'][$connectionName]['dbname'];
+        }
 
         return new static();
     }

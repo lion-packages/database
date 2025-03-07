@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tests\Drivers;
 
 use InvalidArgumentException;
-use Lion\Database\Connection;
+use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
-use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Test\Test;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -114,16 +113,51 @@ class MySQLTest extends Test
         $this->assertSame($assertValue, $rows[$this->actualCode]);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function runInterface(): void
     {
-        $this->assertInstances($this->mysql->run(CONNECTIONS_MYSQL), [
-            MySQL::class,
-            Connection::class,
-            DatabaseConfigInterface::class,
-        ]);
+        $this->assertInstanceOf(MySQL::class, $this->mysql->run(CONNECTIONS_MYSQL));
 
-        $this->assertSame(CONNECTIONS_MYSQL, $this->getPrivateProperty('connections'));
+        $connections = $this->getPrivateProperty('connections');
+
+        $this->assertSame(CONNECTIONS_MYSQL, $connections);
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+
+        $this->assertSame(
+            CONNECTIONS_MYSQL['connections'][DATABASE_NAME_MYSQL]['dbname'],
+            $this->getPrivateProperty('dbname')
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function runInterfaceConnectionIsEmpty(): void
+    {
+        $configConnections = [
+            'default' => DATABASE_NAME_MYSQL,
+            'connections' => [
+                DATABASE_NAME_MYSQL => [
+                    'type' => Driver::MYSQL,
+                    'host' => DATABASE_HOST_MYSQL,
+                    'port' => DATABASE_PORT_MYSQL,
+                    'user' => DATABASE_USER_MYSQL,
+                    'password' => DATABASE_PASSWORD_MYSQL,
+                ],
+            ],
+        ];
+
+        $this->mysql->run($configConnections);
+
+        $connections = $this->getPrivateProperty('connections');
+
+        $this->assertSame($configConnections, $connections);
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame('', $this->getPrivateProperty('dbname'));
     }
 
     #[Testing]
@@ -143,7 +177,9 @@ class MySQLTest extends Test
         $this->expectExceptionCode(500);
         $this->expectExceptionMessage('No databases have been defined');
 
-        $this->mysql->run(['default' => DATABASE_NAME_MYSQL]);
+        $this->mysql->run([
+            'default' => DATABASE_NAME_MYSQL,
+        ]);
     }
 
     /**
@@ -162,6 +198,31 @@ class MySQLTest extends Test
         $this->assertInstanceOf(MySQL::class, $this->mysql->connection(DATABASE_NAME_MYSQL));
         $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
         $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('dbname'));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function connectionInterfaceConnectionIsEmpty(): void
+    {
+        $this->mysql
+            ->run([
+                'default' => DATABASE_NAME_MYSQL,
+                'connections' => [
+                    DATABASE_NAME_MYSQL => [
+                        'type' => Driver::MYSQL,
+                        'host' => DATABASE_HOST_MYSQL,
+                        'port' => DATABASE_PORT_MYSQL,
+                        'user' => DATABASE_USER_MYSQL,
+                        'password' => DATABASE_PASSWORD_MYSQL,
+                    ],
+                ],
+            ]);
+
+        $this->assertInstanceOf(MySQL::class, $this->mysql->connection(DATABASE_NAME_MYSQL));
+        $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
+        $this->assertSame('', $this->getPrivateProperty('dbname'));
     }
 
     #[Testing]

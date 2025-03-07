@@ -30,7 +30,9 @@ trait RunInterfaceTrait
 
         self::$activeConnection = self::$connections['default'];
 
-        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
+        if (!empty(self::$connections['connections'][self::$activeConnection]['dbname'])) {
+            self::$dbname = self::$connections['connections'][self::$activeConnection]['dbname'];
+        }
 
         return new static();
     }
