@@ -341,18 +341,27 @@ abstract class Connection implements ConnectionConfigInterface
         if (empty(self::$databaseInstances[self::$activeConnection])) {
             $connection = self::$connections['connections'][self::$activeConnection];
 
-            if (Driver::POSTGRESQL === $connection['type']) {
-                self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstancePostgreSQL($connection);
-            } elseif (Driver::MYSQL === $connection['type']) {
-                self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceMySQL($connection);
-            } elseif (Driver::SQLITE === $connection['type']) {
-                self::$databaseInstances[self::$activeConnection] = self::getDatabaseInstanceSQLite($connection);
+            /** @var string $type */
+            $type = $connection['type'];
+
+            $key = empty($connection['dbname']) ? 'server-' . self::$activeConnection : self::$activeConnection;
+
+            if (Driver::POSTGRESQL === $type) {
+                self::$databaseInstances[$key] = self::getDatabaseInstancePostgreSQL($connection);
+            } elseif (Driver::MYSQL === $type) {
+                self::$databaseInstances[$key] = self::getDatabaseInstanceMySQL($connection);
+            } elseif (Driver::SQLITE === $type) {
+                self::$databaseInstances[$key] = self::getDatabaseInstanceSQLite($connection);
             } else {
                 throw new InvalidArgumentException('The database connection type is not supported', 500);
             }
         }
 
-        return self::$databaseInstances[self::$activeConnection];
+        $connection = self::$connections['connections'][self::$activeConnection];
+
+        $key = empty($connection['dbname']) ? 'server-' . self::$activeConnection : self::$activeConnection;
+
+        return self::$databaseInstances[$key];
     }
 
     /**

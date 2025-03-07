@@ -306,28 +306,79 @@ class ConnectionTest extends Test
     }
 
     /**
+     * @param array{
+     *     type: string,
+     *     host: string,
+     *     port: int,
+     *     dbname: string,
+     *     user: string,
+     *     password: string
+     * } $connectionData
+     *
      * @throws ReflectionException
      */
     #[Testing]
-    #[TestWith(['driver' => 'mysql', 'databaseName' => DATABASE_NAME_CONNECTION])]
-    #[TestWith(['driver' => 'pgsql', 'databaseName' => DATABASE_NAME_THIRD_CONNECTION])]
-    public function getDatabaseInstance(string $driver, string $databaseName): void
+    #[DataProvider('getDatabaseInstanceProvider')]
+    public function getDatabaseInstance(string $driver, string $connectionName, array $connectionData): void
     {
         $this->setPrivateProperty('connections', [
-            'default' => DATABASE_NAME_CONNECTION,
+            'default' => $connectionName,
             'connections' => [
-                DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
-                DATABASE_NAME_THIRD_CONNECTION => CONNECTION_DATA_THIRD_CONNECTION,
+                $connectionName => $connectionData,
             ],
         ]);
 
-        $this->setPrivateProperty('activeConnection', $databaseName);
+        $this->setPrivateProperty('activeConnection', $connectionName);
 
         $conn = $this->getPrivateMethod('getDatabaseInstance');
 
         $this->assertIsObject($conn);
         $this->assertInstanceOf(PDO::class, $conn);
         $this->assertSame($driver, $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+
+        $databaseInstances = $this->getPrivateProperty('databaseInstances');
+
+        $this->assertIsArray($databaseInstances);
+        $this->assertNotEmpty($databaseInstances);
+        $this->assertArrayHasKey($connectionName, $databaseInstances);
+        $this->assertIsObject($databaseInstances[$connectionName]);
+        $this->assertInstanceOf(PDO::class, $databaseInstances[$connectionName]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function getDatabaseInstanceForServerConnection(): void
+    {
+        $this->setPrivateProperty('connections', [
+            'default' => 'test-connection',
+            'connections' => [
+                'test-connection' => [
+                    'type' => Driver::MYSQL,
+                    'host' => DATABASE_HOST_MYSQL,
+                    'port' => DATABASE_PORT_MYSQL,
+                    'user' => DATABASE_USER_MYSQL,
+                    'password' => DATABASE_PASSWORD_MYSQL
+                ],
+            ],
+        ]);
+
+        $this->setPrivateProperty('activeConnection', 'test-connection');
+
+        $conn = $this->getPrivateMethod('getDatabaseInstance');
+
+        $this->assertIsObject($conn);
+        $this->assertInstanceOf(PDO::class, $conn);
+        $this->assertSame('mysql', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
+
+        $databaseInstances = $this->getPrivateProperty('databaseInstances');
+
+        $this->assertIsArray($databaseInstances);
+        $this->assertNotEmpty($databaseInstances);
+        $this->assertArrayHasKey('server-test-connection', $databaseInstances);
+        $this->assertIsObject($databaseInstances['server-test-connection']);
+        $this->assertInstanceOf(PDO::class, $databaseInstances['server-test-connection']);
     }
 
     /**
