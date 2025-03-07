@@ -102,4 +102,34 @@ trait ConnectionProviderTrait
             ],
         ];
     }
+
+    /**
+     * @return array<int, array{
+     *     driver: string,
+     *     connectionName: string,
+     *     connectionData: array{
+     *         type: string,
+     *         host: string,
+     *         port: int,
+     *         dbname: string,
+     *         user: string,
+     *         password: string
+     *     }
+     * }>
+     */
+    public static function getDatabaseInstanceProvider(): array
+    {
+        return [
+            [
+                'driver' => 'mysql',
+                'connectionName' => DATABASE_NAME_CONNECTION,
+                'connectionData' => CONNECTION_DATA_CONNECTION,
+            ],
+            [
+                'driver' => 'pgsql',
+                'connectionName' => DATABASE_NAME_THIRD_CONNECTION,
+                'connectionData' => CONNECTION_DATA_THIRD_CONNECTION,
+            ]
+        ];
+    }
 }
