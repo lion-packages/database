@@ -159,7 +159,11 @@ trait DriverTrait
      */
     protected static function clean(): void
     {
-        self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
+        if (!empty(self::$connections['connections'][self::$connections['default']]['dbname'])) {
+            self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
+        } else {
+            self::$dbname = '';
+        }
 
         self::$activeConnection = self::$connections['default'];
 
