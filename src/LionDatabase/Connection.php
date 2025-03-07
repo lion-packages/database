@@ -338,13 +338,13 @@ abstract class Connection implements ConnectionConfigInterface
      */
     private static function getDatabaseInstance(): PDO
     {
-        if (empty(self::$databaseInstances[self::$activeConnection])) {
-            $connection = self::$connections['connections'][self::$activeConnection];
+        $connection = self::$connections['connections'][self::$activeConnection];
 
+        $key = empty($connection['dbname']) ? 'server-' . self::$activeConnection : self::$activeConnection;
+
+        if (empty(self::$databaseInstances[$key])) {
             /** @var string $type */
             $type = $connection['type'];
-
-            $key = empty($connection['dbname']) ? 'server-' . self::$activeConnection : self::$activeConnection;
 
             if (Driver::POSTGRESQL === $type) {
                 self::$databaseInstances[$key] = self::getDatabaseInstancePostgreSQL($connection);
@@ -356,10 +356,6 @@ abstract class Connection implements ConnectionConfigInterface
                 throw new InvalidArgumentException('The database connection type is not supported', 500);
             }
         }
-
-        $connection = self::$connections['connections'][self::$activeConnection];
-
-        $key = empty($connection['dbname']) ? 'server-' . self::$activeConnection : self::$activeConnection;
 
         return self::$databaseInstances[$key];
     }
