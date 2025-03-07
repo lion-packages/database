@@ -58,7 +58,7 @@ abstract class Connection implements ConnectionConfigInterface
      *
      * @var array<non-empty-string, PDO> $databaseInstances
      */
-    protected static array $databaseInstances;
+    protected static array $databaseInstances = [];
 
     /**
      * {@inheritdoc}
@@ -435,5 +435,15 @@ abstract class Connection implements ConnectionConfigInterface
             null,
             ($connection['options'] ?? self::DEFAULT_DATABASE_OPTIONS)
         );
+    }
+
+    /**
+     * Clearing the PDO Object Initialization Cache
+     *
+     * @return void
+     */
+    public static function clearConnectionList(): void
+    {
+        self::$databaseInstances = [];
     }
 }

@@ -534,4 +534,36 @@ class ConnectionTest extends Test
         $this->assertInstanceOf(PDO::class, $conn);
         $this->assertSame('sqlite', $conn->getAttribute(PDO::ATTR_DRIVER_NAME));
     }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function clearConnectionList(): void
+    {
+        /** @var PDO $sqliteConnection */
+        $sqliteConnection = $this->getPrivateMethod('getDatabaseInstanceSQLite', [
+            'connection' => [
+                'type' => Driver::SQLITE,
+            ],
+        ]);
+
+        $this->setPrivateProperty('databaseInstances', [
+            'test' => $sqliteConnection
+        ]);
+
+        $databaseInstances = $this->getPrivateProperty('databaseInstances');
+
+        $this->assertIsArray($databaseInstances);
+        $this->assertNotEmpty($databaseInstances);
+        $this->assertArrayHasKey('test', $databaseInstances);
+        $this->assertInstanceOf(PDO::class, $databaseInstances['test']);
+
+        $this->connection->clearConnectionList();
+
+        $databaseInstances = $this->getPrivateProperty('databaseInstances');
+
+        $this->assertIsArray($databaseInstances);
+        $this->assertEmpty($databaseInstances);
+    }
 }
