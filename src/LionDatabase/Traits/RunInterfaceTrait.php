@@ -16,7 +16,7 @@ trait RunInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function run(array $connections): self
+    public static function run(array $connections): static
     {
         if (empty($connections['default'])) {
             throw new InvalidArgumentException('No default database defined', 500);

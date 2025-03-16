@@ -14,9 +14,9 @@ use PDO;
 trait QueryInterfaceTrait
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public static function query(string $sql): self
+    public static function query(string $sql): static
     {
         self::$actualCode = uniqid('code-');
 

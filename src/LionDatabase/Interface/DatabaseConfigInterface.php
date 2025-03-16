@@ -29,12 +29,12 @@ interface DatabaseConfigInterface
      *     }>
      * } $connections [List of available databases]
      *
-     * @return DatabaseConfigInterface
+     * @return static
      *
      * @throws InvalidArgumentException [If any initialization parameter is
      * invalid]
      */
-    public static function run(array $connections): DatabaseConfigInterface;
+    public static function run(array $connections): static;
 
     /**
      * Changes the data of the current connection with those of the specified
@@ -42,9 +42,9 @@ interface DatabaseConfigInterface
      *
      * @param string $connectionName [Connection name]
      *
-     * @return DatabaseConfigInterface
+     * @return static
      *
      * @throws InvalidArgumentException [If the connection does not exist]
      */
-    public static function connection(string $connectionName): DatabaseConfigInterface;
+    public static function connection(string $connectionName): static;
 }

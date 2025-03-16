@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Lion\Database\Interface\Drivers;
 
-use Lion\Database\Drivers\MySQL;
-
 /**
  * Declare a method that updates data in SQL
  *

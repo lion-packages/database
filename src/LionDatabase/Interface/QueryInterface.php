@@ -16,7 +16,7 @@ interface QueryInterface
      *
      * @param string $sql [Defined sentence]
      *
-     * @return QueryInterface
+     * @return static
      */
-    public static function query(string $sql): QueryInterface;
+    public static function query(string $sql): static;
 }

@@ -61,7 +61,7 @@ abstract class Connection implements ConnectionConfigInterface
     protected static array $databaseInstances = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function addConnection(string $connectionName, array $options): void
     {
@@ -69,19 +69,19 @@ abstract class Connection implements ConnectionConfigInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public static function getConnections(): array
-    {
-        return self::$connections['connections'];
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function removeConnection(string $connectionName): void
     {
         unset(self::$connections['connections'][$connectionName]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getConnections(): array
+    {
+        return self::$connections['connections'];
     }
 
     /**

@@ -16,7 +16,7 @@ trait ConnectionInterfaceTrait
     /**
      * {@inheritdoc}
      */
-    public static function connection(string $connectionName): self
+    public static function connection(string $connectionName): static
     {
         if (empty(self::$connections['connections'][$connectionName])) {
             throw new InvalidArgumentException('The selected connection does not exist', 500);

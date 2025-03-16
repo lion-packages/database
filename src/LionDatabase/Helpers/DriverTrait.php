@@ -28,7 +28,18 @@ trait DriverTrait
     /**
      * [List of database connections]
      *
-     * @var array<string, string|array<string, array<string, mixed>>> $connections
+     * @var array{
+     *     default: string,
+     *     connections: array<string, array{
+     *          type: string,
+     *          host?: string,
+     *          port?: int,
+     *          dbname: string,
+     *          user?: string,
+     *          password?: string,
+     *          options?: array<int, int>
+     *     }>
+     * } $connections
      */
     protected static array $connections = [];
 

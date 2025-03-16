@@ -12,9 +12,9 @@ namespace Lion\Database\Traits;
 trait TransactionInterfaceTrait
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public static function transaction(bool $isTransaction = true): self
+    public static function transaction(bool $isTransaction = true): static
     {
         self::$isTransaction = $isTransaction;
 
