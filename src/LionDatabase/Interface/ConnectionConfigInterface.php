@@ -17,11 +17,11 @@ interface ConnectionConfigInterface
      * @param string $connectionName [Connection name]
      * @param array{
      *     type: string,
-     *     host: string,
-     *     port: int,
+     *     host?: string,
+     *     port?: int,
      *     dbname: string,
-     *     user: string,
-     *     password: string,
+     *     user?: string,
+     *     password?: string,
      *     options?: array<int, int>
      * } $options [Connection configuration data]
      *
@@ -43,11 +43,11 @@ interface ConnectionConfigInterface
      *
      * @return array<string, array{
      *     type: string,
-     *     host: string,
-     *     port: int,
+     *     host?: string,
+     *     port?: int,
      *     dbname: string,
-     *     user: string,
-     *     password: string,
+     *     user?: string,
+     *     password?: string,
      *     options?: array<int, int>
      * }>
      */

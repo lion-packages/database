@@ -61,7 +61,7 @@ abstract class Connection implements ConnectionConfigInterface
     protected static array $databaseInstances = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function addConnection(string $connectionName, array $options): void
     {
@@ -69,19 +69,19 @@ abstract class Connection implements ConnectionConfigInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public static function getConnections(): array
-    {
-        return self::$connections['connections'];
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function removeConnection(string $connectionName): void
     {
         unset(self::$connections['connections'][$connectionName]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getConnections(): array
+    {
+        return self::$connections['connections'];
     }
 
     /**
@@ -96,97 +96,7 @@ abstract class Connection implements ConnectionConfigInterface
      *
      * @internal
      */
-    public static function mysql(Closure $callback): array|DatabaseCapsuleInterface|int|stdClass
-    {
-        try {
-            self::$conn = self::getDatabaseInstance();
-
-            if (self::$isTransaction) {
-                self::$conn->beginTransaction();
-            }
-
-            $response = $callback();
-
-            if (self::$isTransaction) {
-                self::$conn->commit();
-            }
-
-            self::clean();
-
-            return $response;
-        } catch (PDOException $e) {
-            if (self::$isTransaction) {
-                self::$conn->rollBack();
-            }
-
-            self::clean();
-
-            return (object) [
-                'code' => $e->getCode(),
-                'status' => 'database-error',
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
-
-    /**
-     * Initializes a PostgreSQL database connection and runs a process
-     *
-     * @param Closure $callback [Function that is executed]
-     *
-     * phpcs:ignore Generic.Files.LineLength
-     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|int|stdClass
-     *
-     * @throws PDOException [If the database process fails]
-     *
-     * @internal
-     */
-    public static function postgresql(Closure $callback): array|DatabaseCapsuleInterface|int|stdClass
-    {
-        try {
-            self::$conn = self::getDatabaseInstance();
-
-            if (self::$isTransaction) {
-                self::$conn->beginTransaction();
-            }
-
-            $response = $callback();
-
-            if (self::$isTransaction) {
-                self::$conn->commit();
-            }
-
-            self::clean();
-
-            return $response;
-        } catch (PDOException $e) {
-            if (self::$isTransaction) {
-                self::$conn->rollBack();
-            }
-
-            self::clean();
-
-            return (object) [
-                'code' => $e->getCode(),
-                'status' => 'database-error',
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
-
-    /**
-     * Initializes a SQLite database connection and runs a process
-     *
-     * @param Closure $callback [Function that is executed]
-     *
-     * phpcs:ignore Generic.Files.LineLength
-     * @return array<int, array<int|string, mixed>|DatabaseCapsuleInterface|stdClass>|DatabaseCapsuleInterface|int|stdClass
-     *
-     * @throws PDOException [If the database process fails]
-     *
-     * @internal
-     */
-    public static function sqlite(Closure $callback): array|DatabaseCapsuleInterface|int|stdClass
+    public static function process(Closure $callback): array|DatabaseCapsuleInterface|int|stdClass
     {
         try {
             self::$conn = self::getDatabaseInstance();

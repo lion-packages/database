@@ -20,9 +20,7 @@ trait ExecuteInterfaceTrait
      */
     public static function execute(): int|stdClass
     {
-        $method = self::$databaseMethod;
-
-        return parent::{$method}(function (): array|DatabaseCapsuleInterface|int|stdClass {
+        return parent::process(function (): array|DatabaseCapsuleInterface|int|stdClass {
             $dataInfoKeys = array_keys(self::$dataInfo);
 
             if (count($dataInfoKeys) > 0) {

@@ -20,9 +20,7 @@ trait GetAllInterfaceTrait
      */
     public static function getAll(): array|stdClass
     {
-        $method = self::$databaseMethod;
-
-        return parent::{$method}(function (): array|DatabaseCapsuleInterface|stdClass {
+        return parent::process(function (): array|DatabaseCapsuleInterface|stdClass {
             $responses = [];
 
             self::$listSql = array_map(

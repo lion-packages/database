@@ -125,20 +125,6 @@ class MySQL extends Connection implements
     use WhereInterfaceTrait;
 
     /**
-     * Defines the database connection method to use
-     *
-     * This property determines which connection method to use in the `trait` to
-     * perform database operations. Allowed values are `mysql` or `postgresql`,
-     * depending on the database being used. The class using the `trait` must
-     * set this value to define the connection type
-     *
-     * @var string $databaseMethod
-     *
-     * @phpstan-ignore-next-line
-     */
-    private static string $databaseMethod = Driver::MYSQL;
-
-    /**
      * Nests the DATABASE statement in the current query
      *
      * @return MySQL
