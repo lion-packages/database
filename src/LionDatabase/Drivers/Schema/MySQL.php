@@ -59,7 +59,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
      */
     public static function execute(): stdClass
     {
-        return parent::mysql(function (): stdClass {
+        return parent::process(function (): stdClass {
             self::prepare(self::$sql);
 
             if (!self::$stmt->execute()) {

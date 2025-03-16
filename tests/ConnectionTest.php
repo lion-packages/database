@@ -13,7 +13,6 @@ use PDOException;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
-use PHPUnit\Framework\Attributes\TestWith;
 use ReflectionException;
 use stdClass;
 use Tests\Provider\ConnectionProviderTrait;
@@ -75,9 +74,11 @@ class ConnectionTest extends Test
      * @throws ReflectionException
      */
     #[Testing]
-    public function mysql(): void
+    public function process(): void
     {
-        $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
+        $response = $this->getPrivateMethod('process', [
+            'callback' => fn () => (object) self::RESPONSE,
+        ]);
 
         $this->assertIsObject($response);
         $this->assertInstanceOf(stdClass::class, $response);
@@ -92,11 +93,13 @@ class ConnectionTest extends Test
      * @throws ReflectionException
      */
     #[Testing]
-    public function mysqlIsTransactionTrue(): void
+    public function processIsTransactionTrue(): void
     {
         $this->setPrivateProperty('isTransaction', true);
 
-        $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
+        $response = $this->getPrivateMethod('process', [
+            'callback' => fn () => (object) self::RESPONSE,
+        ]);
 
         $this->assertIsObject($response);
         $this->assertInstanceOf(stdClass::class, $response);
@@ -111,65 +114,13 @@ class ConnectionTest extends Test
      * @throws ReflectionException
      */
     #[Testing]
-    public function mysqlWithException(): void
+    public function processWithException(): void
     {
-        $response = $this->getPrivateMethod('mysql', [function (): void {
-            throw new PDOException('Connection failed');
-        }]);
-
-        $this->assertIsObject($response);
-        $this->assertInstanceOf(stdClass::class, $response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertSame('database-error', $response->status);
-        $this->assertSame('Connection failed', $response->message);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[Testing]
-    public function sqlite(): void
-    {
-        $response = $this->getPrivateMethod('sqlite', [fn () => (object) self::RESPONSE]);
-
-        $this->assertIsObject($response);
-        $this->assertInstanceOf(stdClass::class, $response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertSame(self::RESPONSE['status'], $response->status);
-        $this->assertSame(self::RESPONSE['message'], $response->message);
-        $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[Testing]
-    public function sqliteIsTransactionTrue(): void
-    {
-        $this->setPrivateProperty('isTransaction', true);
-
-        $response = $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
-
-        $this->assertIsObject($response);
-        $this->assertInstanceOf(stdClass::class, $response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertSame(self::RESPONSE['status'], $response->status);
-        $this->assertSame('TEST-OK', $response->message);
-        $this->assertInstanceOf(PDO::class, $this->getPrivateProperty('conn'));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[Testing]
-    public function sqliteWithException(): void
-    {
-        $response = $this->getPrivateMethod('sqlite', [function (): void {
-            throw new PDOException('Connection failed');
-        }]);
+        $response = $this->getPrivateMethod('process', [
+            'callback' => function (): void {
+                throw new PDOException('Connection failed');
+            },
+        ]);
 
         $this->assertIsObject($response);
         $this->assertInstanceOf(stdClass::class, $response);
@@ -185,7 +136,7 @@ class ConnectionTest extends Test
     #[Testing]
     public function prepare(): void
     {
-        $this->getPrivateMethod('mysql', [
+        $this->getPrivateMethod('process', [
             'callback' => fn (): stdClass => (object) self::RESPONSE,
         ]);
 
@@ -216,7 +167,9 @@ class ConnectionTest extends Test
     #[DataProvider('bindValueProvider')]
     public function bindValue(string $code, string $query, array $values): void
     {
-        $this->getPrivateMethod('mysql', [fn () => (object) self::RESPONSE]);
+        $this->getPrivateMethod('process', [
+            'callback' => fn () => (object) self::RESPONSE,
+        ]);
 
         $this->getPrivateMethod('prepare', [$query]);
 
@@ -310,11 +263,11 @@ class ConnectionTest extends Test
     /**
      * @param array{
      *     type: string,
-     *     host: string,
-     *     port: int,
+     *     host?: string,
+     *     port?: int,
      *     dbname: string,
-     *     user: string,
-     *     password: string
+     *     user?: string,
+     *     password?: string
      * } $connectionData
      *
      * @throws ReflectionException

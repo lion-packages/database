@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lion\Database\Drivers;
 
 use Lion\Database\Connection;
-use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
 use Lion\Database\Interface\Drivers\BulkInterface;
@@ -124,18 +123,4 @@ class PostgreSQL extends Connection implements
     use TransactionInterfaceTrait;
     use UpdateInterfaceTrait;
     use WhereInterfaceTrait;
-
-    /**
-     * Defines the database connection method to use
-     *
-     * This property determines which connection method to use in the `trait` to
-     * perform database operations. Allowed values are `mysql` or `postgresql`,
-     * depending on the database being used. The class using the `trait` must
-     * set this value to define the connection type
-     *
-     * @var string $databaseMethod
-     *
-     * @phpstan-ignore-next-line
-     */
-    private static string $databaseMethod = Driver::POSTGRESQL;
 }

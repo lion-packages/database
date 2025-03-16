@@ -20,9 +20,7 @@ trait GetInterfaceTrait
      */
     public static function get(): array|DatabaseCapsuleInterface|stdClass
     {
-        $method = self::$databaseMethod;
-
-        return parent::{$method}(function (): array|DatabaseCapsuleInterface|stdClass {
+        return parent::process(function (): array|DatabaseCapsuleInterface|stdClass {
             $responses = [];
 
             self::$listSql = array_map(
