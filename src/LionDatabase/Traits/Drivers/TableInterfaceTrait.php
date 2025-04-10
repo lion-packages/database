@@ -16,7 +16,7 @@ trait TableInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function table(string|bool $table = true, bool $withDatabase = true): static
+    public static function table(string|bool $table = true, bool $withDatabase = false): static
     {
         if (is_string($table)) {
             self::$table = !$withDatabase ? $table : self::$dbname . ".{$table}";

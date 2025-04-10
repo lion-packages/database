@@ -851,15 +851,20 @@ class MySQLTest extends Test
         $this->assertSame($return, $concat);
     }
 
-    public function testCreateTable(): void
+    #[Testing]
+    public function createTable(): void
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table('users')->createTable());
-        $this->assertSame('CREATE TABLE lion_database.users', $this->getQuery());
+        $this->assertSame('CREATE TABLE users', $this->getQuery());
     }
 
-    public function testShow(): void
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function show(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->show());
 
@@ -875,8 +880,9 @@ class MySQLTest extends Test
         $this->assertSame('FROM users', $this->getQuery());
     }
 
+    #[Testing]
     #[DataProvider('fromWithFunctionsProvider')]
-    public function testFromWithFunctions(string $callableFunction, string $value, string $return): void
+    public function fromWithFunctions(string $callableFunction, string $value, string $return): void
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 
@@ -896,7 +902,11 @@ class MySQLTest extends Test
         $this->assertSame('DROP', $this->getQuery());
     }
 
-    public function testConstraints(): void
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function constraints(): void
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 
@@ -907,7 +917,7 @@ class MySQLTest extends Test
         $query .= 'AND REFERENCED_COLUMN_NAME IS NOT NULL';
 
         $this->assertInstanceOf(MySQL::class, $this->mysql->table('users')->constraints());
-        $this->assertAddRows(explode('.', 'lion_database.users'));
+        $this->assertAddRows(explode('.', 'users'));
         $this->assertSame($query, $this->getQuery());
     }
 
@@ -931,6 +941,10 @@ class MySQLTest extends Test
         $this->assertSame($query, $this->getQuery());
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
     #[DataProvider('bulkProvider')]
     public function testBulk(bool $enable, string $table, array $columns, array $rows, string $return): void
     {
@@ -1001,11 +1015,15 @@ class MySQLTest extends Test
         $this->assertMessage('Execution finished');
     }
 
-    public function testInsertIsSchema(): void
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function insertIsSchema(): void
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 
-        $sql = 'INSERT INTO lion_database.users (users_name, users_last_name) VALUES (_lion, _root)';
+        $sql = 'INSERT INTO users (users_name, users_last_name) VALUES (_lion, _root)';
 
         $params = ['users_name' => '_lion', 'users_last_name' => '_root'];
 
@@ -1027,8 +1045,9 @@ class MySQLTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('selectProvider')]
-    public function testSelect(string $function, string $value, array $columns, string $return): void
+    public function select(string $function, string $value, array $columns, string $return): void
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 
@@ -1040,8 +1059,12 @@ class MySQLTest extends Test
         $this->assertSame($return, $this->getQuery());
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
     #[DataProvider('selectDistinctProvider')]
-    public function testSelectDistinct(string $function, string $value, array $columns, string $return): void
+    public function selectDistinct(string $function, string $value, array $columns, string $return): void
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 

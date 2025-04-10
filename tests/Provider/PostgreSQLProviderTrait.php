@@ -122,7 +122,7 @@ trait PostgreSQLProviderTrait
                     ],
                 ],
                 'return' => <<<SQL
-                INSERT INTO lion_database.users (users_name, users_last_name) VALUES (?, ?), (?, ?), (?, ?)
+                INSERT INTO users (users_name, users_last_name) VALUES (?, ?), (?, ?), (?, ?)
                 SQL,
             ],
             [
@@ -146,7 +146,7 @@ trait PostgreSQLProviderTrait
                         'database',
                     ],
                 ],
-                'return' => "INSERT INTO lion_database.users (users_name, users_last_name) VALUES ('lion #1', 'database'), ('lion #2', 'database'), ('lion #3', 'database')", /** phpcs:ignore Generic.Files.LineLength */
+                'return' => "INSERT INTO users (users_name, users_last_name) VALUES ('lion #1', 'database'), ('lion #2', 'database'), ('lion #3', 'database')", /** phpcs:ignore Generic.Files.LineLength */
             ],
         ];
     }
@@ -640,14 +640,14 @@ trait PostgreSQLProviderTrait
                     'users_name' => $faker->name(),
                     'users_last_name' => $faker->lastName(),
                 ],
-                'return' => 'INSERT INTO lion_database.users (users_name, users_last_name) VALUES (?, ?)',
+                'return' => 'INSERT INTO users (users_name, users_last_name) VALUES (?, ?)',
             ],
             [
                 'table' => 'roles',
                 'params' => [
                     'roles_name' => $faker->jobTitle(),
                 ],
-                'return' => 'INSERT INTO lion_database.roles (roles_name) VALUES (?)',
+                'return' => 'INSERT INTO roles (roles_name) VALUES (?)',
             ],
             [
                 'table' => 'tasks',
@@ -656,9 +656,7 @@ trait PostgreSQLProviderTrait
                     'tasks_description' => $faker->companySuffix(),
                     'tasks_created_at' => $faker->date('Y-m-d H:i:s'),
                 ],
-                'return' => <<<SQL
-                INSERT INTO lion_database.tasks (tasks_title, tasks_description, tasks_created_at) VALUES (?, ?, ?)
-                SQL,
+                'return' => 'INSERT INTO tasks (tasks_title, tasks_description, tasks_created_at) VALUES (?, ?, ?)',
             ],
         ];
     }
@@ -681,7 +679,7 @@ trait PostgreSQLProviderTrait
                     'users_last_name',
                     'users_email',
                 ],
-                'return' => 'SELECT users_name, users_last_name, users_email FROM lion_database.users',
+                'return' => 'SELECT users_name, users_last_name, users_email FROM users',
             ],
             [
                 'table' => 'read_users',
@@ -690,7 +688,7 @@ trait PostgreSQLProviderTrait
                     'users_last_name',
                     'users_email',
                 ],
-                'return' => 'SELECT users_name, users_last_name, users_email FROM lion_database.read_users',
+                'return' => 'SELECT users_name, users_last_name, users_email FROM read_users',
             ],
         ];
     }
@@ -713,14 +711,14 @@ trait PostgreSQLProviderTrait
                     'users_name' => $faker->name(),
                     'users_last_name' => $faker->lastName(),
                 ],
-                'return' => 'UPDATE lion_database.users SET users_name = ?, users_last_name = ?',
+                'return' => 'UPDATE users SET users_name = ?, users_last_name = ?',
             ],
             [
                 'table' => 'roles',
                 'params' => [
                     'roles_name' => $faker->jobTitle(),
                 ],
-                'return' => 'UPDATE lion_database.roles SET roles_name = ?',
+                'return' => 'UPDATE roles SET roles_name = ?',
             ],
             [
                 'table' => 'tasks',
@@ -729,9 +727,7 @@ trait PostgreSQLProviderTrait
                     'tasks_description' => $faker->companySuffix(),
                     'tasks_created_at' => $faker->date('Y-m-d H:i:s'),
                 ],
-                'return' => <<<SQL
-                UPDATE lion_database.tasks SET tasks_title = ?, tasks_description = ?, tasks_created_at = ?
-                SQL,
+                'return' => 'UPDATE tasks SET tasks_title = ?, tasks_description = ?, tasks_created_at = ?',
             ],
         ];
     }
@@ -747,15 +743,15 @@ trait PostgreSQLProviderTrait
         return [
             [
                 'table' => 'users',
-                'return' => 'DELETE FROM lion_database.users',
+                'return' => 'DELETE FROM users',
             ],
             [
                 'table' => 'roles',
-                'return' => 'DELETE FROM lion_database.roles',
+                'return' => 'DELETE FROM roles',
             ],
             [
                 'table' => 'tasks',
-                'return' => 'DELETE FROM lion_database.tasks',
+                'return' => 'DELETE FROM tasks',
             ],
         ];
     }

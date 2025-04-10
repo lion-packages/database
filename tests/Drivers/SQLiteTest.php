@@ -6,11 +6,8 @@ namespace Tests\Drivers;
 
 use Closure;
 use InvalidArgumentException;
-use Lion\Database\Connection;
-use Lion\Database\Drivers\PostgreSQL;
 use Lion\Database\Drivers\SQLite;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
-use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Test\Test;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -144,6 +141,13 @@ class SQLiteTest extends Test
         $this->SQLite->run([]);
     }
 
+    /**
+     * @param array{
+     *     connections: array<string, array<int, int>|string|null>
+     * } $connections
+     *
+     * @return void
+     */
     #[Testing]
     #[DataProvider('runInterfaceWithoutConnectionsProvider')]
     public function runInterfaceWithoutConnections(array $connections): void

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Lion\Database\Interface\Drivers;
 
-use Lion\Database\Drivers\MySQL;
-
 /**
  * Declare a method to define a table
  *
@@ -23,5 +21,5 @@ interface TableInterface
      *
      * @return static
      */
-    public static function table(string|bool $table = true, bool $withDatabase = true): static;
+    public static function table(string|bool $table = true, bool $withDatabase = false): static;
 }
