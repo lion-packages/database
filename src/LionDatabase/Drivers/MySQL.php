@@ -738,15 +738,17 @@ class MySQL extends Connection implements
      * @param bool $withDatabase [Determines whether to nest the current
      * database in the view]
      *
-     * @return MySQL
+     * @return static
      */
-    public static function view(string|bool $view = true, bool $withDatabase = true): MySQL
+    public static function view(string|bool $view = true, bool $withDatabase = false): static
     {
         if (is_string($view)) {
             self::$view = !$withDatabase ? $view : self::$dbname . ".{$view}";
         } else {
             if ($view) {
-                self::addQueryList([self::getKey(Driver::MYSQL, 'view')]);
+                self::addQueryList([
+                    self::getKey(Driver::MYSQL, 'view'),
+                ]);
             }
         }
 
