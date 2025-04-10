@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Lion\Database\Helpers;
 
 /**
- * Integrate functions to concatenate transformed data to the SQL statement
+ * Modify defined sentence formats
  *
- * @package Lion\Database\Helpers
+ * @packages Lion\Database\Helpers
  */
-trait FunctionsTrait
+class StringFactory
 {
     use DriverTrait;
     use KeywordsTrait;

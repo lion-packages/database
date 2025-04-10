@@ -4,30 +4,27 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
-use Lion\Database\Helpers\FunctionsTrait;
+use Lion\Database\Helpers\StringFactory;
 use Lion\Test\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
 use ReflectionException;
 use Tests\Provider\FunctionsTraitProviderTrait;
 
-class FunctionsTraitTest extends Test
+class StringFactoryTest extends Test
 {
     use FunctionsTraitProviderTrait;
 
-    private object $customClass;
+    private StringFactory $stringFactory;
 
     /**
      * @throws ReflectionException
      */
     protected function setUp(): void
     {
-        $this->customClass = new class
-        {
-            use FunctionsTrait;
-        };
+        $this->stringFactory = new StringFactory();
 
-        $this->initReflection($this->customClass);
+        $this->initReflection($this->stringFactory);
     }
 
     /**
