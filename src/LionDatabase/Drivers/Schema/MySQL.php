@@ -11,7 +11,9 @@ use Lion\Database\Drivers\MySQL as DriverMySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\ExecuteInterface;
+use Lion\Database\Interface\GetQueryStringInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
+use Lion\Database\Traits\GetQueryStringInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
 use PDOException;
 use stdClass;
@@ -41,9 +43,10 @@ use stdClass;
  *
  * @package Lion\Database\Drivers\Schema
  */
-class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterface
+class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterface, GetQueryStringInterface
 {
     use ConnectionInterfaceTrait;
+    use GetQueryStringInterfaceTrait;
     use RunInterfaceTrait;
 
     /**

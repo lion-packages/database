@@ -85,26 +85,6 @@ trait ConnectionProviderTrait
 
     /**
      * @return array<int, array{
-     *     query: string
-     * }>
-     */
-    public static function getQueryStringProvider(): array
-    {
-        return [
-            [
-                'query' => 'INSERT INTO users (users_name, users_last_name) VALUES (?, ?)',
-            ],
-            [
-                'query' => 'SELECT * FROM USERS',
-            ],
-            [
-                'query' => 'INSERT INTO users (users_name, users_last_name) VALUES (?, ?);SELECT * FROM USERS',
-            ],
-        ];
-    }
-
-    /**
-     * @return array<int, array{
      *     driver: string,
      *     connectionName: string,
      *     connectionData: array{

@@ -211,34 +211,6 @@ abstract class Connection implements ConnectionConfigInterface
     }
 
     /**
-     * Gets an object with the current statement
-     *
-     * @return stdClass
-     */
-    public static function getQueryString(): stdClass
-    {
-        $query = trim(self::$sql);
-
-        $split = explode(';', trim(self::$sql));
-
-        $newListSql = array_map(fn ($value) => trim($value), array_filter($split, fn ($value) => trim($value) != ''));
-
-        self::$sql = '';
-
-        self::$listSql = [];
-
-        return (object) [
-            'code' => 200,
-            'status' => 'success',
-            'message' => 'SQL query generated successfully',
-            'data' => (object) [
-                'query' => $query,
-                'split' => $newListSql,
-            ],
-        ];
-    }
-
-    /**
      * Stores database connections to avoid generating multiple connections
      *
      * @return PDO

@@ -22,6 +22,7 @@ use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
 use Lion\Database\Interface\Drivers\UpdateInterface;
 use Lion\Database\Interface\Drivers\WhereInterface;
+use Lion\Database\Interface\GetQueryStringInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RowCountInterface;
@@ -48,6 +49,7 @@ use Lion\Database\Traits\Drivers\WhereInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
+use Lion\Database\Traits\GetQueryStringInterfaceTrait;
 use Lion\Database\Traits\QueryInterfaceTrait;
 use Lion\Database\Traits\RowCountInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
@@ -68,9 +70,6 @@ use Lion\Database\Traits\TransactionInterfaceTrait;
  * * Optimization for PostgreSQL: Designed specifically to work with PostgreSQL,
  *   guaranteeing compatibility and optimization with this DBMS
  *
- * @property string $databaseMethod [Defines the database connection method to
- * use]
- *
  * @package Lion\Database\Drivers
  */
 class PostgreSQL extends Connection implements
@@ -79,6 +78,7 @@ class PostgreSQL extends Connection implements
     DatabaseConfigInterface,
     DeleteInterface,
     EqualToInterface,
+    GetQueryStringInterface,
     GreaterThanInterface,
     GreaterThanOrEqualToInterface,
     InsertInterface,
@@ -104,6 +104,7 @@ class PostgreSQL extends Connection implements
     use DeleteInterfaceTrait;
     use EqualToInterfaceTrait;
     use ExecuteInterfaceTrait;
+    use GetQueryStringInterfaceTrait;
     use GetInterfaceTrait;
     use GetAllInterfaceTrait;
     use GreaterThanInterfaceTrait;
