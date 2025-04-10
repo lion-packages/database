@@ -170,8 +170,6 @@ abstract class Connection extends StringFactory implements ConnectionConfigInter
         if (!empty(self::$dataInfo[$code])) {
             $cont = 1;
 
-            $valueType = null;
-
             foreach (self::$dataInfo[$code] as $value) {
                 if (null === $value) {
                     $valueType = 'NULL';
