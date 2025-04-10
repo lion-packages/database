@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
-use Lion\Database\Helpers\DriverTrait;
-use Lion\Database\Helpers\KeywordsTrait;
+use Lion\Database\Helpers\StringFactory;
 use Lion\Test\Test;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test as Testing;
 use ReflectionException;
-use Tests\Provider\DriverTraitProviderTrait;
+use Tests\Provider\StringFactoryProviderTrait;
 
-class DriverTraitTest extends Test
+class StringFactoryTest extends Test
 {
-    use DriverTraitProviderTrait;
+    use StringFactoryProviderTrait;
 
     private const string DATABASE_TYPE = 'mysql';
     private const string DATABASE_HOST = 'mysql';
@@ -59,25 +59,16 @@ class DriverTraitTest extends Test
     private const array EMPTY_ARRAY = [];
     private const string EMPTY_STRING = '';
 
-    private object $customClass;
-    private string $customCode;
+    private StringFactory $stringFactory;
 
     /**
      * @throws ReflectionException
      */
     protected function setUp(): void
     {
-        $this->customClass = new class
-        {
-            use DriverTrait;
-            use KeywordsTrait;
-        };
+        $this->stringFactory = new StringFactory();
 
-        $this->initReflection($this->customClass);
-
-        $this->customCode = uniqid();
-
-        $this->setActualCode();
+        $this->initReflection($this->stringFactory);
     }
 
     /**
@@ -91,11 +82,108 @@ class DriverTraitTest extends Test
     /**
      * @throws ReflectionException
      */
-    private function setActualCode(): void
+    #[Testing]
+    #[DataProvider('addCharacterBulkProvider')]
+    public function addCharacterBulk(bool $isSchema, bool $enableInsert, bool $addQuotes, string $return): void
     {
-        $this->setPrivateProperty('actualCode', $this->customCode);
+        $this->setPrivateProperty('isSchema', $isSchema);
 
-        $this->assertSame($this->customCode, $this->getPrivateProperty('actualCode'));
+        $this->setPrivateProperty('enableInsert', $enableInsert);
+
+        $str = $this->getPrivateMethod('addCharacterBulk', [
+            'rows' => self::BULK_ROWS,
+            'addQuotes' => $addQuotes,
+        ]);
+
+        $this->assertIsString($str);
+        $this->assertSame($return, $str);
+    }
+
+    /**
+     * @param array<string, int|string> $columns
+     *
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('addCharacterEqualToProvider')]
+    public function addCharacterEqualTo(array $columns, string $return, bool $isSchema, bool $enableInsert): void
+    {
+        $this->setPrivateProperty('isSchema', $isSchema);
+
+        $this->setPrivateProperty('enableInsert', $enableInsert);
+
+        $this->assertSame($isSchema, $this->getPrivateProperty('isSchema'));
+        $this->assertSame($enableInsert, $this->getPrivateProperty('enableInsert'));
+
+        $str = $this->getPrivateMethod('addCharacterEqualTo', [
+            'columns' => $columns,
+        ]);
+
+        $this->assertIsString($str);
+        $this->assertSame($return, $str);
+    }
+
+    /**
+     * @param array<string, int|string> $columns
+     *
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('addCharacterAssocProvider')]
+    public function addCharacterAssoc(array $columns, string $return): void
+    {
+        $str = $this->getPrivateMethod('addCharacterAssoc', [
+            'rows' => $columns,
+        ]);
+
+        $this->assertIsString($str);
+        $this->assertSame($return, $str);
+    }
+
+    /**
+     * @param array<int, int|string> $columns
+     *
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('addCharacterProvider')]
+    public function addCharacter(array $columns, string $return): void
+    {
+        $str = $this->getPrivateMethod('addCharacter', [
+            'rows' => $columns,
+        ]);
+
+        $this->assertIsString($str);
+        $this->assertSame($return, $str);
+    }
+
+    /**
+     * @param array<int, string> $columns
+     *
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('addColumnsProvider')]
+    public function addColumns(
+        bool $isSchema,
+        bool $enableInsert,
+        array $columns,
+        bool $spacing,
+        bool $addQuotes,
+        string $return
+    ): void {
+        $this->setPrivateProperty('isSchema', $isSchema);
+
+        $this->setPrivateProperty('enableInsert', $enableInsert);
+
+        $str = $this->getPrivateMethod('addColumns', [
+            'columns' => $columns,
+            'spacing' => $spacing,
+            'addQuotes' => $addQuotes,
+        ]);
+
+        $this->assertIsString($str);
+        $this->assertSame($return, $str);
     }
 
     /**
@@ -183,14 +271,17 @@ class DriverTraitTest extends Test
     #[DataProvider('fetchModeProvider')]
     public function testFetchMode(int $fetchMode, ?string $value): void
     {
-        /** @phpstan-ignore-next-line */
-        $this->assertInstanceOf($this->customClass::class, $this->customClass::fetchMode($fetchMode));
+        $actualCode = uniqid('code-');
+
+        $this->setPrivateProperty('actualCode', $actualCode);
+
+        $this->assertInstanceOf($this->stringFactory::class, $this->stringFactory::fetchMode($fetchMode));
 
         $fetchModeList = $this->getPrivateProperty('fetchMode');
 
         $this->assertIsArray($fetchModeList);
-        $this->assertArrayHasKey($this->customCode, $fetchModeList);
-        $this->assertSame($fetchMode, $fetchModeList[$this->customCode]);
+        $this->assertArrayHasKey($actualCode, $fetchModeList);
+        $this->assertSame($fetchMode, $fetchModeList[$actualCode]);
     }
 
     /**
@@ -198,17 +289,20 @@ class DriverTraitTest extends Test
      */
     public function testFetchModeWithValue(): void
     {
+        $actualCode = uniqid('code-');
+
+        $this->setPrivateProperty('actualCode', $actualCode);
+
         $this->assertInstanceOf(
-            $this->customClass::class,
-            /** @phpstan-ignore-next-line */
-            $this->customClass::fetchMode(PDO::FETCH_CLASS, $this->customClass)
+            $this->stringFactory::class,
+            $this->stringFactory::fetchMode(PDO::FETCH_CLASS, $this->stringFactory)
         );
 
         $fetchModeList = $this->getPrivateProperty('fetchMode');
 
         $this->assertIsArray($fetchModeList);
-        $this->assertArrayHasKey($this->customCode, $fetchModeList);
-        $this->assertSame([PDO::FETCH_CLASS, $this->customClass], $fetchModeList[$this->customCode]);
+        $this->assertArrayHasKey($actualCode, $fetchModeList);
+        $this->assertSame([PDO::FETCH_CLASS, $this->stringFactory], $fetchModeList[$actualCode]);
     }
 
     /**
@@ -216,10 +310,13 @@ class DriverTraitTest extends Test
      */
     public function testAddRows(): void
     {
-        /** @phpstan-ignore-next-line */
-        $this->customClass::addRows(self::ROWS);
+        $actualCode = uniqid('code-');
 
-        $this->assertSame([$this->customCode => self::ROWS], $this->getPrivateProperty('dataInfo'));
+        $this->setPrivateProperty('actualCode', $actualCode);
+
+        $this->stringFactory::addRows(self::ROWS);
+
+        $this->assertSame([$actualCode => self::ROWS], $this->getPrivateProperty('dataInfo'));
     }
 
     /**
@@ -264,7 +361,13 @@ class DriverTraitTest extends Test
 
         $this->setPrivateProperty('sql', '(--REPLACE-PARAMS--); --REPLACE-INDEXES--');
 
-        $this->assertInstanceOf($this->customClass::class, $this->getPrivateMethod('buildTable'));
+        $this->assertInstanceOf($this->stringFactory::class, $this->getPrivateMethod('buildTable'));
         $this->assertSame($return, $this->getPrivateProperty('sql'));
+    }
+
+    #[DataProvider('getKeyProvider')]
+    public function testGetKey(string $type, string $key, ?string $return): void
+    {
+        $this->assertSame($return, $this->stringFactory::getKey($type, $key));
     }
 }

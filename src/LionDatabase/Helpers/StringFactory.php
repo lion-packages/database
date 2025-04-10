@@ -8,12 +8,21 @@ use Lion\Database\Driver;
 use Lion\Database\Helpers\Constants\MySQLConstants;
 
 /**
- * Defines the configuration methods to run Driver processes
+ * Modify defined sentence formats
  *
- * @package Lion\Database\Helpers
+ * @packages Lion\Database\Helpers
  */
-trait DriverTrait
+class StringFactory
 {
+    /**
+     * [List of available dictionaries]
+     *
+     * @const DATABASE_KEYWORDS
+     */
+    private const array DATABASE_KEYWORDS = [
+        Driver::MYSQL => MySQLConstants::KEYWORDS,
+    ];
+
     /**
      * [List of words ignored from being added as string values]
      *
@@ -41,7 +50,7 @@ trait DriverTrait
      *     }>
      * } $connections
      */
-    protected static array $connections = [];
+    protected static array $connections;
 
     /**
      * [Current database name]
@@ -164,49 +173,167 @@ trait DriverTrait
     protected static string $actualColumn = '';
 
     /**
-     * Initialize the database engine properties to their initial state
+     * Adds the number of indexes as nested parameters in the current query
+     *
+     * @param array<int|string, mixed> $rows [Nesting row]
+     *
+     * @return string
+     */
+    protected static function addCharacter(array $rows): string
+    {
+        $keys = array_keys($rows);
+
+        $addValues = '';
+
+        $size = count($keys) - 1;
+
+        foreach ($keys as $key) {
+            $addValues .= $key === $size ? '?' : '?, ';
+        }
+
+        return $addValues;
+    }
+
+    /**
+     * Nests associative values to the current query based on the number of
+     * columns defined
+     *
+     * @param array<int|string, mixed> $rows [Row of columns]
+     *
+     * @return string
+     */
+    protected static function addCharacterAssoc(array $rows): string
+    {
+        $addValues = '';
+
+        $size = count($rows) - 1;
+
+        for ($i = 0; $i < count($rows); $i++) {
+            $addValues .= $i === $size ? '?' : '?, ';
+        }
+
+        return $addValues;
+    }
+
+    /**
+     * Nest rows in the current query
+     *
+     * @param array<int, array<int|string, mixed>> $rows [list of rows to nest
+     * in query]
+     * @param bool $addQuotes [Add quotes to column value]
+     *
+     * @return string
+     */
+    protected static function addCharacterBulk(array $rows, bool $addQuotes = false): string
+    {
+        $addValues = '';
+
+        $size = count($rows) - 1;
+
+        foreach ($rows as $key => $rowChild) {
+            /** @var array<int, string> $values */
+            $values = array_values($rowChild);
+
+            $row = !self::$isSchema
+                ? self::addCharacter($rowChild)
+                : self::addColumns($values, true, $addQuotes);
+
+            $str = "({$row})";
+
+            $addValues .= $key === $size ? $str : "{$str}, ";
+        }
+
+        return $addValues;
+    }
+
+    /**
+     * Nests columns with a value equal to that defined in the current query
+     *
+     * @param array<int|string, mixed> $columns [List of columns]
+     *
+     * @return string
+     */
+    protected static function addCharacterEqualTo(array $columns): string
+    {
+        $addValues = '';
+
+        $index = 0;
+
+        $size = count($columns) - 1;
+
+        $columns = self::$isSchema && self::$enableInsert ? $columns : array_keys($columns);
+
+        foreach ($columns as $column => $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                $addValues .= $index === $size ? "{$column} = {$value}" : "{$column} = {$value}, ";
+            } else {
+                $addValues .= $index === $size ? "{$value} = ?" : "{$value} = ?, ";
+            }
+
+            $index++;
+        }
+
+        return $addValues;
+    }
+
+    /**
+     * Nests columns in the current query separated by ","
+     *
+     * @param array<int, string> $columns [List of columns]
+     * @param bool $spacing [Defines whether columns are separated by a space
+     * between them]
+     * @param bool $addQuotes [Defines whether columns have quotes]
+     *
+     * @return string
+     */
+    protected static function addColumns(array $columns, bool $spacing = true, bool $addQuotes = false): string
+    {
+        $stringColumns = '';
+
+        /** @var array<int, string> $newColumns */
+        $newColumns = [];
+
+        foreach ($columns as $column) {
+            if (!empty($column)) {
+                $newColumns[] = $column;
+            }
+        }
+
+        $countColumns = count($newColumns);
+
+        if ($countColumns > 0) {
+            $size = $countColumns - 1;
+
+            foreach ($newColumns as $key => $column) {
+                if (!empty($column)) {
+                    if (self::$isSchema && self::$enableInsert && $addQuotes) {
+                        $stringColumns .= $key === $size
+                            ? "'{$column}'"
+                            : (!$spacing ? "'{$column}'," : "'{$column}', ");
+                    } else {
+                        $stringColumns .= $key === $size ? "{$column}" : (!$spacing ? "{$column}," : "{$column}, ");
+                    }
+                }
+            }
+        } else {
+            $stringColumns = '*';
+        }
+
+        return $stringColumns;
+    }
+
+    /**
+     * Nests the defined parameters into the current query
+     *
+     * @param array<int, mixed> $queryList [List of defined parameters]
      *
      * @return void
      */
-    protected static function clean(): void
+    protected static function addQueryList(array $queryList): void
     {
-        if (!empty(self::$connections['connections'][self::$connections['default']]['dbname'])) {
-            self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
-        } else {
-            self::$dbname = '';
+        foreach ($queryList as $query) {
+            self::$sql .= $query;
         }
-
-        self::$activeConnection = self::$connections['default'];
-
-        self::$isTransaction = false;
-
-        self::$withRowCount = false;
-
-        self::$isSchema = false;
-
-        self::$isProcedure = false;
-
-        self::$enableInsert = false;
-
-        self::$listSql = [];
-
-        self::$actualCode = '';
-
-        self::$sql = '';
-
-        self::$table = '';
-
-        self::$view = '';
-
-        self::$message = 'Execution finished';
-
-        self::$dataInfo = [];
-
-        self::$fetchMode = [];
-
-        self::$columns = [];
-
-        self::$actualColumn = '';
     }
 
     /**
@@ -228,57 +355,6 @@ trait DriverTrait
     }
 
     /**
-     * Nests the defined parameters into the current query
-     *
-     * @param array<int, mixed> $queryList [List of defined parameters]
-     *
-     * @return void
-     */
-    protected static function addQueryList(array $queryList): void
-    {
-        foreach ($queryList as $query) {
-            self::$sql .= $query;
-        }
-    }
-
-    /**
-     * Open a group of statements to the current query
-     *
-     * @return void
-     */
-    protected static function openGroup(): void
-    {
-        self::$sql .= " (";
-    }
-
-    /**
-     * Closes a group of statements to the current query
-     *
-     * @return void
-     */
-    protected static function closeGroup(): void
-    {
-        self::$sql .= " )";
-    }
-
-    /**
-     * Select the fetchMode
-     *
-     * @param int $fetchMode [Fetch mode]
-     * @param mixed|null $value [Search value]
-     *
-     * @return static
-     *
-     * @link https://www.php.net/manual/es/pdostatement.fetch.php
-     */
-    public static function fetchMode(int $fetchMode, mixed $value = null): static
-    {
-        self::$fetchMode[self::$actualCode] = null === $value ? $fetchMode : [$fetchMode, $value];
-
-        return new static();
-    }
-
-    /**
      * Nest values to the current statement
      *
      * @param array<int, mixed> $rows [List of defined values]
@@ -295,27 +371,13 @@ trait DriverTrait
     }
 
     /**
-     * Clears the parameters to be nested to the current statement
+     * Open a group of statements to the current query
      *
-     * @param array<int, string> $columns [List of columns]
-     *
-     * @return array<int, string>
+     * @return void
      */
-    protected static function cleanSettings(array $columns): array
+    protected static function openGroup(): void
     {
-        $newColumns = [];
-
-        foreach ($columns as $column) {
-            $column = null === $column ? '' : $column;
-
-            $column = is_string($column) ? trim($column) : $column;
-
-            if (!empty($column)) {
-                $newColumns[] = $column;
-            }
-        }
-
-        return $newColumns;
+        self::$sql .= " (";
     }
 
     /**
@@ -414,5 +476,115 @@ trait DriverTrait
         }
 
         return new static();
+    }
+
+    /**
+     * Initialize the database engine properties to their initial state
+     *
+     * @return void
+     */
+    protected static function clean(): void
+    {
+        if (!empty(self::$connections['connections'][self::$connections['default']]['dbname'])) {
+            self::$dbname = self::$connections['connections'][self::$connections['default']]['dbname'];
+        } else {
+            self::$dbname = '';
+        }
+
+        self::$activeConnection = self::$connections['default'];
+
+        self::$isTransaction = false;
+
+        self::$withRowCount = false;
+
+        self::$isSchema = false;
+
+        self::$isProcedure = false;
+
+        self::$enableInsert = false;
+
+        self::$listSql = [];
+
+        self::$actualCode = '';
+
+        self::$sql = '';
+
+        self::$table = '';
+
+        self::$view = '';
+
+        self::$message = 'Execution finished';
+
+        self::$dataInfo = [];
+
+        self::$fetchMode = [];
+
+        self::$columns = [];
+
+        self::$actualColumn = '';
+    }
+
+    /**
+     * Clears the parameters to be nested to the current statement
+     *
+     * @param array<int, string> $columns [List of columns]
+     *
+     * @return array<int, string>
+     */
+    protected static function cleanSettings(array $columns): array
+    {
+        $newColumns = [];
+
+        foreach ($columns as $column) {
+            $column = null === $column ? '' : $column;
+
+            $column = is_string($column) ? trim($column) : $column;
+
+            if (!empty($column)) {
+                $newColumns[] = $column;
+            }
+        }
+
+        return $newColumns;
+    }
+
+    /**
+     * Closes a group of statements to the current query
+     *
+     * @return void
+     */
+    protected static function closeGroup(): void
+    {
+        self::$sql .= " )";
+    }
+
+    /**
+     * Select the fetchMode
+     *
+     * @param int $fetchMode [Fetch mode]
+     * @param mixed|null $value [Search value]
+     *
+     * @return static
+     *
+     * @link https://www.php.net/manual/es/pdostatement.fetch.php
+     */
+    public static function fetchMode(int $fetchMode, mixed $value = null): static
+    {
+        self::$fetchMode[self::$actualCode] = null === $value ? $fetchMode : [$fetchMode, $value];
+
+        return new static();
+    }
+
+    /**
+     * Get a value from a dictionary
+     *
+     * @param string $dictionary [Define the dictionary]
+     * @param string $key [Value to look up in the dictionary]
+     *
+     * @return string|null
+     */
+    public static function getKey(string $dictionary, string $key): ?string
+    {
+        return self::DATABASE_KEYWORDS[$dictionary][$key] ?? null;
     }
 }

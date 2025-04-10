@@ -6,7 +6,7 @@ namespace Lion\Database;
 
 use Closure;
 use InvalidArgumentException;
-use Lion\Database\Helpers\FunctionsTrait;
+use Lion\Database\Helpers\StringFactory;
 use Lion\Database\Interface\ConnectionConfigInterface;
 use Lion\Database\Interface\DatabaseCapsuleInterface;
 use PDO;
@@ -17,18 +17,10 @@ use stdClass;
 /**
  * Class that manages the connection to databases on different drivers
  *
- * @property PDO $conn [PDO driver object to make connections to databases]
- * @property PDOStatement $stmt [PDO declaration object to perform database
- * processes]
- * @property array<string, PDO> $databaseInstances [List of database
- * connections]
- *
  * @package Lion\Database
  */
-abstract class Connection implements ConnectionConfigInterface
+abstract class Connection extends StringFactory implements ConnectionConfigInterface
 {
-    use FunctionsTrait;
-
     /**
      * [Default settings for database connections]
      *
@@ -177,8 +169,6 @@ abstract class Connection implements ConnectionConfigInterface
     {
         if (!empty(self::$dataInfo[$code])) {
             $cont = 1;
-
-            $valueType = null;
 
             foreach (self::$dataInfo[$code] as $value) {
                 if (null === $value) {
