@@ -307,7 +307,7 @@ trait MySQLProviderTrait
             [
                 'callableFunction' => 'view',
                 'value' => 'read_users',
-                'return' => 'FROM lion_database.read_users'
+                'return' => 'FROM read_users'
             ]
         ];
     }
@@ -531,7 +531,7 @@ trait MySQLProviderTrait
                     'users_last_name',
                     'users_email',
                 ],
-                'return' => 'SELECT users_name, users_last_name, users_email FROM lion_database.read_users',
+                'return' => 'SELECT users_name, users_last_name, users_email FROM read_users',
             ],
         ];
     }
@@ -565,7 +565,7 @@ trait MySQLProviderTrait
                     'users_last_name',
                     'users_email',
                 ],
-                'return' => 'SELECT DISTINCT users_name, users_last_name, users_email FROM lion_database.read_users',
+                'return' => 'SELECT DISTINCT users_name, users_last_name, users_email FROM read_users',
             ],
         ];
     }
