@@ -24,6 +24,7 @@ use Lion\Database\Interface\Drivers\SelectInterface;
 use Lion\Database\Interface\Drivers\TableInterface;
 use Lion\Database\Interface\Drivers\UpdateInterface;
 use Lion\Database\Interface\Drivers\WhereInterface;
+use Lion\Database\Interface\GetQueryStringInterface;
 use Lion\Database\Interface\QueryInterface;
 use Lion\Database\Interface\ReadDatabaseDataInterface;
 use Lion\Database\Interface\RowCountInterface;
@@ -50,6 +51,7 @@ use Lion\Database\Traits\Drivers\WhereInterfaceTrait;
 use Lion\Database\Traits\ExecuteInterfaceTrait;
 use Lion\Database\Traits\GetAllInterfaceTrait;
 use Lion\Database\Traits\GetInterfaceTrait;
+use Lion\Database\Traits\GetQueryStringInterfaceTrait;
 use Lion\Database\Traits\QueryInterfaceTrait;
 use Lion\Database\Traits\RowCountInterfaceTrait;
 use Lion\Database\Traits\RunInterfaceTrait;
@@ -79,6 +81,7 @@ class MySQL extends Connection implements
     DatabaseConfigInterface,
     DeleteInterface,
     EqualToInterface,
+    GetQueryStringInterface,
     GreaterThanInterface,
     GreaterThanOrEqualToInterface,
     InsertInterface,
@@ -105,6 +108,7 @@ class MySQL extends Connection implements
     use EqualToInterfaceTrait;
     use ExecuteInterfaceTrait;
     use GetInterfaceTrait;
+    use GetQueryStringInterfaceTrait;
     use GetAllInterfaceTrait;
     use GreaterThanInterfaceTrait;
     use GreaterThanOrEqualToInterfaceTrait;

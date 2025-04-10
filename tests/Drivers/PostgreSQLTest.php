@@ -191,6 +191,35 @@ class PostgreSQLTest extends Test
         $this->postgresql->connection($connection);
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('getQueryStringProvider')]
+    public function getQueryString(string $query): void
+    {
+        $this->setPrivateProperty('sql', $query);
+
+        $response = $this->postgresql->getQueryString();
+
+        $this->assertInstanceOf(stdClass::class, $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertObjectHasProperty('data', $response);
+        $this->assertIsString($response->status);
+        $this->assertIsString($response->message);
+        $this->assertIsObject($response->data);
+        $this->assertInstanceOf(stdClass::class, $response->data);
+        $this->assertObjectHasProperty('query', $response->data);
+        $this->assertObjectHasProperty('split', $response->data);
+        $this->assertIsString($response->data->query);
+        $this->assertIsArray($response->data->split);
+        $this->assertSame('success', $response->status);
+        $this->assertSame('SQL query generated successfully', $response->message);
+        $this->assertSame($query, $response->data->query);
+        $this->assertSame(explode(';', $query), $response->data->split);
+    }
+
     #[Testing]
     #[DataProvider('getProvider')]
     public function getInterface(string $dropSql, string $tableSql, string $insertSql, string $selectSql): void

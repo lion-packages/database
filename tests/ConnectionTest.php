@@ -186,30 +186,6 @@ class ConnectionTest extends Test
      * @throws ReflectionException
      */
     #[Testing]
-    #[DataProvider('getQueryStringProvider')]
-    public function getQueryString(string $query): void
-    {
-        $this->setPrivateProperty('sql', $query);
-
-        $response = $this->connection->getQueryString();
-
-        $this->assertIsObject($response);
-        $this->assertInstanceOf(stdClass::class, $response);
-        $this->assertObjectHasProperty('status', $response);
-        $this->assertObjectHasProperty('message', $response);
-        $this->assertObjectHasProperty('data', $response);
-        $this->assertObjectHasProperty('query', $response->data);
-        $this->assertObjectHasProperty('split', $response->data);
-        $this->assertSame(self::RESPONSE['status'], $response->status);
-        $this->assertSame('SQL query generated successfully', $response->message);
-        $this->assertSame($query, $response->data->query);
-        $this->assertSame(explode(';', $query), $response->data->split);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[Testing]
     public function addConnection(): void
     {
         /** @phpstan-ignore-next-line */
