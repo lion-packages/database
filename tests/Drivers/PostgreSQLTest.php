@@ -1042,6 +1042,12 @@ class PostgreSQLTest extends Test
     }
 
     /**
+     * @param array{
+     *     table: string,
+     *     params: array<string, string>,
+     *     return: string
+     * } $params
+     *
      * @throws ReflectionException
      */
     #[Testing]
@@ -1054,6 +1060,7 @@ class PostgreSQLTest extends Test
 
         $rows = $this->getPrivateProperty('dataInfo');
 
+        $this->assertIsArray($rows);
         $this->assertArrayHasKey($this->actualCode, $rows);
         $this->assertSame(array_values($params), $rows[$this->actualCode]);
         $this->assertSame($return, $this->getQuery());
@@ -1072,11 +1079,19 @@ class PostgreSQLTest extends Test
 
         $fetchMode = $this->getPrivateProperty('fetchMode');
 
+        $this->assertIsArray($fetchMode);
+        $this->assertArrayHasKey($this->actualCode, $fetchMode);
         $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$this->actualCode]);
         $this->assertSame($return, $this->getQuery());
     }
 
     /**
+     * @param array{
+     *     table: string,
+     *     params: array<string, string>,
+     *     return: string
+     * } $params
+     *
      * @throws ReflectionException
      */
     #[Testing]
@@ -1087,9 +1102,10 @@ class PostgreSQLTest extends Test
 
         $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->update($params));
 
-        /** @var array<string, mixed> $rows */
         $rows = $this->getPrivateProperty('dataInfo');
 
+        $this->assertIsArray($rows);
+        $this->assertArrayHasKey($this->actualCode, $rows);
         $this->assertSame(array_values($params), $rows[$this->actualCode]);
         $this->assertSame($return, $this->getQuery());
     }
