@@ -19,9 +19,6 @@ class DriverTest extends Test
     private PostgreSQL $postgreSQL;
     private SQLite $SQLite;
 
-    /**
-     * @throws ReflectionException
-     */
     protected function setUp(): void
     {
         $this->mysql = new MySQL();

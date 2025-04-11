@@ -10,6 +10,7 @@ use Lion\Database\Driver;
 use Lion\Database\Interface\DatabaseConfigInterface;
 use Lion\Database\Interface\Drivers\AndInterface;
 use Lion\Database\Interface\Drivers\BulkInterface;
+use Lion\Database\Interface\Drivers\DatabaseInterface;
 use Lion\Database\Interface\Drivers\DeleteInterface;
 use Lion\Database\Interface\Drivers\EqualToInterface;
 use Lion\Database\Interface\Drivers\GreaterThanInterface;
@@ -34,6 +35,7 @@ use Lion\Database\Interface\TransactionInterface;
 use Lion\Database\Traits\ConnectionInterfaceTrait;
 use Lion\Database\Traits\Drivers\AndInterfaceTrait;
 use Lion\Database\Traits\Drivers\BulkInterfaceTrait;
+use Lion\Database\Traits\Drivers\DatabaseInterfaceTrait;
 use Lion\Database\Traits\Drivers\DeleteInterfaceTrait;
 use Lion\Database\Traits\Drivers\EqualToInterfaceTrait;
 use Lion\Database\Traits\Drivers\GreaterThanInterfaceTrait;
@@ -79,6 +81,7 @@ class MySQL extends Connection implements
     AndInterface,
     BulkInterface,
     DatabaseConfigInterface,
+    DatabaseInterface,
     DeleteInterface,
     EqualToInterface,
     GetQueryStringInterface,
@@ -104,6 +107,7 @@ class MySQL extends Connection implements
     use AndInterfaceTrait;
     use BulkInterfaceTrait;
     use ConnectionInterfaceTrait;
+    use DatabaseInterfaceTrait;
     use DeleteInterfaceTrait;
     use EqualToInterfaceTrait;
     use ExecuteInterfaceTrait;
@@ -127,18 +131,6 @@ class MySQL extends Connection implements
     use TransactionInterfaceTrait;
     use UpdateInterfaceTrait;
     use WhereInterfaceTrait;
-
-    /**
-     * Nests the DATABASE statement in the current query
-     *
-     * @return MySQL
-     */
-    public static function database(): MySQL
-    {
-        self::addQueryList([self::getKey(Driver::MYSQL, 'database')]);
-
-        return new static();
-    }
 
     /**
      * Nests the TRUNCATE statement in the current query

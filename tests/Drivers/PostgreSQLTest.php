@@ -91,6 +91,29 @@ class PostgreSQLTest extends Test
         return $query;
     }
 
+    #[Testing]
+    public function andIsBool(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and());
+        $this->assertSame('AND', $this->getQuery());
+    }
+
+    #[Testing]
+    public function andIsString(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and('idusers'));
+        $this->assertSame('AND idusers', $this->getQuery());
+    }
+
+    #[Testing]
+    public function andWithCallback(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and(function (): void {
+        }));
+
+        $this->assertSame('AND', $this->getQuery());
+    }
+
     /**
      * @param array<int, string> $columns
      * @param array<int, array<int, string>> $rows
@@ -189,6 +212,13 @@ class PostgreSQLTest extends Test
         $this->expectExceptionMessage('The selected connection does not exist');
 
         $this->postgresql->connection($connection);
+    }
+
+    #[Testing]
+    public function database(): void
+    {
+        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->database());
+        $this->assertSame('DATABASE', $this->getQuery());
     }
 
     /**
@@ -1141,29 +1171,6 @@ class PostgreSQLTest extends Test
         }));
 
         $this->assertSame('WHERE', $this->getQuery());
-    }
-
-    #[Testing]
-    public function andIsBool(): void
-    {
-        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and());
-        $this->assertSame('AND', $this->getQuery());
-    }
-
-    #[Testing]
-    public function andIsString(): void
-    {
-        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and('idusers'));
-        $this->assertSame('AND idusers', $this->getQuery());
-    }
-
-    #[Testing]
-    public function andWithCallback(): void
-    {
-        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->and(function (): void {
-        }));
-
-        $this->assertSame('AND', $this->getQuery());
     }
 
     #[Testing]

@@ -489,7 +489,8 @@ class MySQLTest extends Test
         $this->assertSame($enable, $this->getPrivateProperty('enableInsert'));
     }
 
-    public function testDatabase(): void
+    #[Testing]
+    public function database(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->database());
         $this->assertSame('DATABASE', $this->getQuery());
