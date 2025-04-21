@@ -107,7 +107,7 @@ abstract class Connection extends StringFactory implements ConnectionConfigInter
 
             return $response;
         } catch (PDOException $e) {
-            if (self::$isTransaction){
+            if (self::$isTransaction) {
                 self::$conn->rollBack();
             }
 

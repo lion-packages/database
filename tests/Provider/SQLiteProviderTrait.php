@@ -178,8 +178,7 @@ trait SQLiteProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_ROLES,
                 'insertSql' => self::QUERY_SQL_INSERT_ROLES,
                 'selectSql' => self::QUERY_SQL_NESTED_SELECT_ROLES_BY_ID,
-                'capsule' => new class implements DatabaseCapsuleInterface, IdInterface
-                {
+                'capsule' => new class () implements DatabaseCapsuleInterface, IdInterface {
                     private int $id;
 
                     private string $roles_name;
@@ -210,8 +209,7 @@ trait SQLiteProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
                 'selectSql' => self::QUERY_SQL_NESTED_SELECT_USERS_BY_ID,
-                'capsule' => new class implements DatabaseCapsuleInterface, IdInterface
-                {
+                'capsule' => new class () implements DatabaseCapsuleInterface, IdInterface {
                     private int $id;
 
                     private string $username;
@@ -295,8 +293,7 @@ trait SQLiteProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_ROLES,
                 'insertSql' => self::QUERY_SQL_INSERT_ROLES,
                 'selectSql' => self::QUERY_SQL_SELECT_ROLES,
-                'capsule' => new class implements DatabaseCapsuleInterface, IdInterface
-                {
+                'capsule' => new class () implements DatabaseCapsuleInterface, IdInterface {
                     private int $id;
 
                     private string $roles_name;
@@ -327,8 +324,7 @@ trait SQLiteProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
                 'selectSql' => self::QUERY_SQL_SELECT_USERS,
-                'capsule' => new class implements DatabaseCapsuleInterface, IdInterface
-                {
+                'capsule' => new class () implements DatabaseCapsuleInterface, IdInterface {
                     private int $id;
 
                     private string $username;
@@ -386,8 +382,7 @@ trait SQLiteProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_ROLES,
                 'insertSql' => self::QUERY_SQL_INSERT_ROLES,
                 'selectSql' => self::QUERY_SQL_NESTED_SELECT_ROLES_BY_MULTIPLE_ID,
-                'capsule' => new class implements DatabaseCapsuleInterface, IdInterface
-                {
+                'capsule' => new class () implements DatabaseCapsuleInterface, IdInterface {
                     private int $id;
 
                     private string $roles_name;
@@ -418,8 +413,7 @@ trait SQLiteProviderTrait
                 'tableSql' => self::QUERY_SQL_TABLE_USERS,
                 'insertSql' => self::QUERY_SQL_INSERT_USERS,
                 'selectSql' => self::QUERY_SQL_NESTED_SELECT_USERS_BY_MULTIPLE_ID,
-                'capsule' => new class implements DatabaseCapsuleInterface, IdInterface
-                {
+                'capsule' => new class () implements DatabaseCapsuleInterface, IdInterface {
                     private int $id;
 
                     private string $username;

@@ -33,8 +33,7 @@ class ConnectionTest extends Test
      */
     protected function setUp(): void
     {
-        $this->connection = new class extends Connection
-        {
+        $this->connection = new class () extends Connection {
         };
 
         $this->initReflection($this->connection);
