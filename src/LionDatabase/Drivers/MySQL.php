@@ -328,16 +328,20 @@ class MySQL extends Connection implements
     /**
      * Nests the PRIMARY KEY statement in the current query
      *
-     * @param string $column [Column name]
+     * @param string|null $column [Column name]
      *
-     * @return MySQL
+     * @return static
      */
-    public static function primaryKey(string $column): MySQL
+    public static function primaryKey(?string $column = null): static
     {
+        /** @var string $primaryKey */
+        $primaryKey = self::getKey(Driver::MYSQL, 'primary-key');
+
         self::addQueryList([
-            str_replace('?', $column, self::getKey(Driver::MYSQL, 'primary-key'))
+            str_replace($column ? '?' : '(?)', $column ?? '', $primaryKey),
         ]);
 
+        /** @phpstan-ignore-next-line */
         return new static();
     }
 
