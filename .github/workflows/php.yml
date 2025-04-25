@@ -141,8 +141,8 @@ jobs:
       - name: PHPStan (Src)
         run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max src
 
-#      - name: PHPStan (Tests)
-#        run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max tests
+      # - name: PHPStan (Tests)
+      # run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max tests
 
   code-analysis-php-codesniffer:
     runs-on: ubuntu-latest
