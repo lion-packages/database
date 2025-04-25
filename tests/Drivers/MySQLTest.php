@@ -601,10 +601,13 @@ class MySQLTest extends Test
         $this->assertSame('UNIQUE', $this->getQuery());
     }
 
-    public function testPrimaryKey(): void
+    #[Testing]
+    #[TestWith(['column' => null, 'return' => 'PRIMARY KEY'])]
+    #[TestWith(['column' => 'idusers', 'return' => 'PRIMARY KEY (idusers)'])]
+    public function primaryKey(?string $column, string $return): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->primaryKey('idusers'));
-        $this->assertSame('PRIMARY KEY (idusers)', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->primaryKey($column));
+        $this->assertSame($return, $this->getQuery());
     }
 
     public function testKey(): void
