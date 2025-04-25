@@ -1,8 +1,14 @@
 {
     "name": "lion/database",
     "description": "Package in charge of the generation and execution of processes with databases.",
+    "homepage": "https://dev.lion-packages.com/",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "lion",
+        "bundle",
+        "lion-database"
+    ],
     "support": {
         "issues": "https://github.com/lion-packages/database/issues",
         "source": "https://github.com/lion-packages/database"
