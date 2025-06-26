@@ -14,23 +14,41 @@ trait GreaterThanOrEqualToInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): self
+    public static function greaterThanOrEqualTo(mixed $columnOrValue, mixed $value = null): self
     {
+        if (null === $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                self::addQueryList([
+                    " >= {$columnOrValue}",
+                ]);
+            } else {
+                self::addRows([
+                    $columnOrValue,
+                ]);
+
+                self::addQueryList([
+                    ' >= ?',
+                ]);
+            }
+
+            return new self();
+        }
+
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
                 ' ',
-                trim($column),
+                trim($columnOrValue),
                 ' >= ',
-                $greaterThanOrEqualTo,
+                $value,
             ]);
         } else {
             self::addRows([
-                $greaterThanOrEqualTo,
+                $value,
             ]);
 
             self::addQueryList([
                 ' ',
-                trim($column . ' >= ?'),
+                trim($columnOrValue . ' >= ?'),
             ]);
         }
 

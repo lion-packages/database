@@ -14,10 +14,10 @@ interface GreaterThanOrEqualToInterface
     /**
      * Adds a "greater than or equal to / >=" to the current statement
      *
-     * @param string $column [Column name]
-     * @param mixed $greaterThanOrEqualTo [Greater than or equal to]
+     * @param string $columnOrValue Column name or value
+     * @param mixed $value Value of the condition
      *
      * @return self
      */
-    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): self;
+    public static function greaterThanOrEqualTo(mixed $columnOrValue, mixed $value = null): self;
 }
