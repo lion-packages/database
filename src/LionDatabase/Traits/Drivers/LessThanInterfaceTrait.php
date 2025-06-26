@@ -14,23 +14,41 @@ trait LessThanInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function lessThan(string $column, mixed $lessThan): self
+    public static function lessThan(mixed $columnOrValue, mixed $value = null): self
     {
+        if (null === $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                self::addQueryList([
+                    " < {$columnOrValue}",
+                ]);
+            } else {
+                self::addRows([
+                    $columnOrValue,
+                ]);
+
+                self::addQueryList([
+                    ' < ?',
+                ]);
+            }
+
+            return new self();
+        }
+
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
                 ' ',
-                trim($column),
+                trim($columnOrValue),
                 ' < ',
-                $lessThan,
+                $value,
             ]);
         } else {
             self::addRows([
-                $lessThan,
+                $value,
             ]);
 
             self::addQueryList([
                 ' ',
-                trim($column . ' < ?'),
+                trim($columnOrValue . ' < ?'),
             ]);
         }
 

@@ -14,10 +14,10 @@ interface LessThanInterface
     /**
      * Adds a "less than / <" to the current statement
      *
-     * @param string $column [Column name]
-     * @param mixed $lessThan [Less than]
+     * @param string $columnOrValue Column name or value
+     * @param mixed $value Value of the condition
      *
      * @return self
      */
-    public static function lessThan(string $column, mixed $lessThan): self;
+    public static function lessThan(mixed $columnOrValue, mixed $value = null): self;
 }
