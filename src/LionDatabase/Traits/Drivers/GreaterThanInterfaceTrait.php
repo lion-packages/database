@@ -14,23 +14,41 @@ trait GreaterThanInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function greaterThan(string $column, mixed $greaterThan): self
+    public static function greaterThan(mixed $columnOrValue, mixed $value = null): self
     {
+        if (null === $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                self::addQueryList([
+                    " > {$columnOrValue}",
+                ]);
+            } else {
+                self::addRows([
+                    $columnOrValue,
+                ]);
+
+                self::addQueryList([
+                    ' > ?',
+                ]);
+            }
+
+            return new self();
+        }
+
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
                 ' ',
-                trim($column),
+                trim($columnOrValue),
                 ' > ',
-                $greaterThan,
+                $value,
             ]);
         } else {
             self::addRows([
-                $greaterThan,
+                $value,
             ]);
 
             self::addQueryList([
                 ' ',
-                trim($column . ' > ?'),
+                trim($columnOrValue . ' > ?'),
             ]);
         }
 

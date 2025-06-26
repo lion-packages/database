@@ -14,10 +14,10 @@ interface GreaterThanInterface
     /**
      * Adds a "greater than / >" to the current statement
      *
-     * @param string $column [Column name]
-     * @param mixed $greaterThan [Greather than]
+     * @param string $columnOrValue Column name or value
+     * @param mixed $value Value of the condition
      *
      * @return self
      */
-    public static function greaterThan(string $column, mixed $greaterThan): self;
+    public static function greaterThan(mixed $columnOrValue, mixed $value = null): self;
 }
