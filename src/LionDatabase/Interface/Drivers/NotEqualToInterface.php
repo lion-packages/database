@@ -14,8 +14,8 @@ interface NotEqualToInterface
     /**
      * Adds a "not equal to / <>" to the current statement
      *
-     * @param string $columnOrValue Column name or value to be equal to
-     * @param mixed $value Value to which it is equal
+     * @param string $columnOrValue Column name or value
+     * @param mixed $value Value of the condition
      *
      * @return self
      */
