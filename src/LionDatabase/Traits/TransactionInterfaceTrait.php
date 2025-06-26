@@ -14,10 +14,10 @@ trait TransactionInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function transaction(bool $isTransaction = true): static
+    public static function transaction(bool $isTransaction = true): self
     {
         self::$isTransaction = $isTransaction;
 
-        return new static();
+        return new self();
     }
 }

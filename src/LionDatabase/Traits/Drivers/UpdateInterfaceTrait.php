@@ -16,7 +16,7 @@ trait UpdateInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function update(array $rows): static
+    public static function update(array $rows): self
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
@@ -33,6 +33,6 @@ trait UpdateInterfaceTrait
             self::addCharacterEqualTo($rows),
         ]);
 
-        return new static();
+        return new self();
     }
 }

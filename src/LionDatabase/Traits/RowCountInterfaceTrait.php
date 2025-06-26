@@ -14,10 +14,10 @@ trait RowCountInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public function rowCount(): static
+    public function rowCount(): self
     {
         self::$withRowCount = true;
 
-        return new static();
+        return new self();
     }
 }

@@ -17,7 +17,7 @@ interface LessThanInterface
      * @param string $column [Column name]
      * @param mixed $lessThan [Less than]
      *
-     * @return static
+     * @return self
      */
-    public static function lessThan(string $column, mixed $lessThan): static;
+    public static function lessThan(string $column, mixed $lessThan): self;
 }

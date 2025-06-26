@@ -533,7 +533,7 @@ trait StringFactoryProviderTrait
             [
                 'type' => Driver::MYSQL,
                 'key' => 'testing',
-                'return' => null,
+                'return' => '',
             ],
         ];
     }

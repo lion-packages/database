@@ -16,7 +16,7 @@ trait OnUpdateInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function onUpdate(?string $onUpdate = null): static
+    public static function onUpdate(?string $onUpdate = null): self
     {
         if (empty($onUpdate)) {
             self::addQueryList([
@@ -32,6 +32,6 @@ trait OnUpdateInterfaceTrait
             ]);
         }
 
-        return new static();
+        return new self();
     }
 }

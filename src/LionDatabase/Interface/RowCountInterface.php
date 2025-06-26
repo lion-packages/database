@@ -14,7 +14,7 @@ interface RowCountInterface
     /**
      * Returns the number of rows affected by the last SQL statement
      *
-     * @return static
+     * @return self
      */
-    public function rowCount(): static;
+    public function rowCount(): self;
 }

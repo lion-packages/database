@@ -16,7 +16,7 @@ trait RunInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function run(array $connections): static
+    public static function run(array $connections): self
     {
         if (empty($connections['default'])) {
             throw new InvalidArgumentException('No default database defined', 500);
@@ -34,6 +34,6 @@ trait RunInterfaceTrait
             self::$dbname = self::$connections['connections'][self::$activeConnection]['dbname'];
         }
 
-        return new static();
+        return new self();
     }
 }

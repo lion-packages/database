@@ -16,12 +16,12 @@ trait DatabaseInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function database(): static
+    public static function database(): self
     {
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'database'),
         ]);
 
-        return new static();
+        return new self();
     }
 }

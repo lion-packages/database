@@ -14,9 +14,9 @@ interface QueryInterface
     /**
      * The defined sentence alludes to the current sentence
      *
-     * @param string $sql [Defined sentence]
+     * @param string $sql Defined sentence
      *
-     * @return static
+     * @return self
      */
-    public static function query(string $sql): static;
+    public static function query(string $sql): self;
 }

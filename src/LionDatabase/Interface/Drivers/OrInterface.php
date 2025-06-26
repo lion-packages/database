@@ -25,7 +25,7 @@ interface OrInterface
      * @param bool|Closure|string $or [You can add a OR to the current
      * statement, group by group, or return the OR statement]
      *
-     * @return static
+     * @return self
      */
-    public static function or(bool|Closure|string $or = true): static;
+    public static function or(bool|Closure|string $or = true): self;
 }

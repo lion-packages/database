@@ -17,7 +17,7 @@ interface BulkInterface
      * @param array<int, string> $columns [List of columns]
      * @param array<int, array<int|string, mixed>> $rows [Insertion rows]
      *
-     * @return static
+     * @return self
      */
-    public static function bulk(array $columns, array $rows): static;
+    public static function bulk(array $columns, array $rows): self;
 }

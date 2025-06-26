@@ -25,7 +25,7 @@ interface WhereInterface
      * @param bool|Closure|string $where [You can add a WHERE to the current
      * statement, group by group, or return the WHERE statement]
      *
-     * @return static
+     * @return self
      */
-    public static function where(bool|Closure|string $where = true): static;
+    public static function where(bool|Closure|string $where = true): self;
 }

@@ -17,7 +17,7 @@ trait AndInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function and(bool|Closure|string $and = true): static
+    public static function and(bool|Closure|string $and = true): self
     {
         $andString = self::getKey(Driver::MYSQL, 'and');
 
@@ -38,6 +38,6 @@ trait AndInterfaceTrait
             ]);
         }
 
-        return new static();
+        return new self();
     }
 }

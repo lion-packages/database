@@ -17,7 +17,7 @@ trait WhereInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function where(Closure|string|bool $where = true): static
+    public static function where(Closure|string|bool $where = true): self
     {
         $whereString = self::getKey(Driver::MYSQL, 'where');
 
@@ -38,6 +38,6 @@ trait WhereInterfaceTrait
             ]);
         }
 
-        return new static();
+        return new self();
     }
 }

@@ -16,7 +16,7 @@ interface UpdateInterface
      *
      * @param array<string, mixed> $rows [List of values]
      *
-     * @return static
+     * @return self
      */
-    public static function update(array $rows): static;
+    public static function update(array $rows): self;
 }

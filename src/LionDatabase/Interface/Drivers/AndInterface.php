@@ -24,7 +24,7 @@ interface AndInterface
      * @param Closure|string|bool $and You can add a AND to the current statement, group
      * by group, or return the AND statement
      *
-     * @return static
+     * @return self
      */
-    public static function and(bool|Closure|string $and = true): static;
+    public static function and(bool|Closure|string $and = true): self;
 }
