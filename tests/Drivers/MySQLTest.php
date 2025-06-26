@@ -1322,26 +1322,72 @@ class MySQLTest extends Test
         $this->assertSame($return, $this->getQuery());
     }
 
-    public function testEqualTo(): void
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[TestWith(['column' => 'idusers', 'value' => 1, 'return' => 'idusers = ?'])]
+    #[TestWith(['column' => 'idusers', 'value' => 2, 'return' => 'idusers = ?'])]
+    #[TestWith(['column' => 'idroles', 'value' => 1, 'return' => 'idroles = ?'])]
+    #[TestWith(['column' => 'idroles', 'value' => 2, 'return' => 'idroles = ?'])]
+    public function equalToTest(string $column, int $value, string $return): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->equalTo('idusers', 1));
-        $this->assertAddRows([1]);
-        $this->assertSame('idusers = ?', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->equalTo($column, $value));
+        $this->assertAddRows([$value]);
+        $this->assertSame($return, $this->getQuery());
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[TestWith(['value' => 1])]
+    #[TestWith(['value' => 2])]
+    #[TestWith(['value' => 3])]
+    #[TestWith(['value' => 4])]
+    public function equalToForSingleValue(int $value): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->equalTo($value));
+        $this->assertAddRows([$value]);
+        $this->assertSame('= ?', $this->getQuery());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
     #[DataProvider('equalToSchemaProvider')]
-    public function testEqualToSchema(string $column, string $value, string $return): void
+    public function equalToSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
 
         $this->setPrivateProperty('enableInsert', true);
 
-        $this->assertTrue($this->getPrivateProperty('isSchema'));
-        $this->assertTrue($this->getPrivateProperty('enableInsert'));
         $this->assertInstanceOf(MySQL::class, $this->mysql->equalTo($column, $value));
         $this->assertSame($return, $this->getQuery());
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[TestWith(['value' => 1])]
+    #[TestWith(['value' => 2])]
+    #[TestWith(['value' => 3])]
+    #[TestWith(['value' => 4])]
+    public function equalToSchemaForSingleValue(int $value): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertInstanceOf(MySQL::class, $this->mysql->equalTo($value));
+        $this->assertSame("= {$value}", $this->getQuery());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     public function testNotEqualTo(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo('idusers', 1));

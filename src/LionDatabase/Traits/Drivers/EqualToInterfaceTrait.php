@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Lion\Database\Traits\Drivers;
 
+use Closure;
+
 /**
  * Declare the equalTo method of the interface
  *
@@ -14,23 +16,41 @@ trait EqualToInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function equalTo(string $column, mixed $equalTo): self
+    public static function equalTo(mixed $columnOrValue, mixed $value = null): self
     {
+        if (null === $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                self::addQueryList([
+                    " = {$columnOrValue}",
+                ]);
+            } else {
+                self::addRows([
+                    $columnOrValue,
+                ]);
+
+                self::addQueryList([
+                    ' = ?',
+                ]);
+            }
+
+            return new self();
+        }
+
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
                 ' ',
-                trim($column),
+                trim($columnOrValue),
                 ' = ',
-                $equalTo,
+                $value,
             ]);
         } else {
             self::addRows([
-                $equalTo,
+                $value,
             ]);
 
             self::addQueryList([
                 ' ',
-                trim($column . ' = ?'),
+                trim($columnOrValue . ' = ?'),
             ]);
         }
 

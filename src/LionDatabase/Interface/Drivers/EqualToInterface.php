@@ -14,10 +14,10 @@ interface EqualToInterface
     /**
      * Adds an "equals to / =" to the current statement
      *
-     * @param string $column [Column name]
-     * @param mixed $equalTo [Equal to]
+     * @param string $columnOrValue Column name or value to be equal to
+     * @param mixed $value Value to which it is equal
      *
      * @return self
      */
-    public static function equalTo(string $column, mixed $equalTo): self;
+    public static function equalTo(mixed $columnOrValue, mixed $value = null): self;
 }
