@@ -1388,24 +1388,64 @@ class MySQLTest extends Test
     /**
      * @throws ReflectionException
      */
-    public function testNotEqualTo(): void
+    #[Testing]
+    #[TestWith(['column' => 'idusers', 'value' => 1, 'return' => 'idusers <> ?'])]
+    #[TestWith(['column' => 'idusers', 'value' => 2, 'return' => 'idusers <> ?'])]
+    #[TestWith(['column' => 'idroles', 'value' => 1, 'return' => 'idroles <> ?'])]
+    #[TestWith(['column' => 'idroles', 'value' => 2, 'return' => 'idroles <> ?'])]
+    public function notEqualToTest(string $column, int $value, string $return): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo('idusers', 1));
-        $this->assertAddRows([1]);
-        $this->assertSame('idusers <> ?', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo($column, $value));
+        $this->assertAddRows([$value]);
+        $this->assertSame($return, $this->getQuery());
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[TestWith(['value' => 1])]
+    #[TestWith(['value' => 2])]
+    #[TestWith(['value' => 3])]
+    #[TestWith(['value' => 4])]
+    public function notEqualToForSingleValue(int $value): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo($value));
+        $this->assertAddRows([$value]);
+        $this->assertSame('<> ?', $this->getQuery());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
     #[DataProvider('notEqualToSchemaProvider')]
-    public function testNotEqualToSchema(string $column, string $value, string $return): void
+    public function notEqualToSchema(string $column, string $value, string $return): void
     {
         $this->setPrivateProperty('isSchema', true);
 
         $this->setPrivateProperty('enableInsert', true);
 
-        $this->assertTrue($this->getPrivateProperty('isSchema'));
-        $this->assertTrue($this->getPrivateProperty('enableInsert'));
         $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo($column, $value));
         $this->assertSame($return, $this->getQuery());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[TestWith(['value' => 1])]
+    #[TestWith(['value' => 2])]
+    #[TestWith(['value' => 3])]
+    #[TestWith(['value' => 4])]
+    public function notEqualToSchemaForSingleValue(int $value): void
+    {
+        $this->setPrivateProperty('isSchema', true);
+
+        $this->setPrivateProperty('enableInsert', true);
+
+        $this->assertInstanceOf(MySQL::class, $this->mysql->notEqualTo($value));
+        $this->assertSame("<> {$value}", $this->getQuery());
     }
 
     public function testGreaterThan(): void
