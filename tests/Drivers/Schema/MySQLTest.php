@@ -651,13 +651,14 @@ class MySQLTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('decimalProvider')]
-    public function testDecimal(string $table, string $column, array $configColumn): void
+    public function decimal(string $table, string $column, ?int $digits, ?int $bytes, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
 
         $this->assertSame($table, $this->getPrivateProperty('table'));
-        $this->assertIntances($this->mysql->decimal($column));
+        $this->assertIntances($this->mysql->decimal($column, $digits, $bytes));
         $this->assertSame($column, $this->getPrivateProperty('actualColumn'));
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }

@@ -1567,15 +1567,27 @@ class MySQL extends Connection implements
      * Nests the DECIMAL statement in the current query
      *
      * @param string $column Column name
+     * @param int|null $digits Leftover Digits
+     * @param int|null $bytes Number of Bytes
      *
      * @return self
+     *
+     * @link https://dev.mysql.com/doc/refman/9.3/en/precision-math-decimal-characteristics.html
      */
-    public static function decimal(string $column): self
+    public static function decimal(string $column, ?int $digits = null, ?int $bytes = null): self
     {
-        self::addQueryList([
-            " {$column}",
-            self::getKey(Driver::MYSQL, 'decimal'),
-        ]);
+        if (null === $digits && null === $bytes) {
+            self::addQueryList([
+                " {$column}",
+                self::getKey(Driver::MYSQL, 'decimal'),
+            ]);
+        } else {
+            self::addQueryList([
+                " {$column}",
+                self::getKey(Driver::MYSQL, 'decimal'),
+                "({$digits}, {$bytes})"
+            ]);
+        }
 
         return new self();
     }

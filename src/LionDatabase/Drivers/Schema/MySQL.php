@@ -591,15 +591,23 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     /**
      * Add the DECIMAL statement to the current query
      *
-     * @param string $name [Column name]
+     * @param string $columnName Column name
+     * @param int|null $digits Leftover Digits
+     * @param int|null $bytes Number of Bytes
      *
-     * @return MySQL
+     * @return self
+     *
+     * @link https://dev.mysql.com/doc/refman/9.3/en/precision-math-decimal-characteristics.html
      */
-    public static function decimal(string $name): MySQL
+    public static function decimal(string $columnName, ?int $digits = null, ?int $bytes = null): self
     {
-        $column = self::getKey(Driver::MYSQL, 'decimal');
+        if (null === $digits && null === $bytes) {
+            $column = self::getKey(Driver::MYSQL, 'decimal');
+        } else {
+            $column = self::getKey(Driver::MYSQL, 'decimal') . "({$digits}, {$bytes})";
+        }
 
-        self::$actualColumn = $name;
+        self::$actualColumn = $columnName;
 
         $in = self::$in;
 
@@ -621,7 +629,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['type'] = $column;
 
-        self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
+        self::$columns[self::$table][self::$actualColumn]['column'] = "{$columnName}{$column}";
 
         return new static();
     }
