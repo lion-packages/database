@@ -14,7 +14,7 @@ trait EqualToInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function equalTo(string $column, mixed $equalTo): static
+    public static function equalTo(string $column, mixed $equalTo): self
     {
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
@@ -34,6 +34,6 @@ trait EqualToInterfaceTrait
             ]);
         }
 
-        return new static();
+        return new self();
     }
 }

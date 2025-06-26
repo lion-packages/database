@@ -17,7 +17,7 @@ interface LessThanOrEqualToInterface
      * @param string $column [Column name]
      * @param mixed $lessThanOrEqualTo [Less than or equal to]
      *
-     * @return static
+     * @return self
      */
-    public static function lessThanOrEqualTo(string $column, mixed $lessThanOrEqualTo): static;
+    public static function lessThanOrEqualTo(string $column, mixed $lessThanOrEqualTo): self;
 }

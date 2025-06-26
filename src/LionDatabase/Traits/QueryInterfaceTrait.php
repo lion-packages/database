@@ -16,7 +16,7 @@ trait QueryInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function query(string $sql): static
+    public static function query(string $sql): self
     {
         self::$actualCode = uniqid('code-');
 
@@ -26,6 +26,6 @@ trait QueryInterfaceTrait
 
         self::addQueryList([$sql]);
 
-        return new static();
+        return new self();
     }
 }

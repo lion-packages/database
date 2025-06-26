@@ -17,7 +17,7 @@ trait SelectInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function select(): static
+    public static function select(): self
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
@@ -35,6 +35,6 @@ trait SelectInterfaceTrait
             ('' === self::$table ? self::$view : self::$table),
         ]);
 
-        return new static();
+        return new self();
     }
 }

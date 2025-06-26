@@ -14,7 +14,7 @@ interface DatabaseInterface
     /**
      * Nests the DATABASE statement in the current query
      *
-     * @return static
+     * @return self
      */
-    public static function database(): static;
+    public static function database(): self;
 }

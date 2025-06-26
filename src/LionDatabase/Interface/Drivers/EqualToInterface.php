@@ -17,7 +17,7 @@ interface EqualToInterface
      * @param string $column [Column name]
      * @param mixed $equalTo [Equal to]
      *
-     * @return static
+     * @return self
      */
-    public static function equalTo(string $column, mixed $equalTo): static;
+    public static function equalTo(string $column, mixed $equalTo): self;
 }

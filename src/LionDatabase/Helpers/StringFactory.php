@@ -581,10 +581,10 @@ class StringFactory
      * @param string $dictionary [Define the dictionary]
      * @param string $key [Value to look up in the dictionary]
      *
-     * @return string|null
+     * @return string
      */
-    public static function getKey(string $dictionary, string $key): ?string
+    public static function getKey(string $dictionary, string $key): string
     {
-        return self::DATABASE_KEYWORDS[$dictionary][$key] ?? null;
+        return self::DATABASE_KEYWORDS[$dictionary][$key] ?? '';
     }
 }

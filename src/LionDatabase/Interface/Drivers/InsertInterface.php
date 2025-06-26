@@ -16,7 +16,7 @@ interface InsertInterface
      *
      * @param array<string, mixed> $rows [List of values]
      *
-     * @return static
+     * @return self
      */
-    public static function insert(array $rows): static;
+    public static function insert(array $rows): self;
 }

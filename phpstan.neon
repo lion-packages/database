@@ -1,8 +1,8 @@
 parameters:
-    level: max
+    level: 8
 
     excludePaths:
-        - %currentWorkingDirectory%/src/LionDatabase/Drivers/
+        - %currentWorkingDirectory%/src/LionDatabase/Drivers/Schema/
         - %currentWorkingDirectory%/src/LionDatabase/Traits/
         - %currentWorkingDirectory%/src/LionDatabase/Helpers/
         - %currentWorkingDirectory%/src/LionDatabase/Connection.php

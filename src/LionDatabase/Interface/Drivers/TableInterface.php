@@ -19,7 +19,7 @@ interface TableInterface
      * @param bool $withDatabase [Determines whether to nest the current
      * database in the table]
      *
-     * @return static
+     * @return self
      */
-    public static function table(string|bool $table = true, bool $withDatabase = false): static;
+    public static function table(string|bool $table = true, bool $withDatabase = false): self;
 }

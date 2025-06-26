@@ -16,7 +16,7 @@ interface OnUpdateInterface
      *
      * @param string|null $onUpdate [Nested parameter in ON UPDATE]
      *
-     * @return static
+     * @return self
      */
-    public static function onUpdate(?string $onUpdate = null): static;
+    public static function onUpdate(?string $onUpdate = null): self;
 }

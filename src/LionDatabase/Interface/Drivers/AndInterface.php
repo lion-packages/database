@@ -16,16 +16,15 @@ interface AndInterface
     /**
      * Nests the AND statement in the current query
      *
-     * * If the parameter is boolean, add the Where statement to the current
-     * query
+     * * If the parameter is boolean, add the Where statement to the current query
      * * If parameter is a function, adds a query group to the current statement
-     * * If the parameter is a string, add the where statement and the column to
-     * the current query
+     * * If the parameter is a string, add the where statement and the column to the
+     * current query
      *
-     * @param Closure|string|bool $and [You can add a AND to the current
-     * statement, group by group, or return the AND statement]
+     * @param Closure|string|bool $and You can add a AND to the current statement, group
+     * by group, or return the AND statement
      *
-     * @return static
+     * @return self
      */
-    public static function and(bool|Closure|string $and = true): static;
+    public static function and(bool|Closure|string $and = true): self;
 }

@@ -17,7 +17,7 @@ trait OrInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function or(bool|Closure|string $or = true): static
+    public static function or(bool|Closure|string $or = true): self
     {
         $orString = self::getKey(Driver::MYSQL, 'or');
 
@@ -38,6 +38,6 @@ trait OrInterfaceTrait
             ]);
         }
 
-        return new static();
+        return new self();
     }
 }

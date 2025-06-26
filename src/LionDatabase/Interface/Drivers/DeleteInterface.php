@@ -14,7 +14,7 @@ interface DeleteInterface
     /**
      * Nests the DELETE statement in the current query
      *
-     * @return static
+     * @return self
      */
-    public static function delete(): static;
+    public static function delete(): self;
 }

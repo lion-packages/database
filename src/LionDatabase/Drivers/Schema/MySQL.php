@@ -38,9 +38,6 @@ use stdClass;
  * MySQL database structure, making it easier to manage and manipulate it from
  * the application
  *
- * @property bool $in [Enable the configuration of the properties to implement
- * the IN statement]
- *
  * @package Lion\Database\Drivers\Schema
  */
 class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterface, GetQueryStringInterface

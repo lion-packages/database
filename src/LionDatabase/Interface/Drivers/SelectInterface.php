@@ -14,7 +14,7 @@ interface SelectInterface
     /**
      * Nests the SELECT statement in the current query
      *
-     * @return static
+     * @return self
      */
-    public static function select(): static;
+    public static function select(): self;
 }

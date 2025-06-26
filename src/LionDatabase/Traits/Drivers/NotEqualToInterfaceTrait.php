@@ -14,7 +14,7 @@ trait NotEqualToInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function notEqualTo(string $column, mixed $notEqualTo): static
+    public static function notEqualTo(string $column, mixed $notEqualTo): self
     {
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
@@ -34,6 +34,6 @@ trait NotEqualToInterfaceTrait
             ]);
         }
 
-        return new static();
+        return new self();
     }
 }

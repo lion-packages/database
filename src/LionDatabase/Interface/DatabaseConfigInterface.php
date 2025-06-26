@@ -14,7 +14,7 @@ use InvalidArgumentException;
 interface DatabaseConfigInterface
 {
     /**
-     * initialize the connection data to use the service
+     * Initialize the connection data to use the service
      *
      * @param array{
      *     default: string,
@@ -27,24 +27,23 @@ interface DatabaseConfigInterface
      *          password?: string,
      *          options?: array<int, int>
      *     }>
-     * } $connections [List of available databases]
+     * } $connections List of available databases
      *
-     * @return static
+     * @return self
      *
-     * @throws InvalidArgumentException [If any initialization parameter is
-     * invalid]
+     * @throws InvalidArgumentException If any initialization parameter is invalid
      */
-    public static function run(array $connections): static;
+    public static function run(array $connections): self;
 
     /**
      * Changes the data of the current connection with those of the specified
      * connection
      *
-     * @param string $connectionName [Connection name]
+     * @param string $connectionName Connection name
      *
-     * @return static
+     * @return self
      *
-     * @throws InvalidArgumentException [If the connection does not exist]
+     * @throws InvalidArgumentException If the connection does not exist
      */
-    public static function connection(string $connectionName): static;
+    public static function connection(string $connectionName): self;
 }

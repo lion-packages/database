@@ -16,7 +16,7 @@ trait DeleteInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function delete(): static
+    public static function delete(): self
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
@@ -29,6 +29,6 @@ trait DeleteInterfaceTrait
             self::$table
         ]);
 
-        return new static();
+        return new self();
     }
 }

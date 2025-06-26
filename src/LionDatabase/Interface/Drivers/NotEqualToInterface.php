@@ -17,7 +17,7 @@ interface NotEqualToInterface
      * @param string $column [Column name]
      * @param mixed $notEqualTo [Not equal to]
      *
-     * @return static
+     * @return self
      */
-    public static function notEqualTo(string $column, mixed $notEqualTo): static;
+    public static function notEqualTo(string $column, mixed $notEqualTo): self;
 }

@@ -17,7 +17,7 @@ interface GreaterThanInterface
      * @param string $column [Column name]
      * @param mixed $greaterThan [Greather than]
      *
-     * @return static
+     * @return self
      */
-    public static function greaterThan(string $column, mixed $greaterThan): static;
+    public static function greaterThan(string $column, mixed $greaterThan): self;
 }

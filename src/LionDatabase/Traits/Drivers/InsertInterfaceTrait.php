@@ -16,7 +16,7 @@ trait InsertInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function insert(array $rows): static
+    public static function insert(array $rows): self
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
@@ -48,6 +48,6 @@ trait InsertInterfaceTrait
             ')'
         ]);
 
-        return new static();
+        return new self();
     }
 }

@@ -17,7 +17,7 @@ interface GreaterThanOrEqualToInterface
      * @param string $column [Column name]
      * @param mixed $greaterThanOrEqualTo [Greater than or equal to]
      *
-     * @return static
+     * @return self
      */
-    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): static;
+    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): self;
 }

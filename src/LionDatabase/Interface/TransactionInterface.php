@@ -15,9 +15,9 @@ interface TransactionInterface
      * Activate the configuration to execute a transaction type process in the
      * service
      *
-     * @param bool $isTransaction [Defines whether the process is a transaction]
+     * @param bool $isTransaction Defines whether the process is a transaction
      *
-     * @return static
+     * @return self
      */
-    public static function transaction(bool $isTransaction = true): static;
+    public static function transaction(bool $isTransaction = true): self;
 }

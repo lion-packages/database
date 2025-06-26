@@ -16,7 +16,7 @@ trait BulkInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function bulk(array $columns, array $rows): static
+    public static function bulk(array $columns, array $rows): self
     {
         if (empty(self::$actualCode)) {
             self::$actualCode = uniqid('code-');
@@ -40,6 +40,6 @@ trait BulkInterfaceTrait
             self::addCharacterBulk($rows, (self::$isSchema && self::$enableInsert))
         ]);
 
-        return new static();
+        return new self();
     }
 }

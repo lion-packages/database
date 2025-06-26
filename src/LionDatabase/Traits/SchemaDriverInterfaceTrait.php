@@ -14,20 +14,20 @@ trait SchemaDriverInterfaceTrait
     /**
      * {@inheritdoc}
      */
-    public static function isSchema(): static
+    public static function isSchema(): self
     {
         self::$isSchema = true;
 
-        return new static();
+        return new self();
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function enableInsert(bool $enable = false): static
+    public static function enableInsert(bool $enable = false): self
     {
         self::$enableInsert = $enable;
 
-        return new static();
+        return new self();
     }
 }

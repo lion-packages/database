@@ -14,7 +14,7 @@ trait GreaterThanOrEqualToInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): static
+    public static function greaterThanOrEqualTo(string $column, mixed $greaterThanOrEqualTo): self
     {
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
@@ -34,6 +34,6 @@ trait GreaterThanOrEqualToInterfaceTrait
             ]);
         }
 
-        return new static();
+        return new self();
     }
 }
