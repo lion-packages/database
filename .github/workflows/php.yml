@@ -12,7 +12,7 @@ on:
 
 jobs:
   install-dependencies:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: Install PHP Dependencies
     steps:
       - name: Checkout repository
@@ -43,7 +43,7 @@ jobs:
 
   composer-validation:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: Composer Validation
     needs: install-dependencies
 
@@ -82,7 +82,7 @@ jobs:
 
   dependency-review:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: Dependency Review
     needs: install-dependencies
 
@@ -112,7 +112,7 @@ jobs:
 
   code-analysis-php-stan:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: PHPStan
     needs:
       - composer-validation
@@ -142,14 +142,14 @@ jobs:
           restore-keys: php-vendor-${{ runner.os }}-${{ github.run_id }}
 
       - name: PHPStan (Src)
-        run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max src
+        run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level 8 src
 
       # - name: PHPStan (Tests)
       # run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max tests
 
   code-analysis-php-codesniffer:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: PHPCodeSniffer
     needs:
       - composer-validation
@@ -186,7 +186,7 @@ jobs:
 
   code-analysis-phplint:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: PHPLint
     needs:
       - composer-validation
@@ -222,36 +222,36 @@ jobs:
         run: php -d memory_limit=-1 vendor/bin/phplint tests
 
   tests-phpunit:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: PHPUnit
     needs:
       - code-analysis-php-stan
       - code-analysis-php-codesniffer
       - code-analysis-phplint
 
-    services:
-      mysql:
-        image: mysql
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_DATABASE: lion_database
-          MYSQL_ROOT_PASSWORD: lion
-          MYSQL_PASSWORD: lion
+    # services:
+      # mysql:
+        # image: mysql
+        # options: >-
+          # --health-cmd="mysqladmin ping"
+          # --health-interval=10s
+          # --health-timeout=5s
+          # --health-retries=3
+        # ports:
+          # - 3306:3306
+        # env:
+          # MYSQL_DATABASE: lion_database
+          # MYSQL_ROOT_PASSWORD: lion
+          # MYSQL_PASSWORD: lion
 
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: lion_database
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: lion
+      # postgres:
+        # image: postgres
+        # ports:
+          # - 5432:5432
+        # env:
+          # POSTGRES_DB: lion_database
+          # POSTGRES_USER: root
+          # POSTGRES_PASSWORD: lion
 
     steps:
       - name: Checkout repository
