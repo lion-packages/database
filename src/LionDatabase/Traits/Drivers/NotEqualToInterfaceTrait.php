@@ -14,23 +14,41 @@ trait NotEqualToInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function notEqualTo(string $column, mixed $notEqualTo): self
+    public static function notEqualTo(mixed $columnOrValue, mixed $value = null): self
     {
+        if (null === $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                self::addQueryList([
+                    " <> {$columnOrValue}",
+                ]);
+            } else {
+                self::addRows([
+                    $columnOrValue,
+                ]);
+
+                self::addQueryList([
+                    ' <> ?',
+                ]);
+            }
+
+            return new self();
+        }
+
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
                 ' ',
-                trim($column),
+                trim($columnOrValue),
                 ' <> ',
-                $notEqualTo,
+                $value,
             ]);
         } else {
             self::addRows([
-                $notEqualTo,
+                $value,
             ]);
 
             self::addQueryList([
                 ' ',
-                trim($column . ' <> ?'),
+                trim($columnOrValue . ' <> ?'),
             ]);
         }
 

@@ -14,10 +14,10 @@ interface NotEqualToInterface
     /**
      * Adds a "not equal to / <>" to the current statement
      *
-     * @param string $column [Column name]
-     * @param mixed $notEqualTo [Not equal to]
+     * @param string $columnOrValue Column name or value to be equal to
+     * @param mixed $value Value to which it is equal
      *
      * @return self
      */
-    public static function notEqualTo(string $column, mixed $notEqualTo): self;
+    public static function notEqualTo(mixed $columnOrValue, mixed $value = null): self;
 }
