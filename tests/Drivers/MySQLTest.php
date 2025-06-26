@@ -1893,10 +1893,26 @@ class MySQLTest extends Test
         $this->assertSame("idusers ENUM('1', '2', '3')", $this->getQuery());
     }
 
-    public function testDate(): void
+    #[Testing]
+    #[TestWith(['column' => 'idusers'])]
+    #[TestWith(['column' => 'idroles'])]
+    #[TestWith(['column' => 'idrates'])]
+    public function dateIsNotString(string $column): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->date('idusers'));
-        $this->assertSame('idusers DATE', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->date($column));
+        $this->assertSame("{$column} DATE", $this->getQuery());
+    }
+
+    #[Testing]
+    #[TestWith(['column' => 'idusers'])]
+    #[TestWith(['column' => 'idroles'])]
+    #[TestWith(['column' => 'idrates'])]
+    public function dateIsString(string $column): void
+    {
+        $date = $this->mysql->date($column, true);
+
+        $this->assertIsString($date);
+        $this->assertSame(" DATE({$column})", $date);
     }
 
     public function testTime(): void

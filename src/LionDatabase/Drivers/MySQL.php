@@ -1902,15 +1902,21 @@ class MySQL extends Connection implements
      * Nests the DATE statement in the current query
      *
      * @param string $column Column name
+     * @param bool $isString Defines whether to get a string from the DATE statement
+     * with the column
      *
-     * @return self
+     * @return self|string
      */
-    public static function date(string $column): self
+    public static function date(string $column, bool $isString = false): self|string
     {
-        self::addQueryList([
-            " {$column}",
-            self::getKey(Driver::MYSQL, 'date'),
-        ]);
+        if (!$isString) {
+            self::addQueryList([
+                " {$column}",
+                self::getKey(Driver::MYSQL, 'date'),
+            ]);
+        } else {
+            return self::getKey(Driver::MYSQL, 'date') . "($column)";
+        }
 
         return new self();
     }
