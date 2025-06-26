@@ -14,23 +14,41 @@ trait LessThanOrEqualToInterfaceTrait
     /**
      * {@inheritDoc}
      */
-    public static function lessThanOrEqualTo(string $column, mixed $lessThanOrEqualTo): self
+    public static function lessThanOrEqualTo(mixed $columnOrValue, mixed $value = null): self
     {
+        if (null === $value) {
+            if (self::$isSchema && self::$enableInsert) {
+                self::addQueryList([
+                    " <= {$columnOrValue}",
+                ]);
+            } else {
+                self::addRows([
+                    $columnOrValue,
+                ]);
+
+                self::addQueryList([
+                    ' <= ?',
+                ]);
+            }
+
+            return new self();
+        }
+
         if (self::$isSchema && self::$enableInsert) {
             self::addQueryList([
                 ' ',
-                trim($column),
+                trim($columnOrValue),
                 ' <= ',
-                $lessThanOrEqualTo,
+                $value,
             ]);
         } else {
             self::addRows([
-                $lessThanOrEqualTo,
+                $value,
             ]);
 
             self::addQueryList([
                 ' ',
-                trim($column . ' <= ?'),
+                trim($columnOrValue . ' <= ?'),
             ]);
         }
 
