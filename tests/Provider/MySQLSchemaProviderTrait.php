@@ -1031,11 +1031,13 @@ trait MySQLSchemaProviderTrait
     {
         return [
             [
-                'table' => 'users',
-                'column' => 'idusers',
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => null,
+                'bytes' => null,
                 'configColumn' => [
-                    'users' => [
-                        'idusers' => [
+                    'products' => [
+                        'price' => [
                             'primary' => false,
                             'auto-increment' => false,
                             'unique' => false,
@@ -1044,17 +1046,19 @@ trait MySQLSchemaProviderTrait
                             'null' => false,
                             'in' => false,
                             'type' => ' DECIMAL',
-                            'column' => 'idusers DECIMAL',
+                            'column' => 'price DECIMAL',
                         ],
                     ],
                 ],
             ],
             [
-                'table' => 'users',
-                'column' => 'idroles',
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 1,
+                'bytes' => 1,
                 'configColumn' => [
-                    'users' => [
-                        'idroles' => [
+                    'products' => [
+                        'price' => [
                             'primary' => false,
                             'auto-increment' => false,
                             'unique' => false,
@@ -1062,8 +1066,176 @@ trait MySQLSchemaProviderTrait
                             'default' => false,
                             'null' => false,
                             'in' => false,
-                            'type' => ' DECIMAL',
-                            'column' => 'idroles DECIMAL',
+                            'type' => ' DECIMAL(1, 1)',
+                            'column' => 'price DECIMAL(1, 1)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 2,
+                'bytes' => 1,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(2, 1)',
+                            'column' => 'price DECIMAL(2, 1)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 3,
+                'bytes' => 2,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(3, 2)',
+                            'column' => 'price DECIMAL(3, 2)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 4,
+                'bytes' => 2,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(4, 2)',
+                            'column' => 'price DECIMAL(4, 2)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 5,
+                'bytes' => 3,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(5, 3)',
+                            'column' => 'price DECIMAL(5, 3)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 6,
+                'bytes' => 3,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(6, 3)',
+                            'column' => 'price DECIMAL(6, 3)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 7,
+                'bytes' => 4,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(7, 4)',
+                            'column' => 'price DECIMAL(7, 4)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 8,
+                'bytes' => 4,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(8, 4)',
+                            'column' => 'price DECIMAL(8, 4)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'products',
+                'column' => 'price',
+                'digits' => 9,
+                'bytes' => 4,
+                'configColumn' => [
+                    'products' => [
+                        'price' => [
+                            'primary' => false,
+                            'auto-increment' => false,
+                            'unique' => false,
+                            'comment' => false,
+                            'default' => false,
+                            'null' => false,
+                            'in' => false,
+                            'type' => ' DECIMAL(9, 4)',
+                            'column' => 'price DECIMAL(9, 4)',
                         ],
                     ],
                 ],

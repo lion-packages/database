@@ -1778,10 +1778,21 @@ class MySQLTest extends Test
         $this->assertSame($query, $this->getQuery());
     }
 
-    public function testDecimal(): void
+    #[Testing]
+    #[TestWith(['column' => 'price', 'digits' => null, 'bytes' => null, 'return' => 'price DECIMAL'])]
+    #[TestWith(['column' => 'price', 'digits' => 1, 'bytes' => 1, 'return' => 'price DECIMAL(1, 1)'])]
+    #[TestWith(['column' => 'price', 'digits' => 2, 'bytes' => 1, 'return' => 'price DECIMAL(2, 1)'])]
+    #[TestWith(['column' => 'price', 'digits' => 3, 'bytes' => 2, 'return' => 'price DECIMAL(3, 2)'])]
+    #[TestWith(['column' => 'price', 'digits' => 4, 'bytes' => 2, 'return' => 'price DECIMAL(4, 2)'])]
+    #[TestWith(['column' => 'price', 'digits' => 5, 'bytes' => 3, 'return' => 'price DECIMAL(5, 3)'])]
+    #[TestWith(['column' => 'price', 'digits' => 6, 'bytes' => 3, 'return' => 'price DECIMAL(6, 3)'])]
+    #[TestWith(['column' => 'price', 'digits' => 7, 'bytes' => 4, 'return' => 'price DECIMAL(7, 4)'])]
+    #[TestWith(['column' => 'price', 'digits' => 8, 'bytes' => 4, 'return' => 'price DECIMAL(8, 4)'])]
+    #[TestWith(['column' => 'price', 'digits' => 9, 'bytes' => 4, 'return' => 'price DECIMAL(9, 4)'])]
+    public function decimal(string $column, ?int $digits, ?int $bytes, string $return): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->decimal('idusers'));
-        $this->assertSame('idusers DECIMAL', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->decimal($column, $digits, $bytes));
+        $this->assertSame($return, $this->getQuery());
     }
 
     public function testDouble(): void
