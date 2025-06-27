@@ -876,13 +876,14 @@ class MySQLTest extends Test
     /**
      * @throws ReflectionException
      */
+    #[Testing]
     #[DataProvider('textProvider')]
-    public function testText(string $table, string $column, int $length, array $configColumn): void
+    public function text(string $table, string $column, array $configColumn): void
     {
         $this->setPrivateProperty('table', $table);
 
         $this->assertSame($table, $this->getPrivateProperty('table'));
-        $this->assertIntances($this->mysql->text($column, $length));
+        $this->assertIntances($this->mysql->text($column));
         $this->assertSame($column, $this->getPrivateProperty('actualColumn'));
         $this->assertSame($configColumn, $this->getPrivateProperty('columns'));
     }

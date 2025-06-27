@@ -2044,11 +2044,10 @@ trait MySQLSchemaProviderTrait
     {
         return [
             [
-                'table' => 'users',
+                'table' => 'products',
                 'column' => 'content',
-                'length' => 5,
                 'configColumn' => [
-                    'users' => [
+                    'products' => [
                         'content' => [
                             'primary' => false,
                             'auto-increment' => false,
@@ -2057,18 +2056,17 @@ trait MySQLSchemaProviderTrait
                             'default' => false,
                             'null' => false,
                             'in' => false,
-                            'type' => ' TEXT(5)',
-                            'column' => 'content TEXT(5)',
+                            'type' => ' TEXT',
+                            'column' => 'content TEXT',
                         ],
                     ],
                 ],
             ],
             [
-                'table' => 'users',
+                'table' => 'products',
                 'column' => 'summary',
-                'length' => 10,
                 'configColumn' => [
-                    'users' => [
+                    'products' => [
                         'summary' => [
                             'primary' => false,
                             'auto-increment' => false,
@@ -2077,8 +2075,8 @@ trait MySQLSchemaProviderTrait
                             'default' => false,
                             'null' => false,
                             'in' => false,
-                            'type' => ' TEXT(10)',
-                            'column' => 'summary TEXT(10)',
+                            'type' => ' TEXT',
+                            'column' => 'summary TEXT',
                         ],
                     ],
                 ],
