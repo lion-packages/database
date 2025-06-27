@@ -1859,15 +1859,14 @@ class MySQL extends Connection implements
      * Nests the TEXT statement in the current query
      *
      * @param string $column Column name
-     * @param int $length Length
      *
      * @return self
      */
-    public static function text(string $column, int $length): self
+    public static function text(string $column): self
     {
         self::addQueryList([
             " {$column}",
-            str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'text')),
+            self::getKey(Driver::MYSQL, 'text'),
         ]);
 
         return new self();

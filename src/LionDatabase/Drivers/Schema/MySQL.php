@@ -553,8 +553,6 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
      */
     public static function bigInt(string $name, ?int $length = null): MySQL
     {
-        $column = '';
-
         self::$actualColumn = $name;
 
         $in = self::$in;
@@ -631,7 +629,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$columnName}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
@@ -1215,16 +1213,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     /**
      * Add the TEXT statement to the current query
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $columnName Column name
      *
-     * @return MySQL
+     * @return self
+     *
+     * @link https://dev.mysql.com/doc/refman/9.3/en/blob.html
      */
-    public static function text(string $name, int $length): MySQL
+    public static function text(string $columnName): self
     {
-        $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'text'));
+        $column = self::getKey(Driver::MYSQL, 'text');
 
-        self::$actualColumn = $name;
+        self::$actualColumn = $columnName;
 
         $in = self::$in;
 
@@ -1246,9 +1245,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['type'] = $column;
 
-        self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
+        self::$columns[self::$table][self::$actualColumn]['column'] = "{$columnName}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**

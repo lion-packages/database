@@ -1886,10 +1886,13 @@ class MySQLTest extends Test
         $this->assertSame('idusers MEDIUMTEXT', $this->getQuery());
     }
 
-    public function testText(): void
+    #[Testing]
+    #[TestWith(['column' => 'description', 'return' => 'description TEXT'])]
+    #[TestWith(['column' => 'summary', 'return' => 'summary TEXT'])]
+    public function text(string $column, string $return): void
     {
-        $this->assertInstanceOf(MySQL::class, $this->mysql->text('idusers', 11));
-        $this->assertSame('idusers TEXT(11)', $this->getQuery());
+        $this->assertInstanceOf(MySQL::class, $this->mysql->text($column));
+        $this->assertSame($return, $this->getQuery());
     }
 
     public function testTinyText(): void

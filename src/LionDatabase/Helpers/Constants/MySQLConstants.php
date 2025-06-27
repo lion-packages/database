@@ -163,7 +163,7 @@ class MySQLConstants
         'varchar' => ' VARCHAR(?)',
         'longtext' => ' LONGTEXT',
         'mediumtext' => ' MEDIUMTEXT',
-        'text' => ' TEXT(?)',
+        'text' => ' TEXT',
         'tinytext' => ' TINYTEXT',
         'enum' => ' ENUM(?)',
         'date' => ' DATE',
