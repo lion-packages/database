@@ -77,6 +77,14 @@ abstract class Connection extends StringFactory implements ConnectionConfigInter
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public static function getDefaultConnectionName(): string
+    {
+        return self::$connections['default'];
+    }
+
+    /**
      * Initializes a MySQL database connection and runs a process
      *
      * @param Closure $callback [Function that is executed]

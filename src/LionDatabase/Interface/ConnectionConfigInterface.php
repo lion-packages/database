@@ -52,4 +52,11 @@ interface ConnectionConfigInterface
      * }>
      */
     public static function getConnections(): array;
+
+    /**
+     * Gets the name of the default connection
+     *
+     * @return string
+     */
+    public static function getDefaultConnectionName(): string;
 }

@@ -236,6 +236,22 @@ class ConnectionTest extends Test
     }
 
     /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    public function getDefaultConnectionName(): void
+    {
+        $this->setPrivateProperty('connections', [
+            'default' => DATABASE_NAME_CONNECTION,
+            'connections' => [
+                DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
+            ],
+        ]);
+
+        $this->assertSame(DATABASE_NAME_CONNECTION, $this->connection::getDefaultConnectionName());
+    }
+
+    /**
      * @param array{
      *     type: string,
      *     host?: string,
