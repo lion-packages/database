@@ -837,13 +837,35 @@ class MySQLTest extends Test
         $this->assertSame('UNION', $this->getQuery());
     }
 
-    #[DataProvider('asProvider')]
-    public function testAs(string $column, string $as, string $return): void
+    #[Testing]
+    #[TestWith(['as' => 'id', 'column' => 'idusers', 'return' => 'idusers AS id'])]
+    #[TestWith(['as' => 'id', 'column' => 'idrates', 'return' => 'idrates AS id'])]
+    #[TestWith(['as' => 'id', 'column' => 'idroles', 'return' => 'idroles AS id'])]
+    #[TestWith(['as' => 'id', 'column' => 'idproducts', 'return' => 'idproducts AS id'])]
+    public function asIsString(string $column, string $as, string $return): void
     {
-        $as = $this->mysql->as($column, $as);
+        $as = $this->mysql->as(
+            as: $as,
+            column: $column
+        );
 
         $this->assertIsString($as);
         $this->assertSame($return, $as);
+    }
+
+    #[Testing]
+    #[TestWith(['as' => 'id', 'return' => 'AS id'])]
+    #[TestWith(['as' => 'id', 'return' => 'AS id'])]
+    #[TestWith(['as' => 'id', 'return' => 'AS id'])]
+    #[TestWith(['as' => 'id', 'return' => 'AS id'])]
+    public function asIsNotString(string $as, string $return): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->as(
+            as: $as,
+            isString: false
+        ));
+
+        $this->assertSame($return, $this->getQuery());
     }
 
     #[DataProvider('concatProvider')]
