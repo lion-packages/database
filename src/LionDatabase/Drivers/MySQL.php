@@ -895,14 +895,25 @@ class MySQL extends Connection implements
     /**
      * Nests the AS statement in the current query
      *
-     * @param string $column Column name
      * @param string $as Alias name
+     * @param string|null $column Column name
+     * @param bool $isString Determines whether to get the aliased string or assign
+     * the AS statement to the current query
      *
-     * @return string
+     * @return self|string
      */
-    public static function as(string $column, string $as): string
+    public static function as(string $as, ?string $column = null, bool $isString = true): self|string
     {
-        return $column . self::getKey(Driver::MYSQL, 'as') . " {$as}";
+        if ($isString) {
+            return $column . self::getKey(Driver::MYSQL, 'as') . " {$as}";
+        }
+
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'as'),
+            " {$as}",
+        ]);
+
+        return new self();
     }
 
     /**

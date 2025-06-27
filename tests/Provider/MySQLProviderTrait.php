@@ -230,39 +230,6 @@ trait MySQLProviderTrait
 
     /**
      * @return array<int, array{
-     *     column: string,
-     *     as: string,
-     *     return: string
-     * }>
-     */
-    public static function asProvider(): array
-    {
-        return [
-            [
-                'column' => 'idusers',
-                'as' => 'id',
-                'return' => 'idusers AS id',
-            ],
-            [
-                'column' => 'users_name',
-                'as' => 'name',
-                'return' => 'users_name AS name',
-            ],
-            [
-                'column' => 'users_last_name',
-                'as' => 'last_name',
-                'return' => 'users_last_name AS last_name',
-            ],
-            [
-                'column' => 'CONCAT(name, " ", last_name)',
-                'as' => 'full_name',
-                'return' => 'CONCAT(name, " ", last_name) AS full_name',
-            ],
-        ];
-    }
-
-    /**
-     * @return array<int, array{
      *     elements: array<int, string>,
      *     return: string
      * }>
