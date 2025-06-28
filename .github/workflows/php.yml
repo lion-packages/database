@@ -10,7 +10,7 @@ on:
 
 jobs:
   install-dependencies:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: Install PHP Dependencies
     steps:
       - name: Checkout repository
@@ -40,7 +40,7 @@ jobs:
           restore-keys: php-composer-lock-${{ runner.os }}-${{ github.run_id }}
 
   composer-validation:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: Composer Validation
     needs: install-dependencies
 
@@ -78,7 +78,7 @@ jobs:
         run: composer dump-autoload --optimize --strict-psr
 
   dependency-review:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: Dependency Review
     needs: install-dependencies
 
@@ -107,7 +107,7 @@ jobs:
           license-check: true
 
   code-analysis-php-stan:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: PHPStan
     needs:
       - composer-validation
@@ -143,7 +143,7 @@ jobs:
       # run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max tests
 
   code-analysis-php-codesniffer:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: PHPCodeSniffer
     needs:
       - composer-validation
@@ -179,7 +179,7 @@ jobs:
         run: php -d memory_limit=-1 vendor/bin/phpcs --standard=PSR12 tests
 
   code-analysis-phplint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: PHPLint
     needs:
       - composer-validation
@@ -215,36 +215,36 @@ jobs:
         run: php -d memory_limit=-1 vendor/bin/phplint tests
 
   tests-phpunit:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: PHPUnit
     needs:
       - code-analysis-php-stan
       - code-analysis-php-codesniffer
       - code-analysis-phplint
 
-    # services:
-      # mysql:
-        # image: mysql
-        # options: >-
-          # --health-cmd="mysqladmin ping"
-          # --health-interval=10s
-          # --health-timeout=5s
-          # --health-retries=3
-        # ports:
-          # - 3306:3306
-        # env:
-          # MYSQL_DATABASE: lion_database
-          # MYSQL_ROOT_PASSWORD: lion
-          # MYSQL_PASSWORD: lion
+    services:
+      mysql:
+        image: mysql
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_DATABASE: lion_database
+          MYSQL_ROOT_PASSWORD: lion
+          MYSQL_PASSWORD: lion
 
-      # postgres:
-        # image: postgres
-        # ports:
-          # - 5432:5432
-        # env:
-          # POSTGRES_DB: lion_database
-          # POSTGRES_USER: root
-          # POSTGRES_PASSWORD: lion
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: lion_database
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: lion
 
     steps:
       - name: Checkout repository
