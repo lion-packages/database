@@ -97,6 +97,7 @@ class MySQLConstants
         'or' => ' OR',
         'between' => ' BETWEEN',
         'select' => ' SELECT',
+        'select-exists' => ' SELECT EXISTS',
         'from' => ' FROM',
         'join' => ' JOIN',
         'on' => ' ON',

@@ -132,6 +132,25 @@ class MySQL extends Connection implements
     use UpdateInterfaceTrait;
     use WhereInterfaceTrait;
 
+    public function selectExists(Closure $callable): self
+    {
+        if (empty(self::$actualCode)) {
+            self::$actualCode = uniqid('code-');
+        }
+
+        self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
+
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'select-exists'),
+        ]);
+
+        self::groupQuery(function () use ($callable): void {
+            $callable();
+        });
+
+        return new self();
+    }
+
     /**
      * Nests the TRUNCATE statement in the current query
      *
@@ -902,7 +921,7 @@ class MySQL extends Connection implements
      *
      * @return self|string
      */
-    public static function as(string $as, ?string $column = null, bool $isString = true): self|string
+    public static function as(string $as, ?string $column = null, bool $isString = false): self|string
     {
         if ($isString) {
             return $column . self::getKey(Driver::MYSQL, 'as') . " {$as}";
