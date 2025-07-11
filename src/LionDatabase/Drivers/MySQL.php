@@ -133,6 +133,32 @@ class MySQL extends Connection implements
     use WhereInterfaceTrait;
 
     /**
+     * Nests the SELECT EXISTS statement in the current query
+     *
+     * @param Closure $callable Nest the query in the EXISTS statement
+     *
+     * @return self
+     */
+    public function selectExists(Closure $callable): self
+    {
+        if (empty(self::$actualCode)) {
+            self::$actualCode = uniqid('code-');
+        }
+
+        self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
+
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'select-exists'),
+        ]);
+
+        self::groupQuery(function () use ($callable): void {
+            $callable();
+        });
+
+        return new self();
+    }
+
+    /**
      * Nests the TRUNCATE statement in the current query
      *
      * @return self
@@ -902,7 +928,7 @@ class MySQL extends Connection implements
      *
      * @return self|string
      */
-    public static function as(string $as, ?string $column = null, bool $isString = true): self|string
+    public static function as(string $as, ?string $column = null, bool $isString = false): self|string
     {
         if ($isString) {
             return $column . self::getKey(Driver::MYSQL, 'as') . " {$as}";
@@ -1144,6 +1170,7 @@ class MySQL extends Connection implements
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
 
+        /** @phpstan-ignore-next-line */
         $stringColumns = self::addColumns(func_get_args());
 
         if (empty(self::$table)) {
@@ -1225,6 +1252,7 @@ class MySQL extends Connection implements
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'group-by'),
             ' ',
+            /** @phpstan-ignore-next-line */
             self::addColumns(func_get_args()),
         ]);
 
@@ -1318,6 +1346,7 @@ class MySQL extends Connection implements
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'order-by'),
             ' ',
+            /** @phpstan-ignore-next-line */
             self::addColumns(func_get_args()),
         ]);
 

@@ -137,7 +137,7 @@ jobs:
           restore-keys: php-vendor-${{ runner.os }}-${{ github.run_id }}
 
       - name: PHPStan (Src)
-        run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level 8 src
+        run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level 10 src
 
       # - name: PHPStan (Tests)
       # run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max tests
