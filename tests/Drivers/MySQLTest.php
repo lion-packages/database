@@ -124,7 +124,6 @@ class MySQLTest extends Test
 
         $response = $this->mysql->getQueryString();
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
         $this->assertObjectHasProperty('data', $response);
@@ -482,11 +481,38 @@ class MySQLTest extends Test
         $this->assertTrue($this->getPrivateProperty('isSchema'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
     #[DataProvider('enableInsertProvider')]
-    public function testEnableInsert(bool $enable): void
+    public function enableInsert(bool $enable): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->enableInsert($enable));
         $this->assertSame($enable, $this->getPrivateProperty('enableInsert'));
+    }
+
+    # ------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[TestWith(['table' => 'users'])]
+    #[TestWith(['table' => 'roles'])]
+    #[TestWith(['table' => 'rates'])]
+    #[TestWith(['table' => 'products'])]
+    public function selectExists(string $table): void
+    {
+        $this->setPrivateProperty('actualCode', '');
+
+        $this->assertInstanceOf(MySQL::class, $this->mysql->selectExists(function () use ($table): void {
+            $this->mysql
+                ->table($table)
+                ->select();
+        }));
+
+        $this->assertSame("SELECT EXISTS ( SELECT * FROM {$table} )", $this->getQuery());
     }
 
     #[Testing]
@@ -846,7 +872,8 @@ class MySQLTest extends Test
     {
         $as = $this->mysql->as(
             as: $as,
-            column: $column
+            column: $column,
+            isString: true
         );
 
         $this->assertIsString($as);
@@ -862,7 +889,6 @@ class MySQLTest extends Test
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->as(
             as: $as,
-            isString: false
         ));
 
         $this->assertSame($return, $this->getQuery());

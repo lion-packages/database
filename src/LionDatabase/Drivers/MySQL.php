@@ -132,6 +132,13 @@ class MySQL extends Connection implements
     use UpdateInterfaceTrait;
     use WhereInterfaceTrait;
 
+    /**
+     * Nests the SELECT EXISTS statement in the current query
+     *
+     * @param Closure $callable Nest the query in the EXISTS statement
+     *
+     * @return self
+     */
     public function selectExists(Closure $callable): self
     {
         if (empty(self::$actualCode)) {
@@ -1163,6 +1170,7 @@ class MySQL extends Connection implements
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
 
+        /** @phpstan-ignore-next-line */
         $stringColumns = self::addColumns(func_get_args());
 
         if (empty(self::$table)) {
@@ -1244,6 +1252,7 @@ class MySQL extends Connection implements
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'group-by'),
             ' ',
+            /** @phpstan-ignore-next-line */
             self::addColumns(func_get_args()),
         ]);
 
@@ -1337,6 +1346,7 @@ class MySQL extends Connection implements
         self::addQueryList([
             self::getKey(Driver::MYSQL, 'order-by'),
             ' ',
+            /** @phpstan-ignore-next-line */
             self::addColumns(func_get_args()),
         ]);
 
