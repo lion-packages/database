@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    defaultTestSuite="All-Test"
-    testdox="false"
-    cacheResult="true"
+    bootstrap="tests/bootstrap.php"
+    backupGlobals="false"
+    backupStaticProperties="false"
+    cacheDirectory="tests/build/cache"
     colors="true"
     columns="80"
-    backupGlobals="false"
-    processIsolation="false"
-    stopOnDefect="true"
-    stopOnError="true"
-    stopOnFailure="true"
-    stopOnWarning="true"
-    bootstrap="tests/bootstrap.php"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.1/phpunit.xsd"
-    backupStaticProperties="false"
+    cacheResult="true"
+    defaultTestSuite="All-Test"
     displayDetailsOnIncompleteTests="true"
     displayDetailsOnSkippedTests="true"
     displayDetailsOnTestsThatTriggerDeprecations="true"
     displayDetailsOnTestsThatTriggerErrors="true"
     displayDetailsOnTestsThatTriggerNotices="true"
     displayDetailsOnTestsThatTriggerWarnings="true"
+    processIsolation="false"
+    stopOnDefect="true"
+    stopOnError="true"
+    stopOnFailure="true"
+    stopOnWarning="true"
+    testdox="false"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.2/phpunit.xsd"
 >
     <php>
         <env name="APP_ENV" value="testing" />
@@ -31,7 +32,7 @@
 
     <source>
         <include>
-            <directory suffix=".php">src</directory>
+            <directory suffix=".php">src/LionDatabase</directory>
         </include>
 
         <exclude>
