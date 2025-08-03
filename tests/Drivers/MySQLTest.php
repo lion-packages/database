@@ -506,13 +506,19 @@ class MySQLTest extends Test
     {
         $this->setPrivateProperty('actualCode', '');
 
-        $this->assertInstanceOf(MySQL::class, $this->mysql->selectExists(function () use ($table): void {
-            $this->mysql
-                ->table($table)
-                ->select();
-        }));
+        $this->assertInstanceOf(
+            MySQL::class,
+            $this->mysql->selectExists(function () use ($table): void {
+                $this->mysql
+                    ->table($table)
+                    ->select(1)
+                    ->where('id')
+                        /** @phpstan-ignore-next-line */
+                        ->equalTo(1);
+            })->as('count')
+        );
 
-        $this->assertSame("SELECT EXISTS ( SELECT * FROM {$table} )", $this->getQuery());
+        $this->assertSame("SELECT EXISTS ( SELECT 1 FROM {$table} WHERE id = ? ) AS count", $this->getQuery());
     }
 
     #[Testing]
