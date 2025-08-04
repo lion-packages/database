@@ -151,9 +151,7 @@ class MySQL extends Connection implements
             self::getKey(Driver::MYSQL, 'select-exists'),
         ]);
 
-        self::groupQuery(function () use ($callable): void {
-            $callable();
-        });
+        self::groupQuery($callable);
 
         return new self();
     }
