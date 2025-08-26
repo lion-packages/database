@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Lion\Database\Traits\Drivers;
 
 /**
- * Declare the lessThan method of the interface
- *
- * @package Lion\Database\Traits\Drivers
+ * Declare the lessThan method of the interface.
  */
 trait LessThanInterfaceTrait
 {
     /**
      * {@inheritDoc}
      */
-    public static function lessThan(mixed $columnOrValue, mixed $value = null): self
-    {
+    public static function lessThan(
+        string|int|float|bool|null $columnOrValue,
+        string|int|float|bool|null $value = null
+    ): self {
         if (null === $value) {
             if (self::$isSchema && self::$enableInsert) {
                 self::addQueryList([

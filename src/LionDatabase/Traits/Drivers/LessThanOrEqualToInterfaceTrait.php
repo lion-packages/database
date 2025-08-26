@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Lion\Database\Traits\Drivers;
 
 /**
- * Declare the lessThanOrEqualTo method of the interface
- *
- * @package Lion\Database\Traits\Drivers
+ * Declare the lessThanOrEqualTo method of the interface.
  */
 trait LessThanOrEqualToInterfaceTrait
 {
     /**
      * {@inheritDoc}
      */
-    public static function lessThanOrEqualTo(mixed $columnOrValue, mixed $value = null): self
-    {
+    public static function lessThanOrEqualTo(
+        string|int|float|bool|null $columnOrValue,
+        string|int|float|bool|null $value = null
+    ): self {
         if (null === $value) {
             if (self::$isSchema && self::$enableInsert) {
                 self::addQueryList([

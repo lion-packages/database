@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use Exception;
+use InvalidArgumentException;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL;
 use Lion\Database\Drivers\PostgreSQL;
@@ -139,9 +140,9 @@ class DriverTest extends Test
     #[Testing]
     public function runOptionDefault(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('The defined driver does not exist');
+        $this->expectExceptionMessage('The defined driver does not exist.');
 
         Driver::run([
             'default' => DATABASE_NAME_CONNECTION,
