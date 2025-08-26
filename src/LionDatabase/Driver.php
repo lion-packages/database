@@ -11,35 +11,33 @@ use Lion\Database\Drivers\Schema\MySQL as SchemaMySQL;
 use Lion\Database\Drivers\SQLite;
 
 /**
- * Initialize base configuration for database connection
- *
- * @package Lion\Database
+ * Initialize base configuration for database connection.
  */
 abstract class Driver
 {
     /**
-     * [Defines the MySQL driver]
+     * Defines the MySQL driver.
      *
      * @const MYSQL
      */
     public const string MYSQL = 'mysql';
 
     /**
-     * [Defines the PostgreSQL driver]
+     * Defines the PostgreSQL driver.
      *
      * @const POSTGRESQL
      */
     public const string POSTGRESQL = 'postgresql';
 
     /**
-     * [Defines the SQLite driver]
+     * Defines the SQLite driver.
      *
      * @const POSTGRESQL
      */
     public const string SQLITE = 'sqlite';
 
     /**
-     * Initialize database connections
+     * Initialize database connections.
      *
      * @param array{
      *      default: string,
@@ -52,12 +50,12 @@ abstract class Driver
      *          password?: string,
      *          options?: array<int, int>
      *      }>
-     * } $connections [List of defined connections]
+     * } $connections List of defined connections
      *
      * @return void
      *
-     * @throws InvalidArgumentException [If database initialization is not
-     * successful]
+     * @throws InvalidArgumentException If database initialization is not
+     * successful
      */
     public static function run(array $connections): void
     {
@@ -86,7 +84,7 @@ abstract class Driver
                 break;
 
             default:
-                throw new InvalidArgumentException('The defined driver does not exist', 500);
+                throw new InvalidArgumentException('The defined driver does not exist.', 500);
         }
     }
 }

@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Lion\Database\Traits\Drivers;
 
-use Closure;
-
 /**
- * Declare the equalTo method of the interface
- *
- * @package Lion\Database\Traits\Drivers
+ * Declare the equalTo method of the interface.
  */
 trait EqualToInterfaceTrait
 {
     /**
      * {@inheritDoc}
      */
-    public static function equalTo(mixed $columnOrValue, mixed $value = null): self
-    {
+    public static function equalTo(
+        string|int|float|bool|null $columnOrValue,
+        string|int|float|bool|null $value = null
+    ): self {
         if (null === $value) {
             if (self::$isSchema && self::$enableInsert) {
                 self::addQueryList([

@@ -301,8 +301,9 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->dropTable($table)->execute());
     }
 
-    #[DataProvider('createStoreProcedureProvider')]
-    public function testCreateStoreProcedure(string $table, string $storeProcedure): void
+    #[Testing]
+    #[DataProvider('createStoredProcedureProvider')]
+    public function createStoreProcedure(string $table, string $storeProcedure): void
     {
         $this->assertResponse(
             $this->mysql
@@ -319,7 +320,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(DATABASE_NAME_MYSQL)
-                ->createStoreProcedure($storeProcedure, function () {
+                ->createStoredProcedure($storeProcedure, function () {
                     $this->mysql
                         ->in()->int('_num')
                         ->in()->int('_idroles');
@@ -337,7 +338,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(DATABASE_NAME_MYSQL)
-                ->createStoreProcedure("update_{$storeProcedure}", function () {
+                ->createStoredProcedure("update_{$storeProcedure}", function () {
                     $this->mysql
                         ->in()->int('_num')
                         ->in()->int('_idroles');
@@ -374,7 +375,7 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(DATABASE_NAME_MYSQL)
-                ->createStoreProcedure($storeProcedure, function () {
+                ->createStoredProcedure($storeProcedure, function () {
                     $this->mysql
                         ->in()->int('_num')
                         ->in()->int('_idroles');

@@ -249,7 +249,7 @@ trait MySQLSchemaProviderTrait
      *     storeProcedure: string
      * }>
      */
-    public static function createStoreProcedureProvider(): array
+    public static function createStoredProcedureProvider(): array
     {
         return [
             [
@@ -774,6 +774,21 @@ trait MySQLSchemaProviderTrait
                             'default' => true,
                             'default-value' => [
                                 'root',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'table' => 'users',
+                'column' => 'users_username',
+                'default' => null,
+                'configColumn' => [
+                    'users' => [
+                        'users_username' => [
+                            'default' => true,
+                            'default-value' => [
+                                null,
                             ],
                         ],
                     ],
