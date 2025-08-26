@@ -453,11 +453,11 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     /**
      * Add the DEFAULT statement to the current query.
      *
-     * @param mixed|null $default [¿Default value.
+     * @param string|int|float|bool|null $default Default value.
      *
      * @return self
      */
-    public static function default(mixed $default = null): self
+    public static function default(string|int|float|bool|null $default = null): self
     {
         if (!self::$columns[self::$table][self::$actualColumn]['default']) {
             self::$columns[self::$table][self::$actualColumn]['default'] = true;
