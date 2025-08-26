@@ -414,7 +414,7 @@ class StringFactory
                     $strColumns .= self::getKey(Driver::MYSQL, 'auto-increment');
                 }
 
-                if ($config['default'] && !empty($config['default-value'])) {
+                if ($config['default']) {
                     for ($i = 0; $i < count($config['default-value']); $i++) {
                         if (0 === $i) {
                             $strColumns .= self::getKey(Driver::MYSQL, 'default');

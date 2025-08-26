@@ -19,26 +19,24 @@ use PDOException;
 use stdClass;
 
 /**
- * Provides methods to perform direct operations on the MySQL database structure
+ * Provides methods to perform direct operations on the MySQL database structure.
  *
  * Key Features:
  *
- * * Schema management: Allows you to create, modify and delete database schemas
+ * * Schema management: Allows you to create, modify and delete database schemas.
  * * Table creation: Facilitates the creation of new tables in the database,
- * specifying columns, data types and restrictions
+ * specifying columns, data types and restrictions.
  * * Table modification: Allows you to modify the structure of existing tables,
- * adding, modifying or eliminating columns and restrictions
- * * Table Deletion: Provides methods to safely delete tables from the database
+ * adding, modifying or eliminating columns and restrictions.
+ * * Table Deletion: Provides methods to safely delete tables from the database.
  * * Indexing: Facilitates the creation and deletion of indexes on tables to
- * improve query performance
+ * improve query performance.
  * * Management of primary and foreign keys: Allows you to define and modify
- * primary and foreign keys in the tables
+ * primary and foreign keys in the tables.
  *
  * This class provides a convenient interface to interact directly with the
  * MySQL database structure, making it easier to manage and manipulate it from
- * the application
- *
- * @package Lion\Database\Drivers\Schema
+ * the application.
  */
 class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterface, GetQueryStringInterface
 {
@@ -47,8 +45,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     use RunInterfaceTrait;
 
     /**
-     * [Enable the configuration of the properties to implement the IN
-     * statement]
+     * Enable the configuration of the properties to implement the IN statement.
      *
      * @var bool $in
      */
@@ -77,13 +74,13 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     }
 
     /**
-     * Generate the query to create a database
+     * Generate the query to create a database.
      *
-     * @param string $database [Database name]
+     * @param string $database Database name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function createDatabase(string $database): MySQL
+    public static function createDatabase(string $database): self
     {
         self::addNewQueryList([
             self::getKey(Driver::MYSQL, 'create'),
@@ -94,17 +91,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             " `{$database}`"
         ]);
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Generate the query to delete a database
+     * Generate the query to delete a database.
      *
-     * @param string $database [Database name]
+     * @param string $database Database name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function dropDatabase(string $database): MySQL
+    public static function dropDatabase(string $database): self
     {
         self::addNewQueryList([
             self::getKey(Driver::MYSQL, 'use'),
@@ -114,18 +111,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             " `{$database}`"
         ]);
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Generate the query to create a table
+     * Generate the query to create a table.
      *
-     * @param string $table [Table name]
-     * @param Closure $tableBody [Table body]
+     * @param string $table Table name.
+     * @param Closure $tableBody Table body.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function createTable(string $table, Closure $tableBody): MySQL
+    public static function createTable(string $table, Closure $tableBody): self
     {
         self::$table = $table;
 
@@ -152,17 +149,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::buildTable();
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Delete a table from the database
+     * Delete a table from the database.
      *
-     * @param string $table [Table name]
+     * @param string $table Table name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function dropTable(string $table): MySQL
+    public static function dropTable(string $table): self
     {
         self::addNewQueryList([
             self::getKey(Driver::MYSQL, 'use'),
@@ -172,15 +169,15 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             ' ' . self::$dbname . ".{$table};",
         ]);
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Dropping tables from the database
+     * Dropping tables from the database.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function dropTables(): MySQL
+    public static function dropTables(): self
     {
         self::addNewQueryList([
             self::getKey(Driver::MYSQL, 'use'),
@@ -196,19 +193,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             'SET FOREIGN_KEY_CHECKS = 1;',
         ]);
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Empty a database table
+     * Empty a database table.
      *
-     * @param string $table [Table name]
-     * @param bool $enableForeignKeyChecks [defines whether to verify foreign
-     * keys]
+     * @param string $table Table name.
+     * @param bool $enableForeignKeyChecks defines whether to verify foreign keys.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function truncateTable(string $table, bool $enableForeignKeyChecks = false): MySQL
+    public static function truncateTable(string $table, bool $enableForeignKeyChecks = false): self
     {
         if (!$enableForeignKeyChecks) {
             self::addNewQueryList([
@@ -226,23 +222,20 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             ]);
         }
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Create a stored procedure
+     * Create a stored procedure.
      *
-     * @param string $storedProcedure [Stored procedure]
-     * @param Closure $storeProcedureParams [Parameters]
-     * @param Closure $storeProcedureBegin [Stored Procedure SQL Query]
+     * @param string $storedProcedure Stored procedure.
+     * @param Closure $params Parameters.
+     * @param Closure $begin Stored Procedure SQL Query.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function createStoreProcedure(
-        string $storedProcedure,
-        Closure $storeProcedureParams,
-        Closure $storeProcedureBegin
-    ): MySQL {
+    public static function createStoredProcedure(string $storedProcedure, Closure $params, Closure $begin): self
+    {
         self::$isProcedure = true;
 
         self::$table = $storedProcedure;
@@ -260,15 +253,16 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             " `{$storedProcedure}` (--REPLACE-PARAMS--)",
         ]);
 
-        $storeProcedureParams();
+        $params();
 
         self::buildTable();
 
-        self::addQueryList([self::getKey(Driver::MYSQL, 'begin')]);
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'begin'),
+        ]);
 
-        $storeProcedureBegin(
-            (new DriverMySQL())
-                ->run(self::$connections)
+        $begin(
+            DriverMySQL::run(self::$connections)
                 ->isSchema()
                 ->enableInsert(true)
         );
@@ -279,17 +273,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             ';',
         ]);
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Delete a stored procedure
+     * Delete a stored procedure.
      *
-     * @param string $storedProcedure [Stored procedure]
+     * @param string $storedProcedure Stored procedure.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function dropStoreProcedure(string $storedProcedure): MYSQL
+    public static function dropStoreProcedure(string $storedProcedure): self
     {
         self::addNewQueryList([
             self::getKey(Driver::MYSQL, 'use'),
@@ -301,18 +295,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             " `{$storedProcedure}`;"
         ]);
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Create a view
+     * Create a view.
      *
-     * @param string $view [View name]
-     * @param Closure $viewBody [View body]
+     * @param string $view View name.
+     * @param Closure $viewBody View body.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function createView(string $view, Closure $viewBody): MySQL
+    public static function createView(string $view, Closure $viewBody): self
     {
         self::addNewQueryList([
             self::getKey(Driver::MYSQL, 'use'),
@@ -325,22 +319,23 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             self::getKey(Driver::MYSQL, 'as')
         ]);
 
-        $viewBody((new DriverMySQL())
-            ->run(self::$connections)
-            ->isSchema()
-            ->enableInsert(true));
+        $viewBody(
+            DriverMySQL::run(self::$connections)
+                ->isSchema()
+                ->enableInsert(true)
+        );
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Delete a view
+     * Delete a view.
      *
-     * @param string $view [View name]
+     * @param string $view View name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function dropView(string $view): MySQL
+    public static function dropView(string $view): self
     {
         self::addNewQueryList([
             self::getKey(Driver::MYSQL, 'use'),
@@ -352,27 +347,27 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             " `{$view}`;"
         ]);
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the IN statement to the current query
+     * Add the IN statement to the current query.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function in(): MySQL
+    public static function in(): self
     {
         self::$in = true;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the PRIMARY KEY statement to the current query
+     * Add the PRIMARY KEY statement to the current query.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function primaryKey(): MySQL
+    public static function primaryKey(): self
     {
         self::$columns[self::$table][self::$actualColumn]['primary'] = true;
 
@@ -382,67 +377,67 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             self::getKey(Driver::MYSQL, 'primary-key')
         );
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the AUTO INCREMENT statement to the current query
+     * Add the AUTO INCREMENT statement to the current query.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function autoIncrement(): MySQL
+    public static function autoIncrement(): self
     {
         self::$columns[self::$table][self::$actualColumn]['auto-increment'] = true;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the NOT NULL statement to the current query
+     * Add the NOT NULL statement to the current query.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function notNull(): MySQL
+    public static function notNull(): self
     {
         self::$columns[self::$table][self::$actualColumn]['null'] = false;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the NULL statement to the current query
+     * Add the NULL statement to the current query.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function null(): MySQL
+    public static function null(): self
     {
         self::$columns[self::$table][self::$actualColumn]['null'] = true;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the COMMENT statement to the current query
+     * Add the COMMENT statement to the current query.
      *
-     * @param string $comment [Comment description]
+     * @param string $comment Comment description.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function comment(string $comment): MySQL
+    public static function comment(string $comment): self
     {
         self::$columns[self::$table][self::$actualColumn]['comment'] = true;
 
         self::$columns[self::$table][self::$actualColumn]['comment-description'] = $comment;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the UNIQUE statement to the current query
+     * Add the UNIQUE statement to the current query.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function unique(): MySQL
+    public static function unique(): self
     {
         $unique = self::getKey(Driver::MYSQL, 'unique') . self::getKey(Driver::MYSQL, 'index');
 
@@ -452,17 +447,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['indexes'][] = $unique;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the DEFAULT statement to the current query
+     * Add the DEFAULT statement to the current query.
      *
-     * @param mixed|null $default [Default value]
+     * @param mixed|null $default [¿Default value.
      *
-     * @return static
+     * @return self
      */
-    public static function default(mixed $default = null): static
+    public static function default(mixed $default = null): self
     {
         if (!self::$columns[self::$table][self::$actualColumn]['default']) {
             self::$columns[self::$table][self::$actualColumn]['default'] = true;
@@ -470,18 +465,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['default-value'][] = $default;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the FOREIGN statement to the current query
+     * Add the FOREIGN statement to the current query.
      *
-     * @param string $table [Table name]
-     * @param string $column [Reference column]
+     * @param string $table Table name.
+     * @param string $column Reference column.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function foreign(string $table, string $column): MySQL
+    public static function foreign(string $table, string $column): self
     {
         $relationColumn = self::$table . '_' . self::$actualColumn . '_FK';
 
@@ -495,18 +490,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['foreign']['constraint'] = $constraint;
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the INT statement to the current query
+     * Add the INT statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int|null $length [Length]
+     * @param string $name Column name.
+     * @param int|null $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function int(string $name, ?int $length = null): MySQL
+    public static function int(string $name, ?int $length = null): self
     {
         $column = '';
 
@@ -540,18 +535,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the BIGINT statement to the current query
+     * Add the BIGINT statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int|null $length [Length]
+     * @param string $name Column name.
+     * @param int|null $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function bigInt(string $name, ?int $length = null): MySQL
+    public static function bigInt(string $name, ?int $length = null): self
     {
         self::$actualColumn = $name;
 
@@ -583,15 +578,15 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the DECIMAL statement to the current query
+     * Add the DECIMAL statement to the current query.
      *
-     * @param string $columnName Column name
-     * @param int|null $digits Leftover Digits
-     * @param int|null $bytes Number of Bytes
+     * @param string $columnName Column name.
+     * @param int|null $digits Leftover Digits.
+     * @param int|null $bytes Number of Bytes.
      *
      * @return self
      *
@@ -633,13 +628,13 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     }
 
     /**
-     * Add the DOUBLE statement to the current query
+     * Add the DOUBLE statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function double(string $name): MySQL
+    public static function double(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'double');
 
@@ -667,17 +662,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the FLOAT statement to the current query
+     * Add the FLOAT statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function float(string $name): MySQL
+    public static function float(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'float');
 
@@ -705,18 +700,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the MEDIUMINT statement to the current query
+     * Add the MEDIUMINT statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $name Column name.
+     * @param int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function mediumInt(string $name, int $length): MySQL
+    public static function mediumInt(string $name, int $length): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'mediumint'));
 
@@ -744,17 +739,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the REAL statement to the current query
+     * Add the REAL statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function real(string $name): MySQL
+    public static function real(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'real');
 
@@ -782,18 +777,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the SMALLINT statement to the current query
+     * Add the SMALLINT statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $name Column name.
+     * @param int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function smallInt(string $name, int $length): MySQL
+    public static function smallInt(string $name, int $length): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'smallint'));
 
@@ -821,18 +816,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the TINYINT statement to the current query
+     * Add the TINYINT statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $name Column name.
+     * @param int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function tinyInt(string $name, int $length): MySQL
+    public static function tinyInt(string $name, int $length): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'tinyint'));
 
@@ -860,17 +855,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the BLOB statement to the current query
+     * Add the BLOB statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function blob(string $name): MySQL
+    public static function blob(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'blob');
 
@@ -898,18 +893,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the VARBINARY statement to the current query
+     * Add the VARBINARY statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param string|int $length [Length]
+     * @param string $name Column name.
+     * @param string|int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function varBinary(string $name, string|int $length = 'MAX'): MySQL
+    public static function varBinary(string $name, string|int $length = 'MAX'): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varbinary'));
 
@@ -937,18 +932,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the CHAR statement to the current query
+     * Add the CHAR statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $name Column name.
+     * @param int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function char(string $name, int $length): MySQL
+    public static function char(string $name, int $length): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'char'));
 
@@ -976,17 +971,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the JSON statement to the current query
+     * Add the JSON statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function json(string $name): MySQL
+    public static function json(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'json');
 
@@ -1014,18 +1009,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the NCHAR statement to the current query
+     * Add the NCHAR statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $name Column name.
+     * @param int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function nchar(string $name, int $length): MySQL
+    public static function nchar(string $name, int $length): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nchar'));
 
@@ -1053,18 +1048,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the NVARCHAR statement to the current query
+     * Add the NVARCHAR statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $name Column name.
+     * @param int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function nvarchar(string $name, int $length): MySQL
+    public static function nvarchar(string $name, int $length): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'nvarchar'));
 
@@ -1092,18 +1087,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the VARCHAR statement to the current query
+     * Add the VARCHAR statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param int $length [Length]
+     * @param string $name Column name.
+     * @param int $length Length.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function varchar(string $name, int $length): MySQL
+    public static function varchar(string $name, int $length): self
     {
         $column = str_replace('?', (string) $length, self::getKey(Driver::MYSQL, 'varchar'));
 
@@ -1131,17 +1126,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the LONGTEXT statement to the current query
+     * Add the LONGTEXT statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function longText(string $name): MySQL
+    public static function longText(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'longtext');
 
@@ -1169,17 +1164,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the MEDIUMTEXT statement to the current query
+     * Add the MEDIUMTEXT statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function mediumText(string $name): MySQL
+    public static function mediumText(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'mediumtext');
 
@@ -1207,13 +1202,13 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the TEXT statement to the current query
+     * Add the TEXT statement to the current query.
      *
-     * @param string $columnName Column name
+     * @param string $columnName Column name.
      *
      * @return self
      *
@@ -1251,13 +1246,13 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     }
 
     /**
-     * Add the TINYTEXT statement to the current query
+     * Add the TINYTEXT statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function tinyText(string $name): MySQL
+    public static function tinyText(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'tinytext');
 
@@ -1285,18 +1280,18 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the ENUM statement to the current query
+     * Add the ENUM statement to the current query.
      *
-     * @param string $name [Column name]
-     * @param array<int, string> $options [Options]
+     * @param string $name Column name.
+     * @param array<int, string> $options Options.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function enum(string $name, array $options): MySQL
+    public static function enum(string $name, array $options): self
     {
         $split = array_map(fn ($op) => "'{$op}'", $options);
 
@@ -1326,17 +1321,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the DATE statement to the current query
+     * Add the DATE statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function date(string $name): MySQL
+    public static function date(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'date');
 
@@ -1364,17 +1359,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the TIME statement to the current query
+     * Add the TIME statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function time(string $name): MySQL
+    public static function time(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'time');
 
@@ -1402,17 +1397,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the TIMESTAMP statement to the current query
+     * Add the TIMESTAMP statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function timeStamp(string $name): MySQL
+    public static function timeStamp(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'timestamp');
 
@@ -1440,17 +1435,17 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Add the DATETIME statement to the current query
+     * Add the DATETIME statement to the current query.
      *
-     * @param string $name [Column name]
+     * @param string $name Column name.
      *
-     * @return MySQL
+     * @return self
      */
-    public static function dateTime(string $name): MySQL
+    public static function dateTime(string $name): self
     {
         $column = self::getKey(Driver::MYSQL, 'datetime');
 
@@ -1478,13 +1473,13 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
 
         self::$columns[self::$table][self::$actualColumn]['column'] = "{$name}{$column}";
 
-        return new static();
+        return new self();
     }
 
     /**
-     * Nests the ON UPDATE statement in the current query
+     * Nests the ON UPDATE statement in the current query.
      *
-     * @param string $onUpdate [Nested parameter in ON UPDATE]
+     * @param string $onUpdate Nested parameter in ON UPDATE.
      *
      * @return string
      */
