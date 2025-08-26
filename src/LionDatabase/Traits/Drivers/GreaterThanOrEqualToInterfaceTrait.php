@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Lion\Database\Traits\Drivers;
 
 /**
- * Declare the greaterThanOrEqualTo method of the interface
- *
- * @package Lion\Database\Traits\Drivers
+ * Declare the greaterThanOrEqualTo method of the interface.
  */
 trait GreaterThanOrEqualToInterfaceTrait
 {
     /**
      * {@inheritDoc}
      */
-    public static function greaterThanOrEqualTo(mixed $columnOrValue, mixed $value = null): self
-    {
+    public static function greaterThanOrEqualTo(
+        string|int|float|bool|null $columnOrValue,
+        string|int|float|bool|null $value = null
+    ): self {
         if (null === $value) {
             if (self::$isSchema && self::$enableInsert) {
                 self::addQueryList([
