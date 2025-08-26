@@ -40,5 +40,4 @@ interface LessThanOrEqualToInterface
         string|int|float|bool|null $columnOrValue,
         string|int|float|bool|null $value = null
     ): self;
-
 }
