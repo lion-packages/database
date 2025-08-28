@@ -13,6 +13,7 @@ use PDOException;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
+use PHPUnit\Framework\Attributes\TestWith;
 use ReflectionException;
 use stdClass;
 use Tests\Provider\ConnectionProviderTrait;
@@ -249,6 +250,30 @@ class ConnectionTest extends Test
         ]);
 
         $this->assertSame(DATABASE_NAME_CONNECTION, $this->connection::getDefaultConnectionName());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[TestWith(['connectionName' => 'local_test_1'], 'case-0')]
+    #[TestWith(['connectionName' => 'local_test_2'], 'case-1')]
+    #[TestWith(['connectionName' => 'local_test_3'], 'case-2')]
+    #[TestWith(['connectionName' => 'local_test_4'], 'case-3')]
+    public function setDefaultConnectionName(string $connectionName): void
+    {
+        $this->setPrivateProperty('connections', [
+            'default' => DATABASE_NAME_CONNECTION,
+            'connections' => [
+                DATABASE_NAME_CONNECTION => CONNECTION_DATA_CONNECTION,
+            ],
+        ]);
+
+        $this->assertSame(DATABASE_NAME_CONNECTION, $this->connection::getDefaultConnectionName());
+
+        $this->connection->setDefaultConnectionName($connectionName);
+
+        $this->assertSame($connectionName, $this->connection::getDefaultConnectionName());
     }
 
     /**

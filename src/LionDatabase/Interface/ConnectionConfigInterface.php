@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace Lion\Database\Interface;
 
 /**
- * Defines the connection data configuration of the databases
- *
- * @package Lion\Database\Interface
+ * Defines the configuration for database connections.
  */
 interface ConnectionConfigInterface
 {
     /**
-     * Add a connection
+     * Adds a new database connection.
      *
-     * @param string $connectionName [Connection name]
+     * @param string $connectionName Name of the connection.
      * @param array{
      *     type: string,
      *     host?: string,
@@ -23,23 +21,23 @@ interface ConnectionConfigInterface
      *     user?: string,
      *     password?: string,
      *     options?: array<int, int>
-     * } $options [Connection configuration data]
+     * } $options Connection configuration data.
      *
      * @return void
      */
     public static function addConnection(string $connectionName, array $options): void;
 
     /**
-     * Remove a connection
+     * Removes an existing database connection.
      *
-     * @param string $connectionName [Connection name]
+     * @param string $connectionName Name of the connection to remove.
      *
      * @return void
      */
     public static function removeConnection(string $connectionName): void;
 
     /**
-     * Gets all available connections
+     * Returns all registered database connections.
      *
      * @return array<string, array{
      *     type: string,
@@ -54,9 +52,18 @@ interface ConnectionConfigInterface
     public static function getConnections(): array;
 
     /**
-     * Gets the name of the default connection
+     * Returns the name of the default database connection.
      *
      * @return string
      */
     public static function getDefaultConnectionName(): string;
+
+    /**
+     * Sets the default database connection name.
+     *
+     * @param string $connectionName Name of the connection to set as default.
+     *
+     * @return void
+     */
+    public static function setDefaultConnectionName(string $connectionName): void;
 }
