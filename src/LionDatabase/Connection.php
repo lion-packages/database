@@ -15,14 +15,12 @@ use PDOStatement;
 use stdClass;
 
 /**
- * Class that manages the connection to databases on different drivers
- *
- * @package Lion\Database
+ * Class that manages the connection to databases on different drivers.
  */
 abstract class Connection extends StringFactory implements ConnectionConfigInterface
 {
     /**
-     * [Default settings for database connections]
+     * Default settings for database connections.
      *
      * @const DEFAULT_DATABASE_OPTIONS
      */
@@ -32,21 +30,21 @@ abstract class Connection extends StringFactory implements ConnectionConfigInter
     ];
 
     /**
-     * [PDO driver object to make connections to databases]
+     * PDO driver object to make connections to databases.
      *
      * @var PDO $conn
      */
     protected static PDO $conn;
 
     /**
-     * [PDO declaration object to perform database processes]
+     * PDO declaration object to perform database processes.
      *
      * @var PDOStatement $stmt
      */
     protected static PDOStatement $stmt;
 
     /**
-     * [List of database connections]
+     * List of database connections.
      *
      * @var array<non-empty-string, PDO> $databaseInstances
      */
@@ -82,6 +80,14 @@ abstract class Connection extends StringFactory implements ConnectionConfigInter
     public static function getDefaultConnectionName(): string
     {
         return self::$connections['default'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function setDefaultConnectionName(string $connectionName): void
+    {
+        self::$connections['default'] = $connectionName;
     }
 
     /**
@@ -172,6 +178,8 @@ abstract class Connection extends StringFactory implements ConnectionConfigInter
      * @param string $code [Current unique code]
      *
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     protected static function bindValue(string $code): void
     {
