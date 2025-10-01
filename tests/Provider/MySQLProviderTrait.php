@@ -511,6 +511,40 @@ trait MySQLProviderTrait
      *     return: string
      * }>
      */
+    public static function selectMultipleProvider(): array
+    {
+        return [
+            [
+                'function' => 'table',
+                'value' => 'users',
+                'columns' => [
+                    'users_name',
+                    'users_last_name',
+                    'users_email',
+                ],
+                'return' => 'SELECT users_name, users_last_name, users_email FROM users; SELECT users_name, users_last_name, users_email FROM users', // phpcs:ignore
+            ],
+            [
+                'function' => 'view',
+                'value' => 'read_users',
+                'columns' => [
+                    'users_name',
+                    'users_last_name',
+                    'users_email',
+                ],
+                'return' => 'SELECT users_name, users_last_name, users_email FROM read_users; SELECT users_name, users_last_name, users_email FROM read_users', // phpcs:ignore
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{
+     *     function: string,
+     *     value: string,
+     *     columns: array<int, string>,
+     *     return: string
+     * }>
+     */
     public static function selectDistinctProvider(): array
     {
         return [

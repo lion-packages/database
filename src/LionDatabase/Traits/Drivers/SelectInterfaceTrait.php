@@ -8,9 +8,7 @@ use Lion\Database\Driver;
 use PDO;
 
 /**
- * Declare the select method of the interface
- *
- * @package Lion\Database\Traits\Drivers
+ * Declare the select method of the interface.
  */
 trait SelectInterfaceTrait
 {
@@ -19,9 +17,7 @@ trait SelectInterfaceTrait
      */
     public static function select(): self
     {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
+        self::$actualCode = uniqid('code-');
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
 

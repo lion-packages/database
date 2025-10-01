@@ -434,6 +434,55 @@ class MySQLTest extends Test
     }
 
     #[Testing]
+    public function getMultiple(): void
+    {
+        $this->mysql
+            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->use(DATABASE_NAME_MYSQL)->closeQuery()
+            ->drop()->table()->ifExists('roles')->closeQuery()
+            ->create()->table()->addQuery('roles')
+            ->groupQuery(function (): void {
+                $this->mysql
+                    ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
+                    ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
+                    ->primaryKey('idroles');
+            })
+            ->engine('INNODB')
+            ->default()->character()->set(MySQLConstants::UTF8MB4)
+            ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
+            ->closeQuery()
+            ->execute();
+
+        $this->mysql
+            ->table('roles')
+            ->insert([
+                'roles_name' => ADMINISTRATOR_MYSQL,
+            ])
+            ->execute();
+
+        $validateRowResponse = $this->mysql
+            ->table('roles')
+            ->select('roles_name')
+            ->where()->equalTo('roles_name', ADMINISTRATOR_MYSQL)
+            ->closeQuery()
+            ->table('roles')
+            ->select('roles_name')
+            ->where()->equalTo('roles_name', ADMINISTRATOR_MYSQL)
+            ->get();
+
+        $this->assertIsArray($validateRowResponse);
+        $this->assertNotEmpty($validateRowResponse);
+        $this->assertArrayHasKey(0, $validateRowResponse);
+        $this->assertArrayHasKey(1, $validateRowResponse);
+        $this->assertInstanceOf(stdClass::class, $validateRowResponse[0]);
+        $this->assertInstanceOf(stdClass::class, $validateRowResponse[1]);
+        $this->assertObjectHasProperty('roles_name', $validateRowResponse[0]);
+        $this->assertObjectHasProperty('roles_name', $validateRowResponse[1]);
+        $this->assertSame(ADMINISTRATOR_MYSQL, $validateRowResponse[0]->roles_name);
+        $this->assertSame(ADMINISTRATOR_MYSQL, $validateRowResponse[1]->roles_name);
+    }
+
+    #[Testing]
     public function getAll(): void
     {
         $this->mysql
@@ -465,6 +514,64 @@ class MySQLTest extends Test
         foreach ($validateRowResponse as $row) {
             $this->assertObjectHasProperty('roles_name', $row);
             $this->assertContains($row->roles_name, [ADMINISTRATOR_MYSQL, (ADMINISTRATOR_MYSQL . '-2')]);
+        }
+    }
+
+    #[Testing]
+    public function getAllMultiple(): void
+    {
+        $this->mysql
+            ->run(CONNECTIONS_MYSQL)->isSchema()->enableInsert(true)
+            ->use(DATABASE_NAME_MYSQL)->closeQuery()
+            ->drop()->table()->ifExists('roles')->closeQuery()
+            ->create()->table()->addQuery('roles')
+            ->groupQuery(function () {
+                $this->mysql
+                    ->int('idroles')->notNull()->autoIncrement()->closeQuery(',')
+                    ->varchar('roles_name', 25)->notNull()->comment('roles name')->closeQuery(',')
+                    ->primaryKey('idroles');
+            })
+            ->engine('INNODB')
+            ->default()->character()->set(MySQLConstants::UTF8MB4)
+            ->collate(MySQLConstants::UTF8MB4_SPANISH_CI)
+            ->closeQuery()
+            ->execute();
+
+        $this->mysql
+            ->table('roles')
+            ->bulk(['roles_name'], [
+                [ADMINISTRATOR_MYSQL],
+                [ADMINISTRATOR_MYSQL . '-2']
+            ])
+            ->execute();
+
+        $validateRowResponse = $this->mysql
+            ->table('roles')
+            ->select('roles_name')
+            ->closeQuery()
+            ->table('roles')
+            ->select('roles_name')
+            ->getAll();
+
+        $this->assertIsArray($validateRowResponse);
+        $this->assertNotEmpty($validateRowResponse);
+        $this->assertArrayHasKey(0, $validateRowResponse);
+        $this->assertArrayHasKey(1, $validateRowResponse);
+        $this->assertIsArray($validateRowResponse[0]);
+        $this->assertNotEmpty($validateRowResponse[0]);
+        $this->assertIsArray($validateRowResponse[1]);
+        $this->assertNotEmpty($validateRowResponse[1]);
+
+        foreach ($validateRowResponse as $rows) {
+            foreach ($rows as $row) {
+                $this->assertInstanceOf(stdClass::class, $row);
+                $this->assertObjectHasProperty('roles_name', $row);
+
+                $this->assertContains($row->roles_name, [
+                    ADMINISTRATOR_MYSQL,
+                    (ADMINISTRATOR_MYSQL . '-2')
+                ]);
+            }
         }
     }
 
@@ -991,8 +1098,12 @@ class MySQLTest extends Test
         $this->assertSame('COLUMNS', $this->getQuery());
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
     #[DataProvider('queryProvider')]
-    public function testQuery(string $query): void
+    public function query(string $query): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->query($query));
         $this->assertMessage('Execution finished');
@@ -1004,7 +1115,7 @@ class MySQLTest extends Test
      */
     #[Testing]
     #[DataProvider('bulkProvider')]
-    public function testBulk(bool $enable, string $table, array $columns, array $rows, string $return): void
+    public function bulk(bool $enable, string $table, array $columns, array $rows, string $return): void
     {
         $this->setPrivateProperty('isSchema', $enable);
 
@@ -1014,7 +1125,6 @@ class MySQLTest extends Test
             ->table($table)
             ->bulk($columns, $rows);
 
-        $this->assertInstanceOf(MySQL::class, $this->mysql);
         $this->assertAddRows(array_merge(...$rows));
         $this->assertSame($return, $this->getQuery());
         $this->assertMessage('Execution finished');
@@ -1101,6 +1211,8 @@ class MySQLTest extends Test
     }
 
     /**
+     * @param array<int, string> $columns
+     *
      * @throws ReflectionException
      */
     #[Testing]
@@ -1109,11 +1221,40 @@ class MySQLTest extends Test
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 
-        $this->assertInstanceOf(MySQL::class, $this->mysql->$function($value)->select(...$columns));
+        $this->assertInstanceOf(
+            MySQL::class,
+            $this->mysql
+                ->$function($value)
+                ->select(...$columns)
+        );
 
+        /** @var array<int, string> $fetchMode */
         $fetchMode = $this->getPrivateProperty('fetchMode');
 
-        $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$this->actualCode]);
+        /** @var string $actualCode */
+        $actualCode = $this->getPrivateProperty('actualCode');
+
+        $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$actualCode]);
+        $this->assertSame($return, $this->getQuery());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Testing]
+    #[DataProvider('selectMultipleProvider')]
+    public function selectMultiple(string $function, string $value, array $columns, string $return): void
+    {
+        $this->assertInstanceOf(
+            MySQL::class,
+            $this->mysql
+                ->run(CONNECTIONS_MYSQL)
+                ->$function($value)
+                ->select(...$columns)
+                ->closeQuery()
+                ->select(...$columns)
+        );
+
         $this->assertSame($return, $this->getQuery());
     }
 
