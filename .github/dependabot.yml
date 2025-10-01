@@ -1,10 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "composer"
+    target-branch: "11.x"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
       time: "05:15"
-      days:
-        - monday
-        - wednesday
+      timezone: "America/Bogota"
+    rebase-strategy: "auto"
