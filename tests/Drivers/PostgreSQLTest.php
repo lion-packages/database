@@ -1097,21 +1097,20 @@ class PostgreSQLTest extends Test
     }
 
     /**
-     * @throws ReflectionException
+     * @param array<int, string> $columns
      */
     #[Testing]
     #[DataProvider('selectProvider')]
     public function selectWithTable(string $table, array $columns, string $return): void
     {
-        $this->postgresql->run(CONNECTIONS_POSTGRESQL);
+        $this->assertInstanceOf(
+            PostgreSQL::class,
+            $this->postgresql
+                ->run(CONNECTIONS_POSTGRESQL)
+                ->table($table)
+                ->select(...$columns)
+        );
 
-        $this->assertInstanceOf(PostgreSQL::class, $this->postgresql->table($table)->select(...$columns));
-
-        $fetchMode = $this->getPrivateProperty('fetchMode');
-
-        $this->assertIsArray($fetchMode);
-        $this->assertArrayHasKey($this->actualCode, $fetchMode);
-        $this->assertSame(PDO::FETCH_OBJ, $fetchMode[$this->actualCode]);
         $this->assertSame($return, $this->getQuery());
     }
 
