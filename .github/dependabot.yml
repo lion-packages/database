@@ -4,8 +4,7 @@ updates:
     target-branch: "11.x"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
       time: "05:15"
       timezone: "America/Bogota"
     rebase-strategy: "auto"
