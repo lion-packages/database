@@ -133,17 +133,15 @@ class MySQL extends Connection implements
     use WhereInterfaceTrait;
 
     /**
-     * Nests the SELECT EXISTS statement in the current query
+     * Nests the SELECT EXISTS statement in the current query.
      *
-     * @param Closure $callable Nest the query in the EXISTS statement
+     * @param Closure $callable Nest the query in the EXISTS statement.
      *
      * @return self
      */
     public function selectExists(Closure $callable): self
     {
-        if (empty(self::$actualCode)) {
-            self::$actualCode = uniqid('code-');
-        }
+        self::$actualCode = uniqid('code-');
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
 
