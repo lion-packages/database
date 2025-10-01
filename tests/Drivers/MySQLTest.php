@@ -601,9 +601,6 @@ class MySQLTest extends Test
 
     # ------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * @throws ReflectionException
-     */
     #[Testing]
     #[TestWith(['table' => 'users'])]
     #[TestWith(['table' => 'roles'])]
@@ -611,21 +608,49 @@ class MySQLTest extends Test
     #[TestWith(['table' => 'products'])]
     public function selectExists(string $table): void
     {
-        $this->setPrivateProperty('actualCode', '');
-
         $this->assertInstanceOf(
             MySQL::class,
             $this->mysql->selectExists(function () use ($table): void {
                 $this->mysql
                     ->table($table)
                     ->select(1)
-                    ->where('id')
-                        /** @phpstan-ignore-next-line */
-                        ->equalTo(1);
+                    ->where('id')->equalTo(1);
             })->as('count')
         );
 
         $this->assertSame("SELECT EXISTS ( SELECT 1 FROM {$table} WHERE id = ? ) AS count", $this->getQuery());
+    }
+
+    #[Testing]
+    #[TestWith(['table' => 'users'])]
+    #[TestWith(['table' => 'roles'])]
+    #[TestWith(['table' => 'rates'])]
+    #[TestWith(['table' => 'products'])]
+    public function selectExistsMultiple(string $table): void
+    {
+        $this->assertInstanceOf(
+            MySQL::class,
+            /** @phpstan-ignore-next-line */
+            $this->mysql
+                ->selectExists(function () use ($table): void {
+                    $this->mysql
+                        ->table($table)
+                        ->select(1)
+                        ->where('id')->equalTo(1);
+                })->as('count')
+                ->closeQuery()
+                ->selectExists(function () use ($table): void {
+                    $this->mysql
+                        ->table($table)
+                        ->select(1)
+                        ->where('id')->equalTo(1);
+                })->as('count_2')
+        );
+
+        $this->assertSame(
+            "SELECT EXISTS ( SELECT 1 FROM {$table} WHERE id = ? ) AS count; SELECT EXISTS ( SELECT 1 FROM {$table} WHERE id = ? ) AS count_2", // phpcs:ignore
+            $this->getQuery()
+        );
     }
 
     #[Testing]
