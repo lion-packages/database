@@ -1,7 +1,6 @@
 version: 2
 updates:
   - package-ecosystem: "composer"
-    target-branch: "11.x"
     directory: "/"
     schedule:
       interval: "monthly"
