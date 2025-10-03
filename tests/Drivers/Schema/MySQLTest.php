@@ -181,17 +181,20 @@ class MySQLTest extends Test
         $this->assertResponse($this->mysql->connection($database)->dropDatabase($database)->execute());
     }
 
+    #[Testing]
     #[DataProvider('createTableProvider')]
-    public function testCreateTable(string $table, string $query): void
+    public function createTable(string $table, string $query): void
     {
         $this->assertIntances(
             $this->mysql
                 ->connection(DATABASE_NAME_MYSQL)
-                ->createTable($table, function () {
+                ->createTable($table, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
-                        ->int('num')->notNull()->comment('comment num')
-                        ->int('idroles')->notNull()->foreign('roles', 'idroles');
+                        ->int('num')->notNull()->comment('comment num')->default(5)
+                        ->int('idroles')->notNull()->foreign('roles', 'idroles')
+                        ->varchar('name', 25)->null()->default(null)
+                        ->tinyInt('active', 1)->notNull()->default(true);
                 })
         );
 
@@ -200,11 +203,13 @@ class MySQLTest extends Test
         $this->assertResponse(
             $this->mysql
                 ->connection(DATABASE_NAME_MYSQL)
-                ->createTable($table, function () {
+                ->createTable($table, function (): void {
                     $this->mysql
                         ->int('id')->notNull()->autoIncrement()->primaryKey()
-                        ->int('num')->notNull()->comment('comment num')
-                        ->int('idroles')->notNull()->foreign('roles', 'idroles');
+                        ->int('num')->notNull()->comment('comment num')->default(5)
+                        ->int('idroles')->notNull()->foreign('roles', 'idroles')
+                        ->varchar('name', 25)->null()->default(null)
+                        ->tinyInt('active', 1)->notNull()->default(true);
                 })
                 ->execute()
         );
