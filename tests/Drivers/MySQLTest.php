@@ -1155,10 +1155,31 @@ class MySQLTest extends Test
         $this->assertMessage('Execution finished');
     }
 
+    /**
+     * @param array<int, int>|null $params
+     * @param string $return
+     *
+     * @return void
+     */
+    #[Testing]
     #[DataProvider('inProvider')]
-    public function testIn(?array $params, string $return): void
+    public function in(?array $params, string $return): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->in($params));
+        $this->assertSame($return, $this->getQuery());
+    }
+
+    /**
+     * @param array<int, int>|null $params
+     * @param string $return
+     *
+     * @return void
+     */
+    #[Testing]
+    #[DataProvider('notInProvider')]
+    public function notIn(?array $params, string $return): void
+    {
+        $this->assertInstanceOf(MySQL::class, $this->mysql->notIn($params));
         $this->assertSame($return, $this->getQuery());
     }
 
