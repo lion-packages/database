@@ -8,6 +8,16 @@ on:
     branches:
       - main
       - 11.x
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpunit.xml'
+      - 'phpstan.neon'
+      - 'styleci.yml'
+      - '.gitignore'
+      - '.env.actions'
 
 jobs:
   install-dependencies:
