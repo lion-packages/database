@@ -420,10 +420,18 @@ class StringFactory
                             $strColumns .= self::getKey(Driver::MYSQL, 'default');
                         }
 
-                        if (in_array($config['default-value'][$i], self::IGNORED_ELEMENTS, true)) {
-                            $strColumns .= " {$config['default-value'][$i]}";
+                        $value = $config['default-value'][$i];
+
+                        if ($value === null) {
+                            $strColumns .= " NULL";
+                        } elseif (is_bool($value)) {
+                            $strColumns .= $value ? " 1" : " 0";
+                        } elseif (in_array($value, self::IGNORED_ELEMENTS, true)) {
+                            $strColumns .= " {$value}";
+                        } elseif (is_string($value)) {
+                            $strColumns .= " '{$value}'";
                         } else {
-                            $strColumns .= " '{$config['default-value'][$i]}'";
+                            $strColumns .= " {$value}";
                         }
                     }
                 }

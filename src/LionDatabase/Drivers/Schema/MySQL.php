@@ -457,7 +457,7 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
      *
      * @return self
      */
-    public static function default(string|int|float|bool|null $default = null): self
+    public static function default(string|int|float|bool|null $default): self
     {
         if (!self::$columns[self::$table][self::$actualColumn]['default']) {
             self::$columns[self::$table][self::$actualColumn]['default'] = true;
