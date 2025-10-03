@@ -9,6 +9,7 @@ on:
       - main
       - 11.x
     paths:
+      - '.github/workflows/**'
       - 'src/**'
       - 'tests/**'
       - 'composer.json'

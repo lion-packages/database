@@ -1088,26 +1088,45 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the IN statement in the current query
+     * Nests the IN statement in the current query.
      *
-     * @param array<int, mixed>|null $values List of values
+     * @param array<int, mixed>|null $values List of values.
      *
      * @return self
      */
     public static function in(?array $values = null): self
     {
+        $query = is_array($values)
+            ? str_replace('?', self::addCharacter($values), self::getKey(Driver::MYSQL, 'in'))
+            : str_replace('(?)', '', self::getKey(Driver::MYSQL, 'in'));
+
         if (is_array($values)) {
             self::addRows($values);
-
-            self::addQueryList([
-                str_replace('?', self::addCharacter($values), self::getKey(Driver::MYSQL, 'in')),
-            ]);
-        } else {
-            self::addQueryList([
-                str_replace("(?)", '', self::getKey(Driver::MYSQL, 'in')),
-            ]);
         }
 
+        self::addQueryList([$query]);
+
+        return new self();
+    }
+
+    /**
+     * Nests the NOT IN statement in the current query.
+     *
+     * @param array<int, mixed>|null $values List of values.
+     *
+     * @return self
+     */
+    public static function notIn(?array $values = null): self
+    {
+        $query = is_array($values)
+            ? str_replace('?', self::addCharacter($values), self::getKey(Driver::MYSQL, 'in'))
+            : str_replace('(?)', '', self::getKey(Driver::MYSQL, 'in'));
+
+        if (is_array($values)) {
+            self::addRows($values);
+        }
+
+        self::addQueryList([self::getKey(Driver::MYSQL, 'not'), $query]);
         return new self();
     }
 

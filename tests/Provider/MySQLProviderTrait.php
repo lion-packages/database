@@ -951,6 +951,26 @@ trait MySQLProviderTrait
 
     /**
      * @return array<int, array{
+     *     params: array<int, int>|null,
+     *     return: string
+     * }>
+     */
+    public static function notInProvider(): array
+    {
+        return [
+            [
+                'params' => null,
+                'return' => 'NOT IN',
+            ],
+            [
+                'params' => [1, 2, 3],
+                'return' => 'NOT IN(?, ?, ?)',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{
      *     name: string,
      *     length: int|string,
      *     return: string
