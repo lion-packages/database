@@ -141,7 +141,9 @@ class MySQL extends Connection implements
      */
     public function selectExists(Closure $callable): self
     {
-        self::$actualCode = uniqid('code-');
+        if (empty(self::$actualCode)) {
+            self::$actualCode = uniqid('code-');
+        }
 
         self::$fetchMode[self::$actualCode] = PDO::FETCH_OBJ;
 
