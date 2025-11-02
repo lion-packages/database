@@ -1413,35 +1413,22 @@ class MySQL extends Connection implements
     }
 
     /**
-     * Nests the JOIN statement in the current query
+     * Nests the JOIN statement in the current query.
      *
-     * @param string $table Table name
-     * @param string $valueFrom Column from
-     * @param string $valueTo Column to
-     * @param bool $withAlias Determines if the table is nested with the database
-     * name
+     * @param string $table Table name.
+     * @param string $valueFrom Column from.
+     * @param string $valueTo Column to.
      *
      * @return self
      */
-    public static function join(string $table, string $valueFrom, string $valueTo, bool $withAlias = true): self
+    public static function join(string $table, string $valueFrom, string $valueTo): self
     {
-        if ($withAlias) {
-            self::addQueryList([
-                self::getKey(Driver::MYSQL, 'join'),
-                ' ',
-                self::$dbname,
-                ".{$table}",
-                self::getKey(Driver::MYSQL, 'on'),
-                " {$valueFrom} = {$valueTo}",
-            ]);
-        } else {
-            self::addQueryList([
-                self::getKey(Driver::MYSQL, 'join'),
-                " {$table}",
-                self::getKey(Driver::MYSQL, 'on'),
-                " {$valueFrom} = {$valueTo}",
-            ]);
-        }
+        self::addQueryList([
+            self::getKey(Driver::MYSQL, 'join'),
+            " {$table}",
+            self::getKey(Driver::MYSQL, 'on'),
+            " {$valueFrom} = {$valueTo}",
+        ]);
 
         return new self();
     }
