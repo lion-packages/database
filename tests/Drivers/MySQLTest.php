@@ -1305,11 +1305,11 @@ class MySQLTest extends Test
     }
 
     #[DataProvider('joinProvider')]
-    public function testJoin(string $table, string $valueFrom, string $valueUpTo, bool $withAlias, string $return): void
+    public function testJoin(string $table, string $valueFrom, string $valueUpTo, string $return): void
     {
         $this->mysql->run(CONNECTIONS_MYSQL);
 
-        $this->assertInstanceOf(MySQL::class, $this->mysql->join($table, $valueFrom, $valueUpTo, $withAlias));
+        $this->assertInstanceOf(MySQL::class, $this->mysql->join($table, $valueFrom, $valueUpTo));
         $this->assertSame($return, $this->getQuery());
     }
 

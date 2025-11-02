@@ -722,15 +722,13 @@ trait MySQLProviderTrait
                 'table' => 'users',
                 'valueFrom' => 'idusers',
                 'valueUpTo' => 'idusers',
-                'withAlias' => true,
-                'return' => 'JOIN lion_database.users ON idusers = idusers',
+                'return' => 'JOIN users ON idusers = idusers',
             ],
             [
-                'table' => 'users',
-                'valueFrom' => 'idusers',
-                'valueUpTo' => 'idusers',
-                'withAlias' => false,
-                'return' => 'JOIN users ON idusers = idusers',
+                'table' => 'roles',
+                'valueFrom' => 'idroles',
+                'valueUpTo' => 'idroles',
+                'return' => 'JOIN roles ON idroles = idroles',
             ],
         ];
     }
