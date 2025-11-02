@@ -20,6 +20,51 @@ use stdClass;
 abstract class Connection extends StringFactory implements ConnectionConfigInterface
 {
     /**
+     * @const CONNECTION_DEFAULT
+     */
+    public const string CONNECTION_DEFAULT = 'default';
+
+    /**
+     * @const CONNECTION_CONNECTIONS
+     */
+    public const string CONNECTION_CONNECTIONS = 'connections';
+
+    /**
+     * @const CONNECTION_TYPE
+     */
+    public const string CONNECTION_TYPE = 'type';
+
+    /**
+     * @const CONNECTION_HOST
+     */
+    public const string CONNECTION_HOST = 'host';
+
+    /**
+     * @const CONNECTION_PORT
+     */
+    public const string CONNECTION_PORT = 'port';
+
+    /**
+     * @const CONNECTION_DBNAME
+     */
+    public const string CONNECTION_DBNAME = 'dbname';
+
+    /**
+     * @const CONNECTION_USER
+     */
+    public const string CONNECTION_USER = 'user';
+
+    /**
+     * @const CONNECTION_PASSWORD
+     */
+    public const string CONNECTION_PASSWORD = 'password';
+
+    /**
+     * @const CONNECTION_OPTIONS
+     */
+    public const string CONNECTION_OPTIONS = 'options';
+
+    /**
      * Default settings for database connections.
      *
      * @const DEFAULT_DATABASE_OPTIONS
