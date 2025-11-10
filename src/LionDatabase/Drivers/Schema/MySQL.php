@@ -54,9 +54,9 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
     /**
      * {@inheritdoc}
      */
-    public static function execute(): stdClass
+    public static function execute(): int|stdClass
     {
-        return parent::process(function (): stdClass {
+        return parent::process(function (): int|stdClass {
             self::prepare(self::$sql);
 
             if (!self::$stmt->execute()) {
@@ -261,10 +261,14 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             self::getKey(Driver::MYSQL, 'begin'),
         ]);
 
+        /** @var string $activeConnection */
+        $activeConnection = self::$activeConnection;
+
         $begin(
             DriverMySQL::run(self::$connections)
                 ->isSchema()
                 ->enableInsert(true)
+                ->connection($activeConnection)
         );
 
         self::addQueryList([
@@ -319,10 +323,14 @@ class MySQL extends Connection implements DatabaseConfigInterface, ExecuteInterf
             self::getKey(Driver::MYSQL, 'as')
         ]);
 
+        /** @var string $activeConnection */
+        $activeConnection = self::$activeConnection;
+
         $viewBody(
             DriverMySQL::run(self::$connections)
                 ->isSchema()
                 ->enableInsert(true)
+                ->connection($activeConnection)
         );
 
         return new self();

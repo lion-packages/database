@@ -63,19 +63,17 @@ use PDO;
 
 /**
  * Provides an interface to build SQL queries dynamically in PHP applications
- * that interact with MySQL databases
+ * that interact with MySQL databases.
  *
  * Key Features:
  *
- * * Intuitive methods: Simple methods to build SQL queries programmatically
+ * * Intuitive methods: Simple methods to build SQL queries programmatically.
  * * SQL Injection Prevention: Helps prevent SQL injection attacks by sanitizing
- * data entered in queries
+ * data entered in queries.
  * * Flexibility: Allows the construction of dynamic queries adapted to
- * different application scenarios
+ * different application scenarios.
  * * Optimization for MySQL: Designed specifically to work with MySQL,
- * guaranteeing compatibility and optimization with this DBMS
- *
- * @package Lion\Database\Drivers
+ * guaranteeing compatibility and optimization with this DBMS.
  */
 class MySQL extends Connection implements
     AndInterface,
