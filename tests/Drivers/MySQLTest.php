@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Drivers;
 
 use InvalidArgumentException;
+use Lion\Database\Connection;
 use Lion\Database\Driver;
 use Lion\Database\Drivers\MySQL;
 use Lion\Database\Helpers\Constants\MySQLConstants;
@@ -142,21 +143,22 @@ class MySQLTest extends Test
     }
 
     /**
-     * @throws ReflectionException
+     * @throws ReflectionException If the property does not exist in the reflected
+     * class.
      */
     #[Testing]
     public function runInterface(): void
     {
         $this->assertInstanceOf(MySQL::class, $this->mysql->run(CONNECTIONS_MYSQL));
 
-        $connections = $this->getPrivateProperty('connections');
+        $connections = $this->getPrivateProperty(Connection::CONNECTION_CONNECTIONS);
 
         $this->assertSame(CONNECTIONS_MYSQL, $connections);
         $this->assertSame(DATABASE_NAME_MYSQL, $this->getPrivateProperty('activeConnection'));
 
         $this->assertSame(
-            CONNECTIONS_MYSQL['connections'][DATABASE_NAME_MYSQL]['dbname'],
-            $this->getPrivateProperty('dbname')
+            CONNECTIONS_MYSQL[Connection::CONNECTION_CONNECTIONS][DATABASE_NAME_MYSQL][Connection::CONNECTION_DBNAME],
+            $this->getPrivateProperty(Connection::CONNECTION_DBNAME)
         );
     }
 
