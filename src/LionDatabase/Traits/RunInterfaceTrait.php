@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Lion\Database\Traits;
 
 use InvalidArgumentException;
+use Lion\Database\Connection;
 
 /**
- * Declare the run method of the interface
- *
- * @package Lion\Database\Traits
+ * Declare the run method of the interface.
  */
 trait RunInterfaceTrait
 {
@@ -18,20 +17,24 @@ trait RunInterfaceTrait
      */
     public static function run(array $connections): self
     {
-        if (empty($connections['default'])) {
-            throw new InvalidArgumentException('No default database defined', 500);
+        if (empty($connections[Connection::CONNECTION_DEFAULT])) {
+            throw new InvalidArgumentException('No default database defined.', 500);
         }
 
-        if (empty($connections['connections'])) {
-            throw new InvalidArgumentException('No databases have been defined', 500);
+        if (empty($connections[Connection::CONNECTION_CONNECTIONS])) {
+            throw new InvalidArgumentException('No databases have been defined.', 500);
         }
 
         self::$connections = $connections;
 
-        self::$activeConnection = self::$connections['default'];
+        self::$activeConnection = empty(self::$activeConnection)
+            ? self::$connections[Connection::CONNECTION_DEFAULT]
+            : self::$activeConnection;
 
-        if (!empty(self::$connections['connections'][self::$activeConnection]['dbname'])) {
-            self::$dbname = self::$connections['connections'][self::$activeConnection]['dbname'];
+        $connectionsList = self::$connections[Connection::CONNECTION_CONNECTIONS];
+
+        if (!empty($connectionsList[self::$activeConnection][Connection::CONNECTION_DBNAME])) {
+            self::$dbname = $connectionsList[self::$activeConnection][Connection::CONNECTION_DBNAME];
         }
 
         return new self();
