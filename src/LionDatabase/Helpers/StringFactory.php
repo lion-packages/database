@@ -8,9 +8,7 @@ use Lion\Database\Driver;
 use Lion\Database\Helpers\Constants\MySQLConstants;
 
 /**
- * Modify defined sentence formats
- *
- * @packages Lion\Database\Helpers
+ * Modify defined sentence formats.
  */
 class StringFactory
 {
@@ -60,11 +58,11 @@ class StringFactory
     protected static string $dbname = '';
 
     /**
-     * [Name of the currently active connection]
+     * Name of the currently active connection.
      *
      * @var string $activeConnection
      */
-    protected static string $activeConnection = '';
+    protected static ?string $activeConnection = null;
 
     /**
      * [Defines whether the process is a transaction]
