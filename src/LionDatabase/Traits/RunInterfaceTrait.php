@@ -27,9 +27,7 @@ trait RunInterfaceTrait
 
         self::$connections = $connections;
 
-        self::$activeConnection = empty(self::$activeConnection)
-            ? self::$connections[Connection::CONNECTION_DEFAULT]
-            : self::$activeConnection;
+        self::$activeConnection = self::$connections[Connection::CONNECTION_DEFAULT];
 
         $connectionsList = self::$connections[Connection::CONNECTION_CONNECTIONS];
 
