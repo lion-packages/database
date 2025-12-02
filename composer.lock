@@ -134,16 +134,16 @@
         },
         {
             "name": "lion/test",
-            "version": "v3.11.0",
+            "version": "v3.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lion-packages/test.git",
-                "reference": "bfa3e03274c78b9b4cc0a370579a8ddb6cd8e301"
+                "reference": "125e0bb33e4e84ecc8ca12dce04b8c19ed081217"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lion-packages/test/zipball/bfa3e03274c78b9b4cc0a370579a8ddb6cd8e301",
-                "reference": "bfa3e03274c78b9b4cc0a370579a8ddb6cd8e301",
+                "url": "https://api.github.com/repos/lion-packages/test/zipball/125e0bb33e4e84ecc8ca12dce04b8c19ed081217",
+                "reference": "125e0bb33e4e84ecc8ca12dce04b8c19ed081217",
                 "shasum": ""
             },
             "require": {
@@ -179,7 +179,7 @@
                 "issues": "https://github.com/lion-packages/test/issues",
                 "source": "https://github.com/lion-packages/test"
             },
-            "time": "2025-10-01T21:25:12+00:00"
+            "time": "2025-12-01T13:31:59+00:00"
         },
         {
             "name": "myclabs/deep-copy",
