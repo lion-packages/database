@@ -945,7 +945,12 @@ class MySQL extends Connection implements
      */
     public static function concat(): array|string|null
     {
-        return str_replace('*', implode(', ', func_get_args()), self::getKey(Driver::MYSQL, 'concat'));
+        /** @var list<string> $columns */
+        $columns = func_get_args();
+
+        $columnsList = implode(', ', $columns);
+
+        return str_replace('*', $columnsList, self::getKey(Driver::MYSQL, 'concat'));
     }
 
     /**
