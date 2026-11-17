@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
-    bootstrap="tests/bootstrap.php"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.0/phpunit.xsd"
     backupGlobals="false"
     backupStaticProperties="false"
+    bootstrap="tests/bootstrap.php"
     cacheDirectory="tests/build/cache"
+    recordTestRunHistory="true"
     colors="true"
     columns="80"
-    cacheResult="true"
     defaultTestSuite="All-Test"
     displayDetailsOnIncompleteTests="true"
     displayDetailsOnSkippedTests="true"
+    displayDetailsOnPhpunitDeprecations="true"
     displayDetailsOnTestsThatTriggerDeprecations="true"
     displayDetailsOnTestsThatTriggerErrors="true"
     displayDetailsOnTestsThatTriggerNotices="true"
@@ -20,8 +23,6 @@
     stopOnFailure="true"
     stopOnWarning="true"
     testdox="false"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.2/phpunit.xsd"
 >
     <php>
         <env name="APP_ENV" value="testing" />
